@@ -54,6 +54,14 @@ ETHICS_INDICATORS = {'consent_waiver': ['waiver of consent',
                      'IRB',
                      'research ethics committee',
                      'ethics review board'],
+ 'accordance_statement': [
+                       "in accordance with relevant guidelines and regulations",
+                       "in accordance with relevant named guidelines and regulations",
+                       "performed in accordance with relevant guidelines and regulations",
+                       "performed in accordance with relevant named guidelines and regulations",
+                       "conducted in accordance with relevant guidelines and regulations",
+                       "conducted in accordance with relevant named guidelines and regulations",
+                       "carried out in accordance with relevant guidelines and regulations"],                    
  'ethics_exemption': ['ethics approval was not required',
                       'ethical approval was not required',
                       'exempt from ethical review',
@@ -456,6 +464,8 @@ def evaluate_ethics_screening(
     consent_found = ethics_results[
         "informed_consent"
     ]["detected"]
+ 
+    accordance_found = ethics_results.get("accordance_statement",{"detected": False})["detected"]
 
     waiver_found = ethics_results[
         "consent_waiver"
@@ -518,7 +528,8 @@ def evaluate_ethics_screening(
         "ethics_statement_detected": ethics_found,
         "consent_statement_detected": consent_found,
         "consent_waiver_detected": waiver_found,
-        "ethics_exemption_detected": exemption_found
+        "ethics_exemption_detected": exemption_found,
+        "accordance_statement_detected": accordance_found
     }
 
 
