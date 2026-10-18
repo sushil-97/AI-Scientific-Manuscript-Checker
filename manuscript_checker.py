@@ -383,35 +383,100 @@ def detect_heading(line):
 
 def extract_sections(lines):
 
-  sections = {}
-  current_section = None
-  current_text = []
+    sections = {}
+    current_section = None
+    current_text = []
 
-  for line in lines:
+    # Inline section headings that may contain text
+    inline_heading_patterns = {
+        "data_availability": [
+            r"^\s*data availability\s*:\s*(.*)$",
+            r"^\s*availability of data and materials\s*:\s*(.*)$"
+        ],
+        "competing_interests": [
+            r"^\s*competing interests\s*:\s*(.*)$",
+            r"^\s*conflict of interest\s*:\s*(.*)$",
+            r"^\s*conflicts of interest\s*:\s*(.*)$"
+        ]
+    }
 
-    detected_section = detect_heading(line)
+    for line in lines:
 
-    if detected_section:
+        # -----------------------------------------
+        # 1. Check for inline heading + content
+        # -----------------------------------------
 
-      # Save previous section
+        inline_match_found = False
 
-      if current_section is not None:
-        sections[current_section] = "\n".join(current_text).strip()
+        for section_name, patterns in inline_heading_patterns.items():
 
-      # Start new section
+            for pattern in patterns:
 
-      current_section = detected_section
-      current_text = []
+                match = re.match(
+                    pattern,
+                    line,
+                    flags=re.IGNORECASE
+                )
 
-    else:
+                if match:
+
+                    # Save previous section
+                    if current_section is not None:
+                        sections[current_section] = "\n".join(
+                            current_text
+                        ).strip()
+
+                    # Start new section
+                    current_section = section_name
+                    current_text = []
+
+                    # IMPORTANT:
+                    # preserve text after the colon
+                    remaining_text = match.group(1).strip()
+
+                    if remaining_text:
+                        current_text.append(remaining_text)
+
+                    inline_match_found = True
+                    break
+
+            if inline_match_found:
+                break
+
+        if inline_match_found:
+            continue
+
+        # -----------------------------------------
+        # 2. Normal standalone heading detection
+        # -----------------------------------------
+
+        detected_section = detect_heading(line)
+
+        if detected_section:
+
+            # Save previous section
+            if current_section is not None:
+                sections[current_section] = "\n".join(
+                    current_text
+                ).strip()
+
+            # Start new section
+            current_section = detected_section
+            current_text = []
+
+        else:
+
             # Add text to current section
-        if current_section is not None:
-          current_text.append(line)
+            if current_section is not None:
+                current_text.append(line)
 
-  if current_section is not None:
-    sections[current_section] = "\n".join(current_text).strip()
+    # Save final section
+    if current_section is not None:
+        sections[current_section] = "\n".join(
+            current_text
+        ).strip()
 
-  return sections
+    return sections
 
 
 
