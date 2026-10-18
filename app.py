@@ -1,4 +1,3 @@
-
 import streamlit as st
 import tempfile
 import os
@@ -18,20 +17,87 @@ st.set_page_config(
 
 
 # ==========================================================
+# HELPER FUNCTIONS
+# ==========================================================
+
+def format_name(value):
+    """Convert internal variable names into readable labels."""
+    return str(value).replace("_", " ").title()
+
+
+def status_icon(status):
+    """Return an icon based on screening status."""
+
+    if status is None:
+        return "○"
+
+    status = str(status).upper()
+
+    if status in [
+        "PASS",
+        "PASS_CANDIDATE",
+        "CONSISTENT",
+        "DETECTED"
+    ]:
+        return "✅"
+
+    if status in [
+        "REVIEW",
+        "REVIEW_MISSING",
+        "REVIEW_WAIVER",
+        "REVIEW_EXEMPTION",
+        "REVIEW_ANIMAL_ETHICS",
+        "POTENTIAL_DURC",
+        "POSSIBLE_RELEVANCE",
+        "NOT_TRACEABLE"
+    ]:
+        return "⚠️"
+
+    if status in [
+        "NOT_TRIGGERED",
+        "NOT_APPLICABLE",
+        "NOT_DETECTED",
+        "NOT_ASSESSABLE"
+    ]:
+        return "○"
+
+    return "ℹ️"
+
+
+def display_status_card(title, status, reason=None):
+    """Display a simple module summary card."""
+
+    icon = status_icon(status)
+
+    st.markdown(
+        f"### {icon} {title}"
+    )
+
+    st.markdown(
+        f"**Status:** `{status}`"
+    )
+
+    if reason:
+        st.write(reason)
+
+
+# ==========================================================
 # TITLE
 # ==========================================================
 
-st.title("🔬 AI Scientific Manuscript Quality & Discrepancy Checker")
+st.title(
+    "🔬 AI Scientific Manuscript Quality & Discrepancy Checker"
+)
 
 st.write(
-    "Upload a scientific manuscript in PDF format to perform "
-    "automated editorial screening, discrepancy checks, and "
-    "reproducibility assessment."
+    "Automated editorial screening for scientific manuscripts, "
+    "including policy checks, discrepancy detection, statistical "
+    "consistency, and reproducibility assessment."
 )
 
 st.info(
-    "This tool provides automated screening support. "
-    "Findings should be reviewed by a human editor."
+    "This system is designed as an editorial decision-support tool. "
+    "All findings should be verified by a human editor."
 )
 
 
@@ -39,8 +105,10 @@ st.info(
 # FILE UPLOAD
 # ==========================================================
 
+st.header("Upload Manuscript")
+
 uploaded_file = st.file_uploader(
-    "Upload Scientific Manuscript",
+    "Upload a scientific manuscript in PDF format",
     type=["pdf"]
 )
 
@@ -52,19 +120,23 @@ uploaded_file = st.file_uploader(
 if uploaded_file is not None:
 
     st.success(
-        f"Uploaded: {uploaded_file.name}"
+        f"PDF ready for analysis: {uploaded_file.name}"
     )
 
     if st.button(
         "Analyze Manuscript",
-        type="primary"
+        type="primary",
+        use_container_width=True
     ):
 
         temp_path = None
 
         try:
 
-            # Save uploaded PDF temporarily
+            # --------------------------------------------------
+            # SAVE TEMPORARY PDF
+            # --------------------------------------------------
+
             with tempfile.NamedTemporaryFile(
                 delete=False,
                 suffix=".pdf"
@@ -77,7 +149,10 @@ if uploaded_file is not None:
                 temp_path = temp_file.name
 
 
-            # Run analysis
+            # --------------------------------------------------
+            # RUN ANALYSIS
+            # --------------------------------------------------
+
             with st.spinner(
                 "Analyzing manuscript..."
             ):
@@ -95,24 +170,35 @@ if uploaded_file is not None:
                 "overall_decision"
             ]
 
+            editorial = manuscript_report[
+                "editorial_screening"
+            ]
+
+            discrepancies = manuscript_report[
+                "discrepancy_checks"
+            ]
+
+            reproducibility = manuscript_report[
+                "reproducibility"
+            ]
+
 
             # ==================================================
-            # OVERALL RESULT
+            # OVERALL SUMMARY
             # ==================================================
 
             st.divider()
 
             st.header(
-                "Editorial Screening Result"
+                "Manuscript Screening Summary"
             )
 
-
-            col1, col2 = st.columns(2)
+            col1, col2, col3 = st.columns(3)
 
             with col1:
 
                 st.metric(
-                    "Overall Status",
+                    "Overall Decision",
                     overall["overall_status"]
                 )
 
@@ -123,15 +209,35 @@ if uploaded_file is not None:
                     overall["review_count"]
                 )
 
+            with col3:
+
+                st.metric(
+                    "Screening Modules",
+                    "8"
+                )
+
+
+            if overall["overall_status"] == "REVIEW":
+
+                st.warning(
+                    "One or more findings require editorial review."
+                )
+
+            else:
+
+                st.success(
+                    "No review-level findings were detected."
+                )
+
 
             # ==================================================
-            # REVIEW FINDINGS
+            # REVIEW PRIORITIES
             # ==================================================
 
             if overall["review_items"]:
 
                 st.subheader(
-                    "⚠️ Items Requiring Editorial Review"
+                    "⚠️ Editorial Review Priorities"
                 )
 
                 for item in overall[
@@ -139,87 +245,506 @@ if uploaded_file is not None:
                 ]:
 
                     with st.expander(
-                        f"{item['module']} — "
-                        f"{item['status']}"
+                        f"{item['module']} — {item['status']}",
+                        expanded=True
                     ):
 
                         st.write(
                             item["reason"]
                         )
 
-            else:
-
-                st.success(
-                    "No review-level findings "
-                    "were detected."
-                )
-
 
             # ==================================================
-            # DETAILED REPORT
+            # EDITORIAL & POLICY SCREENING
             # ==================================================
 
             st.divider()
 
             st.header(
-                "Detailed Screening Report"
-            )
-
-
-            # Editorial screening
-            st.subheader(
                 "Editorial & Policy Screening"
             )
 
-            editorial = manuscript_report[
-                "editorial_screening"
+
+            # --------------------------------------------------
+            # ETHICS & CONSENT
+            # --------------------------------------------------
+
+            ethics = editorial[
+                "ethics_consent"
             ]
 
-            for module, module_result in editorial.items():
+            col1, col2 = st.columns(2)
 
-                with st.expander(
-                    module.replace(
-                        "_", " "
-                    ).title()
-                ):
+            with col1:
 
-                    st.json(
-                        module_result
+                display_status_card(
+                    "Ethics",
+                    ethics.get(
+                        "ethics_status",
+                        "UNKNOWN"
                     )
+                )
+
+                st.write(
+                    "Ethics statement detected:",
+                    "Yes"
+                    if ethics.get(
+                        "ethics_statement_detected"
+                    )
+                    else "No"
+                )
+
+                st.write(
+                    "Accordance statement detected:",
+                    "Yes"
+                    if ethics.get(
+                        "accordance_statement_detected"
+                    )
+                    else "No"
+                )
+
+            with col2:
+
+                display_status_card(
+                    "Consent",
+                    ethics.get(
+                        "consent_status",
+                        "UNKNOWN"
+                    )
+                )
+
+                st.write(
+                    "Consent statement detected:",
+                    "Yes"
+                    if ethics.get(
+                        "consent_statement_detected"
+                    )
+                    else "No"
+                )
+
+                st.write(
+                    "Consent waiver detected:",
+                    "Yes"
+                    if ethics.get(
+                        "consent_waiver_detected"
+                    )
+                    else "No"
+                )
 
 
-            # Discrepancy checks
-            st.subheader(
-                "Discrepancy Checks"
-            )
+            # --------------------------------------------------
+            # DATA AVAILABILITY
+            # --------------------------------------------------
 
-            discrepancies = manuscript_report[
-                "discrepancy_checks"
+            st.divider()
+
+            data = editorial[
+                "data_availability"
             ]
 
-            for module, module_result in discrepancies.items():
-
-                with st.expander(
-                    module.replace(
-                        "_", " "
-                    ).title()
-                ):
-
-                    st.json(
-                        module_result
-                    )
-
-
-            # Reproducibility
-            st.subheader(
-                "Reproducibility"
+            display_status_card(
+                "Data Availability",
+                data.get(
+                    "status",
+                    "UNKNOWN"
+                ),
+                data.get("reason")
             )
 
-            st.json(
-                manuscript_report[
-                    "reproducibility"
+            data_col1, data_col2 = st.columns(2)
+
+            with data_col1:
+
+                st.write(
+                    "**Applicability:**",
+                    data.get(
+                        "applicability",
+                        "Unknown"
+                    )
+                )
+
+                st.write(
+                    "**Statement detected:**",
+                    "Yes"
+                    if data.get(
+                        "statement_detected"
+                    )
+                    else "No"
+                )
+
+            with data_col2:
+
+                access_types = data.get(
+                    "access_type",
+                    []
+                )
+
+                st.write(
+                    "**Access type:**",
+                    ", ".join(access_types)
+                    if access_types
+                    else "Not identified"
+                )
+
+                repositories = data.get(
+                    "repositories",
+                    []
+                )
+
+                st.write(
+                    "**Repositories:**",
+                    ", ".join(repositories)
+                    if repositories
+                    else "None detected"
+                )
+
+
+            # --------------------------------------------------
+            # CENTER / CAM / DURC
+            # --------------------------------------------------
+
+            st.divider()
+
+            col1, col2, col3 = st.columns(3)
+
+
+            with col1:
+
+                center = editorial[
+                    "center_screening"
                 ]
+
+                display_status_card(
+                    "Center Screening",
+                    center.get(
+                        "status",
+                        "UNKNOWN"
+                    ),
+                    center.get("reason")
+                )
+
+                st.write(
+                    "**Classification:**",
+                    center.get(
+                        "classification",
+                        "Unknown"
+                    )
+                )
+
+
+            with col2:
+
+                cam = editorial[
+                    "cam"
+                ]
+
+                display_status_card(
+                    "CAM",
+                    cam.get(
+                        "status",
+                        "UNKNOWN"
+                    ),
+                    cam.get("reason")
+                )
+
+                categories = cam.get(
+                    "categories",
+                    []
+                )
+
+                st.write(
+                    "**Categories:**",
+                    ", ".join(categories)
+                    if categories
+                    else "None detected"
+                )
+
+
+            with col3:
+
+                durc = editorial[
+                    "durc"
+                ]
+
+                display_status_card(
+                    "DURC",
+                    durc.get(
+                        "status",
+                        "UNKNOWN"
+                    ),
+                    durc.get("reason")
+                )
+
+                st.write(
+                    "**Classification:**",
+                    durc.get(
+                        "classification",
+                        "Unknown"
+                    )
+                )
+
+
+            # ==================================================
+            # DISCREPANCY CHECKS
+            # ==================================================
+
+            st.divider()
+
+            st.header(
+                "Consistency & Discrepancy Checks"
             )
+
+
+            # --------------------------------------------------
+            # STATISTICAL CONSISTENCY
+            # --------------------------------------------------
+
+            statistical = discrepancies[
+                "statistical_consistency"
+            ]
+
+            display_status_card(
+                "Statistical Consistency",
+                statistical.get(
+                    "status",
+                    "UNKNOWN"
+                ),
+                statistical.get("reason")
+            )
+
+            col1, col2, col3 = st.columns(3)
+
+            with col1:
+
+                st.metric(
+                    "Claim Consistency",
+                    statistical.get(
+                        "claim_consistency",
+                        "Unknown"
+                    )
+                )
+
+            with col2:
+
+                abstract_pvalues = statistical.get(
+                    "abstract_pvalues",
+                    []
+                )
+
+                st.metric(
+                    "Abstract P-values",
+                    len(abstract_pvalues)
+                )
+
+            with col3:
+
+                st.metric(
+                    "Numeric Traceability",
+                    statistical.get(
+                        "numeric_traceability",
+                        "Unknown"
+                    )
+                )
+
+
+            if abstract_pvalues:
+
+                st.write(
+                    "**Abstract p-values:**",
+                    ", ".join(
+                        str(value)
+                        for value in abstract_pvalues
+                    )
+                )
+
+
+            results_pvalues = statistical.get(
+                "results_pvalues",
+                []
+            )
+
+            st.write(
+                "**Results p-values:**",
+                ", ".join(
+                    str(value)
+                    for value in results_pvalues
+                )
+                if results_pvalues
+                else "None detected"
+            )
+
+
+            # --------------------------------------------------
+            # SAMPLE SIZE
+            # --------------------------------------------------
+
+            st.divider()
+
+            sample = discrepancies[
+                "sample_size_consistency"
+            ]
+
+            display_status_card(
+                "Sample Size Consistency",
+                sample.get(
+                    "status",
+                    "UNKNOWN"
+                ),
+                sample.get("reason")
+            )
+
+            st.write(
+                "**Applicability:**",
+                sample.get(
+                    "applicability",
+                    "Unknown"
+                )
+            )
+
+
+            # ==================================================
+            # REPRODUCIBILITY
+            # ==================================================
+
+            st.divider()
+
+            st.header(
+                "Reproducibility Assessment"
+            )
+
+            display_status_card(
+                "Reproducibility",
+                reproducibility.get(
+                    "status",
+                    "UNKNOWN"
+                ),
+                reproducibility.get(
+                    "reason"
+                )
+            )
+
+
+            reported = reproducibility.get(
+                "reported",
+                []
+            )
+
+            unavailable = reproducibility.get(
+                "explicitly_unavailable",
+                []
+            )
+
+            not_detected = reproducibility.get(
+                "not_detected",
+                []
+            )
+
+
+            col1, col2, col3 = st.columns(3)
+
+
+            with col1:
+
+                st.subheader(
+                    "✅ Reported"
+                )
+
+                if reported:
+
+                    for item in reported:
+
+                        st.write(
+                            f"• {format_name(item)}"
+                        )
+
+                else:
+
+                    st.write(
+                        "None identified"
+                    )
+
+
+            with col2:
+
+                st.subheader(
+                    "⚠️ Explicitly Unavailable"
+                )
+
+                if unavailable:
+
+                    for item in unavailable:
+
+                        st.write(
+                            f"• {format_name(item)}"
+                        )
+
+                else:
+
+                    st.write(
+                        "None"
+                    )
+
+
+            with col3:
+
+                st.subheader(
+                    "○ Not Detected"
+                )
+
+                if not_detected:
+
+                    for item in not_detected:
+
+                        st.write(
+                            f"• {format_name(item)}"
+                        )
+
+                else:
+
+                    st.write(
+                        "None"
+                    )
+
+
+            # ==================================================
+            # TECHNICAL DETAILS
+            # ==================================================
+
+            st.divider()
+
+            with st.expander(
+                "View Technical Analysis Details"
+            ):
+
+                st.write(
+                    "### Editorial Screening"
+                )
+
+                st.json(
+                    manuscript_report[
+                        "editorial_screening"
+                    ]
+                )
+
+                st.write(
+                    "### Discrepancy Checks"
+                )
+
+                st.json(
+                    manuscript_report[
+                        "discrepancy_checks"
+                    ]
+                )
+
+                st.write(
+                    "### Reproducibility"
+                )
+
+                st.json(
+                    manuscript_report[
+                        "reproducibility"
+                    ]
+                )
 
 
         except Exception as e:
@@ -231,10 +756,15 @@ if uploaded_file is not None:
 
         finally:
 
-            # Remove temporary PDF
+            # --------------------------------------------------
+            # DELETE TEMPORARY PDF
+            # --------------------------------------------------
+
             if (
                 temp_path
                 and os.path.exists(temp_path)
             ):
 
-                os.remove(temp_path)
+                os.remove(
+                    temp_path
+                )
