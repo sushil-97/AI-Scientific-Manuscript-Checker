@@ -654,41 +654,7 @@ def detect_mandated_data(sections):
 
 
 def detect_data_availability_statement(sections):
- def detect_data_availability_statement(sections):
-
-    print("\n===== DATA AVAILABILITY DEBUG =====")
-
-    for section_name, section_text in sections.items():
-
-        normalized = re.sub(
-            r"\s+",
-            " ",
-            section_text
-        )
-
-        if (
-            "data availability" in normalized.lower()
-            or "corresponding author" in normalized.lower()
-            or "reasonable request" in normalized.lower()
-        ):
-            print("FOUND IN SECTION:", section_name)
-
-            index = normalized.lower().find("corresponding author")
-
-            if index == -1:
-                index = normalized.lower().find("data availability")
-
-            if index == -1:
-                index = normalized.lower().find("reasonable request")
-
-            print(
-                normalized[
-                    max(0, index - 250):
-                    index + 350
-                ]
-            )
-
-    print("===== END DEBUG =====\n")
+ 
 
     evidence = []
 
