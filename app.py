@@ -965,7 +965,32 @@ if uploaded_file is not None:
                         "None"
                     )
 
-
+            # ==========================================================
+            # DOWNLOAD EDITORIAL REPORT
+            # ==========================================================
+            
+            st.divider()
+            
+            st.header("Download Editorial Report")
+            
+            editorial_report_text = build_editorial_report(
+                uploaded_file.name,
+                manuscript_report,
+                overall
+            )
+            
+            report_filename = (
+                os.path.splitext(uploaded_file.name)[0]
+                + "_editorial_report.txt"
+            )
+            
+            st.download_button(
+                label="📄 Download Editorial Screening Report",
+                data=editorial_report_text,
+                file_name=report_filename,
+                mime="text/plain",
+                use_container_width=True
+            )
             # ==================================================
             # TECHNICAL DETAILS
             # ==================================================
