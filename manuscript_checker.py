@@ -22,7 +22,50 @@ SECTION_PATTERNS = {'abstract': ['^abstract$'],
  'related_work': ['^(?:\\d+\\.?\\s*)?related work$'],
  'results': ['^(?:\\d+\\.?\\s*)?results$']}
 
-STUDY_INDICATORS = {'animal_study': ['mice', 'mouse', 'rats', 'rat', 'animal model', 'animal study'],
+STUDY_INDICATORS = {
+ 'animal_study': [
+    # General animal-study terminology
+    'animal model',
+    'animal models',
+    'animal study',
+    'animal studies',
+    'animal experiment',
+    'animal experiments',
+    'animal experimentation',
+    'animal manipulation',
+    'animal manipulations',
+    'animal husbandry',
+
+    # Common laboratory mammals
+    'mouse',
+    'mice',
+    'rat',
+    'rats',
+    'rabbit',
+    'rabbits',
+    'hamster',
+    'hamsters',
+    'guinea pig',
+    'guinea pigs',
+
+    # Other common research organisms
+    'zebrafish',
+    'drosophila',
+    'fruit fly',
+    'fruit flies',
+    'cricket',
+    'crickets',
+    'crustacean',
+    'crustaceans',
+
+    # Experimental animal procedures
+    'euthanasia',
+    'euthanized',
+    'euthanised',
+    'sacrificed',
+    'anaesthetized',
+    'anaesthetised'
+],
  'clinical_trial': ['clinical trial',
                     'randomized controlled trial',
                     'randomised controlled trial',
