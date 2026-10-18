@@ -1,6 +1,11 @@
 import re
 import fitz
+import nltk
 from nltk.tokenize import sent_tokenize
+
+# Ensure tokenizer resources are available
+nltk.download("punkt", quiet=True)
+nltk.download("punkt_tab", quiet=True)
 
 SECTION_PATTERNS = {'abstract': ['^abstract$'],
  'competing_interests': ['^(?:\\d+\\.?\\s*)?(competing interests|conflict of interest|conflicts of '
