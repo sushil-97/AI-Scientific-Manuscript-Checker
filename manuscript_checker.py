@@ -442,43 +442,72 @@ def detect_study_characters(text):
 
 def ethics_indicator_evidence(sections, indicators):
 
-  results = {}
+    results = {}
 
-  for category, keywords in indicators.items():
+    for category, keywords in indicators.items():
 
-    evidence = []
+        evidence = []
 
-    for section_name, section_text in sections.items():
+        for section_name, section_text in sections.items():
 
-      # Skip references
-      if section_name == "references":
-        continue
+            # Skip references
+            if section_name == "references":
+                continue
 
-      sentences = sent_tokenize(section_text)
+            # Normalize PDF whitespace
+            normalized_text = re.sub(
+                r'\s+',
+                ' ',
+                section_text
+            ).strip()
 
-      for sentence in sentences:
+            sentences = sent_tokenize(
+                normalized_text
+            )
 
-        for keyword in keywords:
+            for sentence in sentences:
 
-          pattern = (r'\b'+ re.escape(keyword) + r'\b')
+                # Normalize sentence whitespace
+                normalized_sentence = re.sub(
+                    r'\s+',
+                    ' ',
+                    sentence
+                ).strip()
 
-          if re.search(pattern, sentence, flags=re.IGNORECASE):
+                for keyword in keywords:
 
-            evidence.append({
-                "keyword": keyword,
-                "section": section_name,
-                "sentence": sentence.strip()
-            })
+                    normalized_keyword = re.sub(
+                        r'\s+',
+                        ' ',
+                        keyword
+                    ).strip()
 
-            break
+                    pattern = (
+                        r'\b'
+                        + re.escape(normalized_keyword)
+                        + r'\b'
+                    )
 
-    results[category]= {
-         "detected": len(evidence) > 0,
-         "evidence" : evidence
-     }
+                    if re.search(
+                        pattern,
+                        normalized_sentence,
+                        flags=re.IGNORECASE
+                    ):
 
-  return results
+                        evidence.append({
+                            "keyword": keyword,
+                            "section": section_name,
+                            "sentence": normalized_sentence
+                        })
 
+                        break
+
+        results[category] = {
+            "detected": len(evidence) > 0,
+            "evidence": evidence
+        }
+
+    return results
 
 
 def evaluate_ethics_screening(
