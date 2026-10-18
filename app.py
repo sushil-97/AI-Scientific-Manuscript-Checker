@@ -420,6 +420,27 @@ if uploaded_file is not None:
                 result = analyze_manuscript(
                     temp_path
                 )
+                st.write("DEBUG — Accordance phrase test")
+
+                import fitz
+                
+                debug_doc = fitz.open(temp_path)
+                
+                debug_text = "\n".join(
+                    page.get_text("text")
+                    for page in debug_doc
+                )
+                
+                debug_doc.close()
+                
+                phrase = "in accordance with relevant guidelines and regulations"
+                
+                st.write(
+                    "Phrase found in extracted PDF text:",
+                    phrase.lower() in debug_text.lower()
+                )
+                                
+                
 
 
             manuscript_report = result[
