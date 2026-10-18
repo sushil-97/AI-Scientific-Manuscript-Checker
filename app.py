@@ -79,7 +79,267 @@ def display_status_card(title, status, reason=None):
 
     if reason:
         st.write(reason)
+        
+def build_editorial_report(
+    uploaded_filename,
+    manuscript_report,
+    overall
+):
+    """Create a downloadable editorial screening report."""
 
+    lines = []
+
+    lines.append(
+        "AI SCIENTIFIC MANUSCRIPT QUALITY & DISCREPANCY CHECKER"
+    )
+    lines.append("=" * 65)
+    lines.append("")
+
+    lines.append(
+        f"Manuscript: {uploaded_filename}"
+    )
+
+    lines.append(
+        f"Overall Decision: {overall['overall_status']}"
+    )
+
+    lines.append(
+        f"Review Flags: {overall['review_count']}"
+    )
+
+    lines.append("")
+
+    # ------------------------------------------------------
+    # REVIEW PRIORITIES
+    # ------------------------------------------------------
+
+    lines.append("EDITORIAL REVIEW PRIORITIES")
+    lines.append("-" * 65)
+
+    if overall["review_items"]:
+
+        for item in overall["review_items"]:
+
+            lines.append(
+                f"{item['module']} — {item['status']}"
+            )
+
+            lines.append(
+                f"Reason: {item['reason']}"
+            )
+
+            lines.append("")
+
+    else:
+
+        lines.append(
+            "No review-level findings were detected."
+        )
+
+        lines.append("")
+
+
+    # ------------------------------------------------------
+    # EDITORIAL SCREENING
+    # ------------------------------------------------------
+
+    lines.append("EDITORIAL & POLICY SCREENING")
+    lines.append("-" * 65)
+
+    editorial = manuscript_report[
+        "editorial_screening"
+    ]
+
+    ethics = editorial["ethics_consent"]
+
+    lines.append(
+        f"Ethics: {ethics.get('ethics_status', 'UNKNOWN')}"
+    )
+
+    lines.append(
+        f"Consent: {ethics.get('consent_status', 'UNKNOWN')}"
+    )
+
+    lines.append(
+        "Ethics Statement Detected: "
+        + (
+            "Yes"
+            if ethics.get("ethics_statement_detected")
+            else "No"
+        )
+    )
+
+    lines.append(
+        "Accordance Statement Detected: "
+        + (
+            "Yes"
+            if ethics.get("accordance_statement_detected")
+            else "No"
+        )
+    )
+
+    lines.append("")
+
+
+    data = editorial["data_availability"]
+
+    lines.append(
+        f"Data Availability: {data.get('status', 'UNKNOWN')}"
+    )
+
+    lines.append(
+        f"Reason: {data.get('reason', 'Not available')}"
+    )
+
+    lines.append("")
+
+
+    center = editorial["center_screening"]
+
+    lines.append(
+        f"Center Screening: {center.get('status', 'UNKNOWN')}"
+    )
+
+    lines.append(
+        f"Classification: "
+        f"{center.get('classification', 'UNKNOWN')}"
+    )
+
+    lines.append("")
+
+
+    cam = editorial["cam"]
+
+    lines.append(
+        f"CAM: {cam.get('status', 'UNKNOWN')}"
+    )
+
+    lines.append("")
+
+
+    durc = editorial["durc"]
+
+    lines.append(
+        f"DURC: {durc.get('status', 'UNKNOWN')}"
+    )
+
+    lines.append("")
+
+
+    # ------------------------------------------------------
+    # CONSISTENCY CHECKS
+    # ------------------------------------------------------
+
+    lines.append("CONSISTENCY & DISCREPANCY CHECKS")
+    lines.append("-" * 65)
+
+    discrepancies = manuscript_report[
+        "discrepancy_checks"
+    ]
+
+    statistical = discrepancies[
+        "statistical_consistency"
+    ]
+
+    lines.append(
+        f"Statistical Consistency: "
+        f"{statistical.get('status', 'UNKNOWN')}"
+    )
+
+    lines.append(
+        f"Claim Consistency: "
+        f"{statistical.get('claim_consistency', 'UNKNOWN')}"
+    )
+
+    lines.append(
+        f"Numeric Traceability: "
+        f"{statistical.get('numeric_traceability', 'UNKNOWN')}"
+    )
+
+    lines.append(
+        f"Reason: {statistical.get('reason', 'Not available')}"
+    )
+
+    lines.append("")
+
+
+    sample = discrepancies[
+        "sample_size_consistency"
+    ]
+
+    lines.append(
+        f"Sample Size Consistency: "
+        f"{sample.get('status', 'UNKNOWN')}"
+    )
+
+    lines.append(
+        f"Applicability: "
+        f"{sample.get('applicability', 'UNKNOWN')}"
+    )
+
+    lines.append("")
+
+
+    # ------------------------------------------------------
+    # REPRODUCIBILITY
+    # ------------------------------------------------------
+
+    lines.append("REPRODUCIBILITY ASSESSMENT")
+    lines.append("-" * 65)
+
+    reproducibility = manuscript_report[
+        "reproducibility"
+    ]
+
+    lines.append(
+        f"Status: {reproducibility.get('status', 'UNKNOWN')}"
+    )
+
+    lines.append("")
+
+    lines.append("Reported:")
+
+    for item in reproducibility.get(
+        "reported",
+        []
+    ):
+        lines.append(
+            f"  - {format_name(item)}"
+        )
+
+    lines.append("")
+
+    lines.append("Explicitly Unavailable:")
+
+    for item in reproducibility.get(
+        "explicitly_unavailable",
+        []
+    ):
+        lines.append(
+            f"  - {format_name(item)}"
+        )
+
+    lines.append("")
+
+    lines.append("Not Detected:")
+
+    for item in reproducibility.get(
+        "not_detected",
+        []
+    ):
+        lines.append(
+            f"  - {format_name(item)}"
+        )
+
+    lines.append("")
+    lines.append("=" * 65)
+
+    lines.append(
+        "Automated screening result — human editorial "
+        "verification is required."
+    )
+
+    return "\n".join(lines)
 
 # ==========================================================
 # TITLE
