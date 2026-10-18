@@ -684,6 +684,10 @@ def detect_data_availability_statement(sections):
 
         r"\bdatasets? (?:are|is) available\b",
 
+        # Handles:
+        # "datasets generated during ... are available"
+        r"\bdatasets?\b.{0,200}?\b(?:are|is) available\b",
+
         r"\bdata (?:can|may) be accessed\b",
 
         r"\bdata (?:can|may) be obtained\b",
@@ -694,7 +698,14 @@ def detect_data_availability_statement(sections):
 
         r"\bdata generated (?:during|in) this study\b",
 
-        r"\bdata supporting (?:the|this) (?:findings|study)\b"
+        r"\bdata supporting (?:the|this) (?:findings|study)\b",
+
+        # Common available-on-request wording
+        r"\bavailable from the corresponding author\b",
+
+        r"\bavailable (?:from|upon) reasonable request\b",
+
+        r"\bavailable (?:on|upon) request\b"
     ]
 
     for section_name, section_text in sections.items():
@@ -702,7 +713,14 @@ def detect_data_availability_statement(sections):
         if section_name == "references":
             continue
 
-        sentences = sent_tokenize(section_text)
+        # Normalize PDF whitespace
+        normalized_text = re.sub(
+            r"\s+",
+            " ",
+            section_text
+        ).strip()
+
+        sentences = sent_tokenize(normalized_text)
 
         for sentence in sentences:
 
