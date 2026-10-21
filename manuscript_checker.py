@@ -2007,7 +2007,7 @@ def classify_sample_size_role(context):
         r'\btotal of\s+\d+\s+(?:patients?|participants?|subjects?)\b.{0,40}\b(?:was|were)\s+included\b',
     
         # "784 patients were included"
-        r'\b\d+\s+(?:patients?|participants?|subjects?)\s+(?:was|were)\s+included\b'
+        r'\b\d+\s+(?:patients?|participants?|subjects?)\b.{0,50}\b(?:was|were)\s+included\b'
     ]
 
     for pattern in enrolled_patterns:
