@@ -1866,11 +1866,19 @@ def extract_sample_sizes(sections):
 
         for sentence in sentences:
 
+            # Remove common manuscript PDF line-number artifacts.
+            # Example:
+            # "118 Patients who..." -> "Patients who..."
+            # "344 individual patient" -> "individual patient"
+            #
+            # Only remove a number when it appears to be an embedded
+            # manuscript line marker immediately before participant words.
             normalized = re.sub(
-                r'\s+',
-                ' ',
-                sentence
-            ).strip()
+                r'(?<!\d)\b\d{2,3}\s+(?=(?:Patients?|Participants?|Subjects?|Individuals?|Volunteers?)\b)',
+                '',
+                normalized,
+                flags=re.IGNORECASE
+            )
 
             for pattern in SAMPLE_SIZE_PATTERNS:
 
@@ -1991,9 +1999,15 @@ def classify_sample_size_role(context):
         r'\benrolled\b',
         r'\brecruited\b',
         r'\bincluded in (?:the )?study\b',
-
-        # "This study included 250 patients"
-        r'\bstudy included\s+\d+\s+(?:patients?|participants?|subjects?)\b'
+    
+        # "This study included 784 patients"
+        r'\bstudy included\s+\d+\s+(?:patients?|participants?|subjects?)\b',
+    
+        # "A total of 784 patients were included"
+        r'\btotal of\s+\d+\s+(?:patients?|participants?|subjects?)\b.{0,40}\b(?:was|were)\s+included\b',
+    
+        # "784 patients were included"
+        r'\b\d+\s+(?:patients?|participants?|subjects?)\s+(?:was|were)\s+included\b'
     ]
 
     for pattern in enrolled_patterns:
