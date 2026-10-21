@@ -882,9 +882,7 @@ if uploaded_file is not None:
                 )
             )
 
-            st.markdown("#### 🔍 Sample Size Debug")
-
-            st.json(sample)
+            
             # ==================================================
             # REPRODUCIBILITY
             # ==================================================
