@@ -1944,7 +1944,9 @@ def classify_sample_size_role(context):
 
     randomized_patterns = [
         r'\brandomi[sz]ed\b',
-        r'\bassigned\b'
+        r'\brandomly assigned\b',
+        r'\brandomly allocated\b',
+        r'\ballocated at random\b'
     ]
 
     for pattern in randomized_patterns:
