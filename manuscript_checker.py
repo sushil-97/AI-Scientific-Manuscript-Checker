@@ -1874,11 +1874,10 @@ def extract_sample_sizes(sections):
             # Only remove a number when it appears to be an embedded
             # manuscript line marker immediately before participant words.
             normalized = re.sub(
-                r'(?<!\d)\b\d{2,3}\s+(?=(?:Patients?|Participants?|Subjects?|Individuals?|Volunteers?)\b)',
-                '',
-                normalized,
-                flags=re.IGNORECASE
-            )
+                r'\s+',
+                ' ',
+                sentence
+            ).strip()
 
             for pattern in SAMPLE_SIZE_PATTERNS:
 
