@@ -2952,4 +2952,13 @@ def analyze_manuscript(pdf_path):
     )
 
     return final_analysis
+ 
+test_context = (
+    "A total of 784 patients with EC were included, "
+    "of whom 172 (22%) experienced relapse."
+)
 
+print(
+    "ROLE TEST:",
+    classify_sample_size_role(test_context)
+)
