@@ -1896,13 +1896,36 @@ def extract_sample_sizes(sections):
 
                     if number_match:
 
+                        match_position = normalized.lower().find(
+                            match.lower()
+                        )
+                        
+                        if match_position != -1:
+                        
+                            start = max(
+                                0,
+                                match_position - 80
+                            )
+                        
+                            end = min(
+                                len(normalized),
+                                match_position + len(match) + 80
+                            )
+                        
+                            local_context = normalized[start:end]
+                        
+                        else:
+                            local_context = normalized
+                        
+                        
                         findings.append({
                             "section": section_name,
                             "expression": match,
                             "numeric_value": int(
                                 number_match.group()
                             ),
-                            "context": normalized
+                            "context": normalized,
+                            "local_context": local_context
                         })
 
     return findings
@@ -2027,7 +2050,10 @@ def add_sample_size_roles(findings):
 
         new_finding["role"] = (
             classify_sample_size_role(
-                finding["context"]
+                finding.get(
+                    "local_context",
+                    finding["context"]
+                )
             )
         )
 
