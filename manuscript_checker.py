@@ -2809,6 +2809,21 @@ def analyze_manuscript_text(full_text):
     sample_size_findings = extract_sample_sizes(sections)
     sample_size_findings = add_sample_size_roles(sample_size_findings)
     sample_size_findings = remove_duplicate_sample_sizes(sample_size_findings)
+    print("\n===== SAMPLE SIZE DEBUG =====")
+
+    for finding in sample_size_findings:
+        print(
+            "VALUE:", finding.get("numeric_value"),
+            "| ROLE:", finding.get("role"),
+            "| SECTION:", finding.get("section")
+        )
+        print(
+            "CONTEXT:",
+            finding.get("context")
+        )
+        print("-" * 70)
+    
+    print("===== END SAMPLE SIZE DEBUG =====\n")
     sample_size_screening = evaluate_sample_size_consistency(study_characters, sample_size_findings)
     print("✓ Sample Size Consistency Screening Completed")
 
