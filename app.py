@@ -882,19 +882,9 @@ if uploaded_file is not None:
                 )
             )
 
-                        # TEMPORARY DEBUG
             st.markdown("#### 🔍 Sample Size Debug")
 
-            st.json({
-                "same_role_comparisons": sample.get(
-                    "same_role_comparisons",
-                    []
-                ),
-                "participant_flow": sample.get(
-                    "participant_flow",
-                    []
-                )
-            })
+            st.json(sample)
             # ==================================================
             # REPRODUCIBILITY
             # ==================================================
