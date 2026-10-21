@@ -2100,7 +2100,12 @@ def evaluate_sample_size_consistency(
         role = finding["role"]
         section = finding["section"]
         value = finding["numeric_value"]
-
+    
+        # Do not compare numbers whose participant role
+        # could not be determined.
+        if role == "UNSPECIFIED":
+            continue
+    
         role_section_values.setdefault(
             role,
             {}
