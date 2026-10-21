@@ -1,5 +1,4 @@
 import streamlit as st
-st.info("DEPLOYMENT TEST — NEW APP.PY")
 import tempfile
 import os
 
