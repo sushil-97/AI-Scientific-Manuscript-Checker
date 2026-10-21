@@ -2242,6 +2242,7 @@ def evaluate_sample_size_consistency(
         "applicability": "APPLICABLE",
         "same_role_comparisons": comparisons,
         "participant_flow": participant_flow,
+        "raw_findings": findings,
         "status": status,
         "reason": reason
     }
