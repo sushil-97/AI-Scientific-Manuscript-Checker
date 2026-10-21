@@ -1893,6 +1893,14 @@ def extract_sample_sizes(sections):
                         r'\d+',
                         match
                     )
+                    # Ignore section-number artifacts such as:
+                    # "3.1 Patient Cohort" being extracted as "1 Patient"
+                    if re.search(
+                        r'\b\d+\.\d+\s+' + re.escape(match) + r'\b',
+                        normalized,
+                        flags=re.IGNORECASE
+                    ):
+                        continue
 
                     if number_match:
 
