@@ -1056,10 +1056,10 @@ if uploaded_file is not None:
 
 
         except Exception as e:
-
-            st.error(
-                f"Analysis failed: {e}"
-            )
+            st.error(f"Analysis failed: {e}")
+        
+            import traceback
+            st.code(traceback.format_exc())
 
 
         finally:
