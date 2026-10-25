@@ -104,16 +104,23 @@ ETHICS_INDICATORS = {'consent_waiver': ['waiver of consent',
                     'consent was waived',
                     'informed consent was waived',
                     'waived the requirement for informed consent'],
- 'ethics_approval': ['ethics approval',
-                     'ethical approval',
-                     'ethics committee',
-                     'ethical committee',
-                     'institutional review board',
-                     'IRB',
-                     'research ethics committee',
-                     'ethics review board'],
+ 'ethics_approval': [
+    'ethics approval',
+    'ethical approval',
+    'ethics committee',
+    'ethics committees',
+    'ethical committee',
+    'ethical committees',
+    'institutional review board',
+    'IRB',
+    'research ethics committee',
+    'research ethics committees',
+    'ethics review board',
+    'ethics review boards'
+],
+
 'accordance_statement': [
-    # Generic guidelines/regulations wording
+    # Generic accordance wording
     'in accordance with relevant guidelines and regulations',
     'in accordance with relevant named guidelines and regulations',
     'performed in accordance with relevant guidelines and regulations',
@@ -131,8 +138,11 @@ ETHICS_INDICATORS = {'consent_waiver': ['waiver of consent',
     'complied with the declaration of helsinki',
     'compliance with the declaration of helsinki',
     'following the declaration of helsinki',
-    'declaration of helsinki'
-],              
+    'declaration of helsinki',
+
+    # Alternative word order
+    'helsinki declaration'
+],
  'ethics_exemption': ['ethics approval was not required',
                       'ethical approval was not required',
                       'exempt from ethical review',
