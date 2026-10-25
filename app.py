@@ -434,7 +434,13 @@ if uploaded_file is not None:
                 st.json(result["statistical_report"])
                 st.markdown("#### 🔍 Raw P-Value Findings")
                 st.json(result["pvalue_findings"])
-                
+                st.markdown("#### 🔍 0.019 Text Debug")
+
+                if "0.019" in result["analysis_text"]:
+                    st.success("0.019 was found in extracted manuscript text.")
+                else:
+                    st.warning("0.019 was NOT found in extracted manuscript text.")
+                                
 
                 import fitz
                 
