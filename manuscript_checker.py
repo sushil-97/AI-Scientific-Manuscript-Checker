@@ -250,7 +250,8 @@ Known_Repositories = ['genbank',
  'dbgap',
  'figshare',
  'zenodo',
- 'dryad']
+ 'dryad',
+ 'github]
 
 Identifier_Patterns = {'arrayexpress_accession': '\\bE-[A-Z]+-\\d+\\b',
  'doi': '\\b10\\.\\d{4,9}/[-._;()/:A-Z0-9]+\\b',
