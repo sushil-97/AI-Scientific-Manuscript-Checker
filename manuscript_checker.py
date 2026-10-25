@@ -3655,6 +3655,27 @@ def detect_reproducibility_indicators(
 
                 if matched_keyword is None:
                     continue
+                # Avoid generic prose uses of "accuracy"
+                # that do not represent an evaluation metric.
+                if matched_keyword.lower() == "accuracy":
+                
+                    non_metric_accuracy_patterns = [
+                        r'\bcannot guarantee the accuracy\b',
+                        r'\bguarantee the accuracy\b',
+                        r'\baccuracy of (?:the )?answers\b',
+                        r'\baccuracy of (?:the )?information\b',
+                        r'\baccuracy of (?:the )?content\b'
+                    ]
+                
+                    if any(
+                        re.search(
+                            pattern,
+                            normalized,
+                            flags=re.IGNORECASE
+                        )
+                        for pattern in non_metric_accuracy_patterns
+                    ):
+                        continue
 
                 evidence = {
                     "section": section_name,
