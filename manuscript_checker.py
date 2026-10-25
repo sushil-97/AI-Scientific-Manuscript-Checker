@@ -2289,6 +2289,7 @@ def evaluate_sample_size_consistency(
         return {
             "applicability": "NOT_APPLICABLE",
             "same_role_comparisons": [],
+            "final_population_comparisons": [],
             "participant_flow": [],
             "status": "NOT_TRIGGERED",
             "reason": (
@@ -2306,6 +2307,7 @@ def evaluate_sample_size_consistency(
         return {
             "applicability": "APPLICABLE",
             "same_role_comparisons": [],
+            "final_population_comparisons": [],
             "participant_flow": [],
             "status": "REVIEW",
             "reason": (
@@ -2325,12 +2327,12 @@ def evaluate_sample_size_consistency(
         role = finding["role"]
         section = finding["section"]
         value = finding["numeric_value"]
-    
+
         # Do not compare numbers whose participant role
         # could not be determined.
         if role == "UNSPECIFIED":
             continue
-    
+
         role_section_values.setdefault(
             role,
             {}
@@ -2381,8 +2383,71 @@ def evaluate_sample_size_consistency(
         })
 
     # ---------------------------------
+    # Compare FINAL STUDY POPULATION
+    #
+    # A final population may be described as:
+    #
+    # Methods:
+    # "247 patients for final analysis"
+    #       -> ANALYZED
+    #
+    # Results:
+    # "247 patients were included"
+    #       -> ENROLLED
+    #
+    # These different role labels may still describe
+    # the same final study population.
+    # ---------------------------------
+
+    final_population_comparisons = []
+
+    methods_final_values = set()
+    results_final_values = set()
+
+    for finding in findings:
+
+        role = finding["role"]
+        section = finding["section"]
+        value = finding["numeric_value"]
+
+        if (
+            section in ["methods", "experiments"]
+            and role == "ANALYZED"
+        ):
+            methods_final_values.add(value)
+
+        if (
+            section == "results"
+            and role in ["ANALYZED", "ENROLLED"]
+        ):
+            results_final_values.add(value)
+
+    matching_final_values = (
+        methods_final_values
+        & results_final_values
+    )
+
+    if matching_final_values:
+
+        final_population_comparisons.append({
+            "methods_values": sorted(
+                methods_final_values
+            ),
+            "results_values": sorted(
+                results_final_values
+            ),
+            "matching_values": sorted(
+                matching_final_values
+            ),
+            "result": "CONSISTENT"
+        })
+
+    # ---------------------------------
     # Participant flow
     # ENROLLED -> ANALYZED
+    #
+    # Informational only.
+    # Does NOT determine discrepancy status.
     # ---------------------------------
 
     participant_flow = []
@@ -2405,21 +2470,15 @@ def evaluate_sample_size_consistency(
 
     if enrolled_values and analyzed_values:
 
-        max_enrolled = max(enrolled_values)
-        min_analyzed = min(analyzed_values)
-
-        difference = (
-            max_enrolled - min_analyzed
-        )
-
         participant_flow.append({
-            "enrolled": max_enrolled,
-            "analyzed": min_analyzed,
-            "difference": difference,
+            "enrolled_values": sorted(
+                set(enrolled_values)
+            ),
+            "analyzed_values": sorted(
+                set(analyzed_values)
+            ),
             "interpretation": (
-                "POSSIBLE_ATTRITION"
-                if difference > 0
-                else "NO_REDUCTION_DETECTED"
+                "INFORMATIONAL_ONLY"
             )
         })
 
@@ -2432,6 +2491,12 @@ def evaluate_sample_size_consistency(
         == "POTENTIAL_DISCREPANCY"
 
         for comparison in comparisons
+    )
+
+    final_population_consistent = any(
+        comparison["result"] == "CONSISTENT"
+        for comparison
+        in final_population_comparisons
     )
 
     if discrepancy_found:
@@ -2453,26 +2518,35 @@ def evaluate_sample_size_consistency(
             "role were consistent across the assessed sections."
         )
 
+    elif final_population_consistent:
+
+        status = "PASS_CANDIDATE"
+
+        reason = (
+            "The final participant population was consistent "
+            "between the Methods and Results sections."
+        )
+
     else:
 
         status = "REVIEW"
 
         reason = (
             "Participant counts were detected, but there "
-            "was insufficient same-role cross-section "
+            "was insufficient comparable cross-section "
             "information for a direct consistency comparison."
         )
 
     return {
         "applicability": "APPLICABLE",
         "same_role_comparisons": comparisons,
+        "final_population_comparisons":
+            final_population_comparisons,
         "participant_flow": participant_flow,
         "raw_findings": findings,
         "status": status,
         "reason": reason
     }
-
-
 
 def detect_reproducibility_indicators(
     sections,
