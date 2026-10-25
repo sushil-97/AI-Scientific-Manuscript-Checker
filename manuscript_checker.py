@@ -2458,40 +2458,6 @@ def classify_sample_size_role(context, expression=None):
     expression_start = None
     expression_end = None
 
-    # --------------------------------------------------
-    # Explicit completed/followed cohort
-    # --------------------------------------------------
-    # If the same sample-size expression is followed by
-    # language showing that this cohort successfully
-    # completed follow-up, treat it as COMPLETED rather
-    # than simply ENROLLED.
-    #
-    # Example:
-    # "394 newborns ... were enrolled, screened ... and
-    # successfully followed to 28 days."
-    # --------------------------------------------------
-    
-    if expression_end is not None:
-    
-        text_after_expression = context_lower[
-            expression_end:
-            expression_end + 150
-        ]
-    
-        completed_followup_patterns = [
-            r'\bsuccessfully followed\b',
-            r'\bcompleted follow-up\b',
-            r'\bcompleted the study\b',
-            r'\bcompleted treatment\b',
-            r'\bfollowed (?:up )?to \d+\s*(?:days?|weeks?|months?|years?)\b'
-        ]
-    
-        if any(
-            re.search(pattern, text_after_expression)
-            for pattern in completed_followup_patterns
-        ):
-            return "COMPLETED"
-
     if expression:
 
         match = re.search(
@@ -2502,6 +2468,76 @@ def classify_sample_size_role(context, expression=None):
         if match:
             expression_start = match.start()
             expression_end = match.end()
+
+    # --------------------------------------------------
+    # Explicit participant-flow relationships
+    # --------------------------------------------------
+
+    if expression_end is not None:
+
+        text_after_expression = context_lower[
+            expression_end:
+            expression_end + 150
+        ]
+
+        # ----------------------------------------------
+        # EXCLUDED / LOST TO FOLLOW-UP
+        #
+        # The exclusion phrase must be reasonably close
+        # to the specific population expression.
+        #
+        # Example:
+        # "47 babies were lost to follow-up"
+        # ----------------------------------------------
+
+        excluded_patterns = [
+            r'^\s*(?:were|was)?\s*excluded\b',
+            r'^\s*(?:were|was)?\s*removed\b',
+            r'^\s*(?:were|was)?\s*lost to follow-up\b',
+            r'^\s*(?:were|was)?\s*withdrawn\b',
+            r'^\s*withdrew\b'
+        ]
+
+        if any(
+            re.search(pattern, text_after_expression)
+            for pattern in excluded_patterns
+        ):
+            return "EXCLUDED"
+
+        # ----------------------------------------------
+        # COMPLETED / FOLLOWED COHORT
+        #
+        # This allows intervening study-process language
+        # such as:
+        #
+        # "394 newborns ... were enrolled, screened ...
+        # and successfully followed to 28 days."
+        #
+        # But do not classify a population as completed
+        # if it is explicitly described as lost/excluded.
+        # ----------------------------------------------
+
+        completed_followup_patterns = [
+            r'^.{0,120}\bsuccessfully followed\b',
+            r'^.{0,120}\bcompleted follow-up\b',
+            r'^.{0,120}\bcompleted the study\b',
+            r'^.{0,120}\bcompleted treatment\b',
+            r'^.{0,120}\bfollowed (?:up )?to \d+\s*(?:days?|weeks?|months?|years?)\b'
+        ]
+
+        exclusion_before_completion = re.search(
+            r'\b(?:lost to follow-up|excluded|removed|withdrawn|withdrew)\b',
+            text_after_expression
+        )
+
+        if (
+            not exclusion_before_completion
+            and any(
+                re.search(pattern, text_after_expression)
+                for pattern in completed_followup_patterns
+            )
+        ):
+            return "COMPLETED"
 
     # --------------------------------------------------
     # Role patterns
@@ -2552,8 +2588,6 @@ def classify_sample_size_role(context, expression=None):
             r'\bcompleted the study\b',
             r'\bcompleted follow-up\b',
             r'\bcompleted treatment\b',
-        
-            # Follow-up completion language
             r'\bsuccessfully followed\b',
             r'\bsuccessfully followed (?:up )?to\b',
             r'\bfollowed (?:up )?to \d+\s*(?:days?|weeks?|months?|years?)\b',
@@ -2579,8 +2613,7 @@ def classify_sample_size_role(context, expression=None):
     }
 
     # --------------------------------------------------
-    # If we know the exact expression:
-    # choose the CLOSEST role evidence
+    # Choose the closest role evidence
     # --------------------------------------------------
 
     if expression_start is not None:
@@ -2596,8 +2629,6 @@ def classify_sample_size_role(context, expression=None):
                     context_lower
                 ):
 
-                    # Distance between the sample-size expression
-                    # and the role phrase.
                     if role_match.end() <= expression_start:
 
                         distance = (
@@ -2620,7 +2651,6 @@ def classify_sample_size_role(context, expression=None):
                         "distance": distance
                     })
 
-        # Only accept reasonably local evidence.
         nearby_candidates = [
             candidate
             for candidate in candidates
@@ -2638,7 +2668,6 @@ def classify_sample_size_role(context, expression=None):
 
     # --------------------------------------------------
     # Fallback
-    # Used when the exact expression cannot be located
     # --------------------------------------------------
 
     for role, patterns in role_patterns.items():
@@ -2652,6 +2681,7 @@ def classify_sample_size_role(context, expression=None):
                 return role
 
     return "UNSPECIFIED"
+
 
 def add_sample_size_roles(findings):
 
