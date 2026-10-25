@@ -2743,8 +2743,9 @@ def classify_sample_size_role(context, expression=None):
             r'\brecruited\b',
             r'\bincluded in (?:the )?study\b',
             r'\bstudy included\b',
-            r'\bwere included\b',
-            r'\bwas included\b'
+        
+            r'\bwere included\b(?!\s+in\s+(?:the\s+)?(?:primary|final)?\s*analysis\b)',
+            r'\bwas included\b(?!\s+in\s+(?:the\s+)?(?:primary|final)?\s*analysis\b)'
         ]
     }
 
