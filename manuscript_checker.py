@@ -1058,34 +1058,34 @@ def detect_data_availability_statement(sections):
 def build_das_text(das_result):
 
     evidence_sentences = []
-    seen_sentences = set()
-    
+
     for item in das_result["evidence"]:
-    
+
         sentence = re.sub(
             r'\s+',
             ' ',
             item["sentence"]
         ).strip()
-    
-        sentence_key = sentence.lower()
-    
-        if (
-            sentence
-            and sentence_key not in seen_sentences
+
+        if sentence:
+            evidence_sentences.append(sentence)
+
+    # ---------------------------------------------
+    # Remove duplicate evidence sentences
+    # while preserving original order
+    # ---------------------------------------------
+
+    unique_sentences = []
+
+    for sentence in evidence_sentences:
+
+        if not any(
+            sentence.lower() == existing.lower()
+            for existing in unique_sentences
         ):
-    
-            seen_sentences.add(
-                sentence_key
-            )
-    
-            evidence_sentences.append(
-                sentence
-            )
-    
-    das_text = " ".join(
-        evidence_sentences
-    )
+            unique_sentences.append(sentence)
+
+    das_text = " ".join(unique_sentences)
 
     # ---------------------------------------------
     # Stop DAS text when the next manuscript
@@ -1106,7 +1106,6 @@ def build_das_text(das_result):
         "references"
     ]
 
-    # Find the earliest following section heading
     stop_positions = []
 
     for heading in stop_headings:
@@ -1123,12 +1122,11 @@ def build_das_text(das_result):
             )
 
     if stop_positions:
-
         das_text = das_text[
             :min(stop_positions)
         ]
 
-    # Normalize whitespace
+    # Final whitespace normalization
     das_text = re.sub(
         r'\s+',
         ' ',
@@ -1136,7 +1134,6 @@ def build_das_text(das_result):
     ).strip()
 
     return das_text
-
 
 
 def detect_persistent_identifiers(text):
