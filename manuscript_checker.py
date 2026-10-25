@@ -2518,20 +2518,32 @@ def classify_sample_size_role(context, expression=None):
         # ----------------------------------------------
 
         completed_followup_patterns = [
-            r'^.{0,120}\bsuccessfully followed\b',
-            r'^.{0,120}\bcompleted follow-up\b',
-            r'^.{0,120}\bcompleted the study\b',
-            r'^.{0,120}\bcompleted treatment\b',
-            r'^.{0,120}\bfollowed (?:up )?to \d+\s*(?:days?|weeks?|months?|years?)\b'
+            # Direct description of the detected population
+            r'^.{0,80}\b(?:were|was)\b.{0,50}\bsuccessfully followed\b',
+            r'^.{0,80}\b(?:were|was)\b.{0,50}\bcompleted follow-up\b',
+            r'^.{0,80}\b(?:were|was)\b.{0,50}\bcompleted the study\b',
+            r'^.{0,80}\b(?:were|was)\b.{0,50}\bcompleted treatment\b',
         ]
 
         exclusion_before_completion = re.search(
             r'\b(?:lost to follow-up|excluded|removed|withdrawn|withdrew)\b',
             text_after_expression
         )
-
+        
+        # Prevent completion language belonging to a comparison
+        # population from being assigned to the detected count.
+        #
+        # Example:
+        # "47 babies were less likely ... than those
+        # successfully followed to 28 days"
+        comparison_population = re.search(
+            r'\b(?:than|compared (?:with|to))\s+those\b',
+            text_after_expression
+        )
+        
         if (
             not exclusion_before_completion
+            and not comparison_population
             and any(
                 re.search(pattern, text_after_expression)
                 for pattern in completed_followup_patterns
