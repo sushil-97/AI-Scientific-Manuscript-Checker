@@ -2366,12 +2366,21 @@ def build_statistical_consistency_report(
     else:
 
         status = "PASS_CANDIDATE"
-
-        reason = (
-            "The detected statistical claims and "
-            "p-values appear internally consistent."
-        )
-
+    
+        if claim_consistency == "NOT_ASSESSABLE":
+    
+            reason = (
+                "No statistical discrepancy was detected "
+                "in the assessed p-values. Cross-section "
+                "claim consistency was not assessable."
+            )
+    
+        else:
+    
+            reason = (
+                "The detected statistical claims and "
+                "p-values appear internally consistent."
+            )
     return {
         "abstract_pvalues": sorted(
             abstract_numbers
