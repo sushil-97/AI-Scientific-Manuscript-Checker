@@ -541,6 +541,19 @@ def extract_sections(lines):
 
 def detect_study_characters(text):
 
+
+    # Normalize common PDF ligatures
+    text = (
+        text
+        .replace("ﬁ", "fi")
+        .replace("ﬂ", "fl")
+        .replace("ﬀ", "ff")
+        .replace("ﬃ", "ffi")
+        .replace("ﬄ", "ffl")
+    )
+
+    results = {}
+
     results = {}
 
     for study_type, keywords in STUDY_INDICATORS.items():
