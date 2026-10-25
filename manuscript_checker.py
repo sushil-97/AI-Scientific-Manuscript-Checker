@@ -2868,6 +2868,8 @@ def evaluate_sample_size_consistency(
     study_characteristics,
     findings
 ):
+    comparisons = []
+ 
 
     # ---------------------------------
     # Systematic review / meta-analysis
