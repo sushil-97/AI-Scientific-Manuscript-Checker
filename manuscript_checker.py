@@ -1058,13 +1058,34 @@ def detect_data_availability_statement(sections):
 def build_das_text(das_result):
 
     evidence_sentences = []
-
+    seen_sentences = set()
+    
     for item in das_result["evidence"]:
-        evidence_sentences.append(
+    
+        sentence = re.sub(
+            r'\s+',
+            ' ',
             item["sentence"]
-        )
-
-    das_text = " ".join(evidence_sentences)
+        ).strip()
+    
+        sentence_key = sentence.lower()
+    
+        if (
+            sentence
+            and sentence_key not in seen_sentences
+        ):
+    
+            seen_sentences.add(
+                sentence_key
+            )
+    
+            evidence_sentences.append(
+                sentence
+            )
+    
+    das_text = " ".join(
+        evidence_sentences
+    )
 
     # ---------------------------------------------
     # Stop DAS text when the next manuscript
