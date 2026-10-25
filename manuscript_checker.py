@@ -2102,7 +2102,7 @@ def detect_significance_claims(text):
 
             r'\bsignificant\s+difference\b',
 
-            r'\bsignificantly\s+(?:higher|lower|greater|different)\b'
+            r'\bsignificantly\s+(?:higher|lower|greater|different|increased|decreased)\b'
         ]
 
         positive_found = any(
