@@ -1072,7 +1072,7 @@ def detect_persistent_identifiers(text):
 
 
 
-def determine_data_access_type(das_result,repositories_found=None):
+def determine_data_access_type(das_result, repositories_found=None):
 
     if not das_result["detected"]:
         return ["NOT_ASSESSABLE"]
@@ -1085,8 +1085,31 @@ def determine_data_access_type(das_result,repositories_found=None):
     text_lower = das_text.lower()
 
     # ----------------------------------
-    # 1. RESTRICTED ACCESS
-    # Check before public availability
+    # 1. NO NEW DATA / NOT APPLICABLE
+    # ----------------------------------
+    # Common in systematic reviews,
+    # reviews, commentaries, and other
+    # secondary-research manuscripts.
+    # ----------------------------------
+
+    no_new_data_patterns = [
+        r"\bno datasets? (?:were|was) generated\b",
+        r"\bno datasets? (?:were|was) generated or analysed\b",
+        r"\bno datasets? (?:were|was) generated or analyzed\b",
+        r"\bno new data (?:were|was) generated\b",
+        r"\bno new datasets? (?:were|was) generated\b",
+        r"\bdata sharing is not applicable\b",
+        r"\bdata availability is not applicable\b",
+        r"\bnot applicable to this article as no datasets?\b"
+    ]
+
+    for pattern in no_new_data_patterns:
+
+        if re.search(pattern, text_lower):
+            return ["not_applicable"]
+
+    # ----------------------------------
+    # 2. RESTRICTED ACCESS
     # ----------------------------------
 
     restricted_patterns = [
@@ -1101,11 +1124,10 @@ def determine_data_access_type(das_result,repositories_found=None):
     for pattern in restricted_patterns:
 
         if re.search(pattern, text_lower):
-
             return ["restricted"]
 
     # ----------------------------------
-    # 2. AVAILABLE ON REQUEST
+    # 3. AVAILABLE ON REQUEST
     # ----------------------------------
 
     request_patterns = [
@@ -1118,11 +1140,10 @@ def determine_data_access_type(das_result,repositories_found=None):
     for pattern in request_patterns:
 
         if re.search(pattern, text_lower):
-
             return ["available_on_request"]
 
     # ----------------------------------
-    # 3. PUBLIC REPOSITORY
+    # 4. PUBLIC REPOSITORY
     # ----------------------------------
 
     public_patterns = [
@@ -1138,11 +1159,10 @@ def determine_data_access_type(das_result,repositories_found=None):
     for pattern in public_patterns:
 
         if re.search(pattern, text_lower):
-
             return ["public_repository"]
 
     # ----------------------------------
-    # 4. SUPPLEMENTARY MATERIAL
+    # 5. SUPPLEMENTARY MATERIAL
     # ----------------------------------
 
     supplementary_patterns = [
@@ -1154,11 +1174,10 @@ def determine_data_access_type(das_result,repositories_found=None):
     for pattern in supplementary_patterns:
 
         if re.search(pattern, text_lower):
-
             return ["supplementary_material"]
 
     # ----------------------------------
-    # 5. WITHIN ARTICLE
+    # 6. WITHIN ARTICLE
     # ----------------------------------
 
     article_patterns = [
@@ -1170,17 +1189,16 @@ def determine_data_access_type(das_result,repositories_found=None):
     for pattern in article_patterns:
 
         if re.search(pattern, text_lower):
-
             return ["within_article"]
-        # ----------------------------------
-    # Repository already detected
+
+    # ----------------------------------
+    # 7. Repository already detected
     # ----------------------------------
 
     if repositories_found:
         return ["repository_deposition"]
 
     return ["UNCLEAR"]
-
 
 
 def evaluate_data_availability(
