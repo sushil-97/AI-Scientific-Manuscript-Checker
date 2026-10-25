@@ -3032,8 +3032,8 @@ def analyze_manuscript_text(full_text):
         print(
             "VALUE:", finding.get("numeric_value"),
             "| ROLE:", finding.get("role"),
-            "| SECTION:", finding.get("section"),
-            "sample_size_findings": sample_size_findings
+            "| SECTION:", finding.get("section")
+            
         )
         print(
             "CONTEXT:",
@@ -3083,6 +3083,7 @@ def analyze_manuscript_text(full_text):
         "durc_screening": durc_screening,
         "statistical_report": statistical_report,
         "sample_size_screening": sample_size_screening,
+        "sample_size_findings": sample_size_findings,
         "reproducibility_report": reproducibility_report,
         "manuscript_report": manuscript_report,
         "overall_decision": overall_decision
