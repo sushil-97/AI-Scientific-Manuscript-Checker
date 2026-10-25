@@ -1671,8 +1671,8 @@ def detect_center_evidence(sections):
                 + number_words
                 + r'|\d+)'
                 + r'\s+'
-                + r'(?:centers?|centres?|sites?|clinics?|'
-                  r'hospitals?|institutions?)\b'
+                + r'(?:centers|centres|sites|clinics|'
+                  r'hospitals|institutions)\b'
             )
 
             if re.search(
