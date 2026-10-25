@@ -2173,14 +2173,20 @@ def detect_significance_threshold(sections, default=0.05):
     ]
 
     threshold_patterns = [
+        # Example:
+        # "A two-sided p-value of <0.05 was considered
+        # statistically significant."
+        r'\bp[\s-]*value\s+of\s*[<≤]\s*(0?\.\d+)\s+'
+        r'was\s+considered\s+statistically\s+significant',
+    
         r'\bp[\s-]*value\s+of\s+(0?\.\d+)\s+'
         r'was\s+taken\s+as\s+statistically\s+significant',
-
+    
         r'\bsignificance\s+threshold\s+(?:of|was)\s+'
         r'(0?\.\d+)',
-
+    
         r'\bthreshold\s+of\s+(0?\.\d+)',
-
+    
         r'\bstatistical\s+significance\s+was\s+'
         r'(?:set|defined)\s+at\s+'
         r'(?:p\s*[<≤]\s*)?(0?\.\d+)'
