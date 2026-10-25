@@ -318,7 +318,13 @@ Durc_Indicators = {'biological_agent': ['pathogen',
                   'resistance to treatment',
                   'drug resistance',
                   'immune escape']}
-p_value_pattern = r'\bp\s*[=<>≤≥]\s*0?\.\d+\b'
+p_value_pattern = (
+    r'\b(?:'
+    r'p\s*[=<>≤≥]\s*0?\.\d+'
+    r'|'
+    r'p[\s-]*value\s+(?:of\s+)?0?\.\d+'
+    r')\b'
+)
 SIGNIFICANCE_THRESHOLD = 0.05
 
 SAMPLE_NUMBER_PATTERN = r'(?:\d{1,3}(?:,\d{3})*|\d+)'
