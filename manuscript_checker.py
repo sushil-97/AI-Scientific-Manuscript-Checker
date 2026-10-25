@@ -295,8 +295,8 @@ SAMPLE_SIZE_PATTERNS = [
     rf'\b{SAMPLE_NUMBER_PATTERN}\s+individuals?\b',
     rf'\b{SAMPLE_NUMBER_PATTERN}\s+volunteers?\b',
     rf'\bsample\s+of\s+{SAMPLE_NUMBER_PATTERN}\b',
-    rf'\btotal\s+of\s+{SAMPLE_NUMBER_PATTERN}\s+',
-    rf'(?:patients?|participants?|subjects?|individuals?)\b']
+    rf'\btotal\s+of\s+{SAMPLE_NUMBER_PATTERN}\s+(?:patients?|participants?|subjects?|individuals?)\b'
+]
 
 Sample_size_roles = {'ANALYZED': ['analyzed', 'analysed', 'included in the analysis', 'included in the final analysis'],
  'COMPLETED': ['completed the study', 'completed follow-up', 'completed treatment'],
