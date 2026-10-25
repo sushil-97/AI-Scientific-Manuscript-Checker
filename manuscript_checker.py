@@ -2223,147 +2223,164 @@ def classify_sample_size_role(context, expression=None):
     context_lower = context.lower()
 
     # --------------------------------------------------
-    # Build expression-specific context
+    # Locate the specific sample-size expression
     # --------------------------------------------------
 
-    target_context = context_lower
+    expression_start = None
+    expression_end = None
 
     if expression:
 
-        expression_lower = expression.lower()
-
         match = re.search(
-            re.escape(expression_lower),
+            re.escape(expression.lower()),
             context_lower
         )
 
         if match:
+            expression_start = match.start()
+            expression_end = match.end()
 
-            # Small window around THIS specific sample-size
-            # expression. This prevents another number elsewhere
-            # in the same sentence from determining the role.
-            start = max(0, match.start() - 35)
-            end = min(len(context_lower), match.end() + 35)
+    # --------------------------------------------------
+    # Role patterns
+    # --------------------------------------------------
 
-            target_context = context_lower[start:end]
+    role_patterns = {
 
-    # ---------------------------------
-    # PLANNED
-    # ---------------------------------
+        "PLANNED": [
+            r'\bplanned sample size\b',
+            r'\btarget sample size\b',
+            r'\brequired sample size\b',
+            r'\bcalculated sample size\b',
+            r'\bestimated sample size\b',
+            r'\bminimum sample size\b',
+            r'\bminimal sample size\b',
+            r'\bsample size would be\b',
+            r'\bsample size was calculated\b',
+            r'\bsample size was estimated\b',
+            r'\bpatients? per arm\b',
+            r'\bparticipants? per arm\b',
+            r'\bsubjects? per arm\b'
+        ],
 
-    planned_patterns = [
-        r'\bplanned sample size\b',
-        r'\btarget sample size\b',
-        r'\brequired sample size\b',
-        r'\bcalculated sample size\b',
-        r'\bestimated sample size\b',
-        r'\bminimum sample size\b',
-        r'\bminimal sample size\b',
-        r'\bsample size would be\b',
-        r'\bsample size was calculated\b',
-        r'\bsample size was estimated\b',
-        r'\bpatients? per arm\b',
-        r'\bparticipants? per arm\b',
-        r'\bsubjects? per arm\b'
-    ]
+        "SCREENED": [
+            r'\bscreened\b',
+            r'\bwere screened\b',
+            r'\bwas screened\b'
+        ],
 
-    for pattern in planned_patterns:
-        if re.search(pattern, target_context):
-            return "PLANNED"
+        "ANALYZED": [
+            r'\banaly[sz]ed\b',
+            r'\bincluded in (?:the )?analysis\b',
+            r'\bincluded in (?:the )?final analysis\b',
+            r'\bfor (?:the )?final analysis\b',
+            r'\bfor (?:the )?analysis\b',
+            r'\bused in (?:the )?analysis\b',
+            r'\bused for (?:the )?analysis\b'
+        ],
 
-    # ---------------------------------
-    # SCREENED
-    # ---------------------------------
+        "RANDOMIZED": [
+            r'\brandomi[sz]ed\b',
+            r'\brandomly assigned\b',
+            r'\brandomly allocated\b',
+            r'\ballocated at random\b'
+        ],
 
-    screened_patterns = [
-        r'\bscreened\b',
-        r'\bwere screened\b',
-        r'\bwas screened\b'
-    ]
+        "COMPLETED": [
+            r'\bcompleted the study\b',
+            r'\bcompleted follow-up\b',
+            r'\bcompleted treatment\b'
+        ],
 
-    for pattern in screened_patterns:
-        if re.search(pattern, target_context):
-            return "SCREENED"
+        "EXCLUDED": [
+            r'\bexcluded\b',
+            r'\bremoved\b',
+            r'\blost to follow-up\b',
+            r'\bwithdrew\b',
+            r'\bwithdrawn\b'
+        ],
 
-    # ---------------------------------
-    # ANALYZED
-    # ---------------------------------
+        "ENROLLED": [
+            r'\benrolled\b',
+            r'\brecruited\b',
+            r'\bincluded in (?:the )?study\b',
+            r'\bstudy included\b',
+            r'\bwere included\b',
+            r'\bwas included\b'
+        ]
+    }
 
-    analyzed_patterns = [
-        r'\banaly[sz]ed\b',
-        r'\bincluded in (?:the )?analysis\b',
-        r'\bincluded in (?:the )?final analysis\b',
-        r'\bfor (?:the )?final analysis\b',
-        r'\bfor (?:the )?analysis\b',
-        r'\bused in (?:the )?analysis\b',
-        r'\bused for (?:the )?analysis\b'
-    ]
+    # --------------------------------------------------
+    # If we know the exact expression:
+    # choose the CLOSEST role evidence
+    # --------------------------------------------------
 
-    for pattern in analyzed_patterns:
-        if re.search(pattern, target_context):
-            return "ANALYZED"
+    if expression_start is not None:
 
-    # ---------------------------------
-    # RANDOMIZED
-    # ---------------------------------
+        candidates = []
 
-    randomized_patterns = [
-        r'\brandomi[sz]ed\b',
-        r'\brandomly assigned\b',
-        r'\brandomly allocated\b',
-        r'\ballocated at random\b'
-    ]
+        for role, patterns in role_patterns.items():
 
-    for pattern in randomized_patterns:
-        if re.search(pattern, target_context):
-            return "RANDOMIZED"
+            for pattern in patterns:
 
-    # ---------------------------------
-    # COMPLETED
-    # ---------------------------------
+                for role_match in re.finditer(
+                    pattern,
+                    context_lower
+                ):
 
-    completed_patterns = [
-        r'\bcompleted the study\b',
-        r'\bcompleted follow-up\b',
-        r'\bcompleted treatment\b'
-    ]
+                    # Distance between the sample-size expression
+                    # and the role phrase.
+                    if role_match.end() <= expression_start:
 
-    for pattern in completed_patterns:
-        if re.search(pattern, target_context):
-            return "COMPLETED"
+                        distance = (
+                            expression_start
+                            - role_match.end()
+                        )
 
-    # ---------------------------------
-    # EXCLUDED
-    # ---------------------------------
+                    elif role_match.start() >= expression_end:
 
-    excluded_patterns = [
-        r'\bexcluded\b',
-        r'\bremoved\b',
-        r'\blost to follow-up\b',
-        r'\bwithdrew\b',
-        r'\bwithdrawn\b'
-    ]
+                        distance = (
+                            role_match.start()
+                            - expression_end
+                        )
 
-    for pattern in excluded_patterns:
-        if re.search(pattern, target_context):
-            return "EXCLUDED"
+                    else:
+                        distance = 0
 
-    # ---------------------------------
-    # ENROLLED
-    # ---------------------------------
+                    candidates.append({
+                        "role": role,
+                        "distance": distance
+                    })
 
-    enrolled_patterns = [
-        r'\benrolled\b',
-        r'\brecruited\b',
-        r'\bincluded in (?:the )?study\b',
-        r'\bstudy included\b',
-        r'\bwere included\b',
-        r'\bwas included\b'
-    ]
+        # Only accept reasonably local evidence.
+        nearby_candidates = [
+            candidate
+            for candidate in candidates
+            if candidate["distance"] <= 40
+        ]
 
-    for pattern in enrolled_patterns:
-        if re.search(pattern, target_context):
-            return "ENROLLED"
+        if nearby_candidates:
+
+            closest = min(
+                nearby_candidates,
+                key=lambda x: x["distance"]
+            )
+
+            return closest["role"]
+
+    # --------------------------------------------------
+    # Fallback
+    # Used when the exact expression cannot be located
+    # --------------------------------------------------
+
+    for role, patterns in role_patterns.items():
+
+        for pattern in patterns:
+
+            if re.search(
+                pattern,
+                context_lower
+            ):
+                return role
 
     return "UNSPECIFIED"
 
