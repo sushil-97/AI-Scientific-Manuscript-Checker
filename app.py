@@ -688,6 +688,13 @@ if uploaded_file is not None:
                     if repositories
                     else "None detected"
                 )
+                if result.get("das_text"):
+
+                    st.markdown("#### 📄 Detected Data Availability Statement")
+                
+                    st.info(result["das_text"])
+                
+                
 
 
             # --------------------------------------------------
