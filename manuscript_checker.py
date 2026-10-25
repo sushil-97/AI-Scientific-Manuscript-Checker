@@ -2974,44 +2974,111 @@ def evaluate_sample_size_consistency(
 
     # ---------------------------------
     # Participant flow
-    # ENROLLED -> ANALYZED
     #
-    # Informational only.
-    # Does NOT determine discrepancy status.
+    # Detect explainable changes in cohort size.
+    #
+    # Examples:
+    #
+    # ENROLLED - EXCLUDED = COMPLETED
+    # 441      - 47       = 394
+    #
+    # ENROLLED - EXCLUDED = ANALYZED
+    #
+    # This prevents legitimate attrition from being
+    # interpreted as an unexplained sample-size change.
     # ---------------------------------
-
+    
     participant_flow = []
-
-    enrolled_values = []
-
-    analyzed_values = []
-
+    
+    enrolled_values = set()
+    excluded_values = set()
+    completed_values = set()
+    analyzed_values = set()
+    
     for finding in findings:
-
-        if finding["role"] == "ENROLLED":
-            enrolled_values.append(
-                finding["numeric_value"]
+    
+        role = finding["role"]
+        value = finding["numeric_value"]
+    
+        if role == "ENROLLED":
+            enrolled_values.add(value)
+    
+        elif role == "EXCLUDED":
+            excluded_values.add(value)
+    
+        elif role == "COMPLETED":
+            completed_values.add(value)
+    
+        elif role == "ANALYZED":
+            analyzed_values.add(value)
+    
+    
+    # ---------------------------------
+    # ENROLLED - EXCLUDED = COMPLETED
+    # ---------------------------------
+    
+    for enrolled in enrolled_values:
+    
+        for excluded in excluded_values:
+    
+            expected_remaining = (
+                enrolled - excluded
             )
-
-        elif finding["role"] == "ANALYZED":
-            analyzed_values.append(
-                finding["numeric_value"]
+    
+            if expected_remaining in completed_values:
+    
+                participant_flow.append({
+                    "enrolled": enrolled,
+                    "excluded": excluded,
+                    "final": expected_remaining,
+                    "final_role": "COMPLETED",
+                    "result": "CONSISTENT"
+                })
+    
+    
+    # ---------------------------------
+    # ENROLLED - EXCLUDED = ANALYZED
+    # ---------------------------------
+    
+    for enrolled in enrolled_values:
+    
+        for excluded in excluded_values:
+    
+            expected_remaining = (
+                enrolled - excluded
             )
-
-    if enrolled_values and analyzed_values:
-
+    
+            if expected_remaining in analyzed_values:
+    
+                participant_flow.append({
+                    "enrolled": enrolled,
+                    "excluded": excluded,
+                    "final": expected_remaining,
+                    "final_role": "ANALYZED",
+                    "result": "CONSISTENT"
+                })
+    
+    
+    # ---------------------------------
+    # Informational ENROLLED -> ANALYZED
+    # when no arithmetic relationship exists
+    # ---------------------------------
+    
+    if (
+        enrolled_values
+        and analyzed_values
+        and not participant_flow
+    ):
+    
         participant_flow.append({
             "enrolled_values": sorted(
-                set(enrolled_values)
+                enrolled_values
             ),
             "analyzed_values": sorted(
-                set(analyzed_values)
+                analyzed_values
             ),
-            "interpretation": (
-                "INFORMATIONAL_ONLY"
-            )
+            "interpretation": "INFORMATIONAL_ONLY"
         })
-
     # ---------------------------------
     # Final decision
     # ---------------------------------
