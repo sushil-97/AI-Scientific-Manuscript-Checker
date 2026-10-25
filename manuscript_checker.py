@@ -327,7 +327,7 @@ p_value_pattern = (
 )
 SIGNIFICANCE_THRESHOLD = 0.05
 
-SAMPLE_NUMBER_PATTERN = r'(?:\d{1,3}(?:,\d{3})*|\d+)'
+SAMPLE_NUMBER_PATTERN = r'(?:\d{1,3}(?:,\d{3})+|\d+)'
 
 SAMPLE_SIZE_PATTERNS = [
     rf'\b[nN]\s*=\s*{SAMPLE_NUMBER_PATTERN}\b',
