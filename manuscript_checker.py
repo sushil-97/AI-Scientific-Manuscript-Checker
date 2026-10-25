@@ -543,10 +543,81 @@ def detect_study_characters(text):
                 matches.append(keyword)
 
         # --------------------------------------------------
+        # Animal-study logic
+        # --------------------------------------------------
+
+        if study_type == "animal_study":
+
+            strong_indicators = {
+                "animal model",
+                "animal models",
+                "animal study",
+                "animal studies",
+                "animal experiment",
+                "animal experiments",
+                "animal experimentation",
+                "animal manipulation",
+                "animal manipulations",
+                "animal husbandry",
+                "euthanasia",
+                "euthanized",
+                "euthanised",
+                "sacrificed",
+                "anaesthetized",
+                "anaesthetised"
+            }
+
+            species_indicators = {
+                "mouse",
+                "mice",
+                "rat",
+                "rats",
+                "rabbit",
+                "rabbits",
+                "hamster",
+                "hamsters",
+                "guinea pig",
+                "guinea pigs",
+                "zebrafish",
+                "drosophila",
+                "fruit fly",
+                "fruit flies",
+                "cricket",
+                "crickets",
+                "crustacean",
+                "crustaceans"
+            }
+
+            strong_matches = [
+                match for match in matches
+                if match.lower() in strong_indicators
+            ]
+
+            species_matches = [
+                match for match in matches
+                if match.lower() in species_indicators
+            ]
+
+            # Animal study detected when:
+            # 1. At least one strong experimental animal
+            #    indicator is present, OR
+            # 2. Multiple distinct species indicators occur.
+            #
+            # This avoids classifying a manuscript as an
+            # animal study from one incidental species mention.
+            detected = (
+                len(strong_matches) >= 1
+                or len(set(
+                    match.lower()
+                    for match in species_matches
+                )) >= 2
+            )
+
+        # --------------------------------------------------
         # Computational-study logic
         # --------------------------------------------------
 
-        if study_type == "computational_study":
+        elif study_type == "computational_study":
 
             strong_indicators = {
                 "computational",
@@ -601,12 +672,6 @@ def detect_study_characters(text):
                 if match.lower() in weak_indicators
             ]
 
-            # Systematic review detected when:
-            # 1. Explicit systematic-review/PRISMA language exists, OR
-            # 2. Both forms of weak evidence are detected.
-            #
-            # A single incidental mention of "meta-analysis"
-            # should not classify the manuscript as a review.
             detected = (
                 len(strong_matches) >= 1
                 or len(set(weak_matches)) >= 2
@@ -626,6 +691,7 @@ def detect_study_characters(text):
         }
 
     return results
+
 
 def ethics_indicator_evidence(sections, indicators):
 
