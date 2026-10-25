@@ -3968,9 +3968,20 @@ def analyze_manuscript_text(full_text):
     print("===== END DAS EVIDENCE DEBUG =====\n")
  
     identifiers_found = detect_persistent_identifiers(das_text)
-    data_access_types = determine_data_access_type(das_result, repositories_found=None)
+ 
+    repositories_found = detect_repositories(das_text)
+    
+    data_access_types = determine_data_access_type(
+        das_result,
+        repositories_found=repositories_found
+    )
+    
     data_screening = evaluate_data_availability(
-        mandated_findings, das_result, data_access_types, [], identifiers_found
+        mandated_findings,
+        das_result,
+        data_access_types,
+        repositories_found,
+        identifiers_found
     )
     print("✓ Data Availability Screening Completed")
 
