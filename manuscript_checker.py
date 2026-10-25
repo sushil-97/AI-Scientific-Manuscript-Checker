@@ -427,7 +427,10 @@ def detect_heading(line):
 def extract_sections(lines):
 
     sections = {}
-    current_section = None
+ 
+    # Text before the first recognized manuscript
+    # heading is preserved as front/title material.
+    current_section = "title"
     current_text = []
 
     # Inline section headings that may contain text
