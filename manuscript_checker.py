@@ -479,7 +479,6 @@ def extract_sections(lines):
     return sections
 
 
-
 def detect_study_characters(text):
 
     results = {}
@@ -496,8 +495,47 @@ def detect_study_characters(text):
             if re.search(pattern, text, flags=re.IGNORECASE):
                 matches.append(keyword)
 
+        # --------------------------------------------------
+        # Computational-study logic
+        # --------------------------------------------------
+        if study_type == "computational_study":
+
+            strong_indicators = {
+                "computational",
+                "simulation",
+                "benchmark"
+            }
+
+            weak_indicators = {
+                "modeling",
+                "modelling",
+                "algorithm"
+            }
+
+            strong_matches = [
+                match for match in matches
+                if match.lower() in strong_indicators
+            ]
+
+            weak_matches = [
+                match for match in matches
+                if match.lower() in weak_indicators
+            ]
+
+            # A computational study is detected when:
+            # 1. At least one strong computational indicator exists, OR
+            # 2. At least two different weak indicators occur.
+            detected = (
+                len(strong_matches) >= 1
+                or len(set(weak_matches)) >= 2
+            )
+
+        else:
+
+            detected = len(matches) > 0
+
         results[study_type] = {
-            "detected": len(matches) > 0,
+            "detected": detected,
             "matches": matches
         }
 
