@@ -698,55 +698,64 @@ def detect_study_characters(text):
         # All other study types
         # --------------------------------------------------
 
+                # --------------------------------------------------
+        # All other study types
+        # --------------------------------------------------
+
         else:
 
             detected = len(matches) > 0
 
-                # --------------------------------------------------
-                # Human-study evidence context
-                # --------------------------------------------------
-        
-                evidence = []
-        
-                if study_type == "human_study":
-        
-                    sentences = sent_tokenize(text)
-        
-                    for sentence in sentences:
-        
-                        normalized_sentence = re.sub(
-                            r'\s+',
-                            ' ',
-                            sentence
-                        ).strip()
-        
-                        for keyword in matches:
-        
-                            pattern = (
-                                r'\b'
-                                + re.escape(keyword)
-                                + r'\b'
-                            )
-        
-                            if re.search(
-                                pattern,
-                                normalized_sentence,
-                                flags=re.IGNORECASE
-                            ):
-                                evidence.append({
-                                    "indicator": keyword,
-                                    "context": normalized_sentence
-                                })
-        
-                results[study_type] = {
-                    "detected": detected,
-                    "matches": matches
-                }
+        # --------------------------------------------------
+        # Human-study evidence context
+        # --------------------------------------------------
+
+        evidence = []
+
+        if study_type == "human_study":
+
+            sentences = sent_tokenize(text)
+
+            for sentence in sentences:
+
+                normalized_sentence = re.sub(
+                    r'\s+',
+                    ' ',
+                    sentence
+                ).strip()
+
+                for keyword in matches:
+
+                    pattern = (
+                        r'\b'
+                        + re.escape(keyword)
+                        + r'\b'
+                    )
+
+                    if re.search(
+                        pattern,
+                        normalized_sentence,
+                        flags=re.IGNORECASE
+                    ):
+                        evidence.append({
+                            "indicator": keyword,
+                            "context": normalized_sentence
+                        })
+
+        # --------------------------------------------------
+        # Store results
+        # --------------------------------------------------
+
+        results[study_type] = {
+            "detected": detected,
+            "matches": matches
+        }
 
         if study_type == "human_study":
             results[study_type]["evidence"] = evidence
 
     return results
+        
 
 
 def ethics_indicator_evidence(sections, indicators):
