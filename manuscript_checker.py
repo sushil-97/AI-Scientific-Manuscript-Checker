@@ -3512,8 +3512,7 @@ def detect_computational_subtype(sections):
         r'\btransformers\b',
         r'\bpretrained model\b',
         r'\bpretrained language model\b',
-        r'\bfine[\s-]?tuning\b',
-        r'\bbenchmark(?:ing)?\b'
+        r'\bfine[\s-]?tuning\b'
     ]
 
     simulation_evidence = [
