@@ -432,6 +432,9 @@ if uploaded_file is not None:
                 )
                 st.markdown("#### 🔍 Statistical Report Debug")
                 st.json(result["statistical_report"])
+
+                st.markdown("#### 🔍 Computational Subtype Debug")
+                st.json(result["computational_subtype"])
                 
                 st.markdown("#### 🔍 P-Value Extraction Debug")
                 st.json(result["statistical_report"])
