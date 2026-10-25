@@ -784,6 +784,10 @@ def evaluate_ethics_screening(
         "computational_study"
     ]["detected"]
 
+    systematic_review = study_characteristics[
+        "systematic_review"
+    ]["detected"]
+
     ethics_found = ethics_results[
         "ethics_approval"
     ]["detected"]
@@ -791,8 +795,11 @@ def evaluate_ethics_screening(
     consent_found = ethics_results[
         "informed_consent"
     ]["detected"]
- 
-    accordance_found = ethics_results.get("accordance_statement",{"detected": False})["detected"]
+
+    accordance_found = ethics_results.get(
+        "accordance_statement",
+        {"detected": False}
+    )["detected"]
 
     waiver_found = ethics_results[
         "consent_waiver"
@@ -803,9 +810,27 @@ def evaluate_ethics_screening(
     ]["detected"]
 
 
-    # HUMAN / CLINICAL STUDY
+    # --------------------------------------------------
+    # SYSTEMATIC REVIEW / META-ANALYSIS
+    # --------------------------------------------------
+    # Secondary research does not directly recruit
+    # participants or conduct new animal experiments.
+    #
+    # Mentions of patients, participants, ethics approval,
+    # or consent may describe included primary studies.
+    # --------------------------------------------------
 
-    if human or clinical:
+    if systematic_review:
+
+        ethics_status = "NOT_APPLICABLE"
+        consent_status = "NOT_APPLICABLE"
+
+
+    # --------------------------------------------------
+    # HUMAN / CLINICAL STUDY
+    # --------------------------------------------------
+
+    elif human or clinical:
 
         if ethics_found:
             ethics_status = "PASS"
@@ -827,7 +852,9 @@ def evaluate_ethics_screening(
             consent_status = "REVIEW_MISSING"
 
 
+    # --------------------------------------------------
     # ANIMAL STUDY
+    # --------------------------------------------------
 
     elif animal:
 
@@ -835,13 +862,19 @@ def evaluate_ethics_screening(
         consent_status = "NOT_APPLICABLE"
 
 
+    # --------------------------------------------------
     # COMPUTATIONAL / SYNTHETIC STUDY
+    # --------------------------------------------------
+
     elif computational or synthetic:
 
         ethics_status = "NOT_TRIGGERED"
         consent_status = "NOT_TRIGGERED"
 
+
+    # --------------------------------------------------
     # UNKNOWN STUDY TYPE
+    # --------------------------------------------------
 
     else:
 
@@ -858,8 +891,6 @@ def evaluate_ethics_screening(
         "ethics_exemption_detected": exemption_found,
         "accordance_statement_detected": accordance_found
     }
-
-
 
 def detect_mandated_data(sections):
 
