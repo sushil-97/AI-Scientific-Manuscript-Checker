@@ -3715,6 +3715,18 @@ def analyze_manuscript_text(full_text):
 
     # 8. Statistical Consistency
     pvalue_findings = extract_pvalues_by_section(sections)
+
+    print("\n===== P-VALUE DEBUG =====")
+    
+    for section, values in pvalue_findings.items():
+    
+        print("\nSECTION:", section)
+    
+        for value in values:
+            print(value)
+    
+    print("\n===== END P-VALUE DEBUG =====")
+ 
     for finding in pvalue_findings:
         parsed = parse_pvalue(finding["value"])
         finding.update(parsed)
