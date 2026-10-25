@@ -2977,6 +2977,7 @@ def analyze_manuscript_text(full_text):
         "study_characters": study_characters,
         "ethics_screening": ethics_screening,
         "data_screening": data_screening,
+        "center_findings": center_findings,
         "center_screening": center_screening,
         "cam_screening": cam_screening,
         "durc_screening": durc_screening,
