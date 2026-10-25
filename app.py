@@ -437,6 +437,9 @@ if uploaded_file is not None:
             # --------------------------------------------------
             
             if show_debug:
+                st.success("DEBUG MODE IS ON")
+                st.write("Result exists:", result is not None)
+                st.write("Available result keys:", list(result.keys()))
             
                 st.markdown("### 🔧 Developer Debug Information")
             
