@@ -66,11 +66,26 @@ STUDY_INDICATORS = {
     'anaesthetized',
     'anaesthetised'
 ],
- 'clinical_trial': ['clinical trial',
-                    'randomized controlled trial',
-                    'randomised controlled trial',
-                    'RCT',
-                    'trial registration'],
+'clinical_trial': [
+    'clinical trial',
+    'randomized controlled trial',
+    'randomised controlled trial',
+    'randomized trial',
+    'randomised trial',
+    'randomized study',
+    'randomised study',
+    'phase I study',
+    'phase II study',
+    'phase III study',
+    'phase IV study',
+    'phase 1 study',
+    'phase 2 study',
+    'phase 3 study',
+    'phase 4 study',
+    'trial registration',
+    'ClinicalTrials.gov',
+    'RCT'
+],
  'computational_study': ['computational',
                          'simulation',
                          'modeling',
@@ -510,12 +525,17 @@ def detect_study_characters(text):
             # Match complete words/phrases only
             pattern = r'\b' + re.escape(keyword) + r'\b'
 
-            if re.search(pattern, text, flags=re.IGNORECASE):
+            if re.search(
+                pattern,
+                text,
+                flags=re.IGNORECASE
+            ):
                 matches.append(keyword)
 
         # --------------------------------------------------
         # Computational-study logic
         # --------------------------------------------------
+
         if study_type == "computational_study":
 
             strong_indicators = {
@@ -540,13 +560,51 @@ def detect_study_characters(text):
                 if match.lower() in weak_indicators
             ]
 
-            # A computational study is detected when:
-            # 1. At least one strong computational indicator exists, OR
-            # 2. At least two different weak indicators occur.
             detected = (
                 len(strong_matches) >= 1
                 or len(set(weak_matches)) >= 2
             )
+
+        # --------------------------------------------------
+        # Systematic-review logic
+        # --------------------------------------------------
+
+        elif study_type == "systematic_review":
+
+            strong_indicators = {
+                "systematic review",
+                "prisma"
+            }
+
+            weak_indicators = {
+                "meta-analysis",
+                "meta analysis"
+            }
+
+            strong_matches = [
+                match for match in matches
+                if match.lower() in strong_indicators
+            ]
+
+            weak_matches = [
+                match for match in matches
+                if match.lower() in weak_indicators
+            ]
+
+            # Systematic review detected when:
+            # 1. Explicit systematic-review/PRISMA language exists, OR
+            # 2. Both forms of weak evidence are detected.
+            #
+            # A single incidental mention of "meta-analysis"
+            # should not classify the manuscript as a review.
+            detected = (
+                len(strong_matches) >= 1
+                or len(set(weak_matches)) >= 2
+            )
+
+        # --------------------------------------------------
+        # All other study types
+        # --------------------------------------------------
 
         else:
 
@@ -558,8 +616,6 @@ def detect_study_characters(text):
         }
 
     return results
-
-
 
 def ethics_indicator_evidence(sections, indicators):
 
