@@ -434,7 +434,6 @@ if uploaded_file is not None:
                 st.json(result["statistical_report"])
                 st.markdown("#### 🔍 Raw P-Value Findings")
                 st.json(result["pvalue_findings"])
-                st.markdown("#### 🔍 0.019 Text Debug")
 
                 st.markdown("#### 🔍 0.019 Section Debug")
 
