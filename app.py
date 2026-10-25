@@ -430,9 +430,6 @@ if uploaded_file is not None:
                 st.json(
                     result["sample_size_screening"]["same_role_comparisons"]
                 )
-
-                st.markdown("#### 🔍 DAS Evidence Debug")
-                st.json(result["das_evidence_debug"])
                 
                 st.markdown("#### 🔍 P-Value Extraction Debug")
                 st.json(result["statistical_report"])
