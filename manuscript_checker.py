@@ -706,6 +706,34 @@ def detect_study_characters(text):
 
             detected = len(matches) > 0
 
+
+                # --------------------------------------------------
+        # Explicit no-human-study safeguard
+        # --------------------------------------------------
+
+        if study_type == "human_study":
+
+            no_human_patterns = [
+                r'\bthis study does not involve identifiable human data\b',
+                r'\bthis study does not involve human participants\b',
+                r'\bdoes not involve identifiable human data\b',
+                r'\bdoes not involve human participants\b',
+                r'\bno human participants were involved\b',
+                r'\bno human subjects were involved\b'
+            ]
+
+            explicit_no_human = any(
+                re.search(
+                    pattern,
+                    text,
+                    flags=re.IGNORECASE
+                )
+                for pattern in no_human_patterns
+            )
+
+            if explicit_no_human:
+                detected = False
+
         # --------------------------------------------------
         # Human-study evidence context
         # --------------------------------------------------
