@@ -2501,7 +2501,7 @@ def extract_sample_sizes(sections):
                     # ---------------------------------
 
                     number_match = re.search(
-                        r'\d{1,3}(?:,\d{3})*|\d+',
+                        SAMPLE_NUMBER_PATTERN,
                         match
                     )
 
