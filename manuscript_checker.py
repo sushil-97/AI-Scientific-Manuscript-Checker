@@ -358,18 +358,31 @@ Sample_size_roles = {'ANALYZED': ['analyzed', 'analysed', 'included in the analy
  'RANDOMIZED': ['randomized', 'randomised', 'assigned']}
 
 computational_reproducibility_indicators = {'code_availability': ['code availability', 'source code', 'github', 'gitlab', 'code repository'],
- 'evaluation_metrics': ['evaluation metric',
-                        'evaluation metrics',
-                        'performance metric',
-                        'performance metrics',
-                        'benchmark metric',
-                        'benchmark metrics',
-                        'primary metric',
-                        'accuracy',
-                        'precision',
-                        'recall',
-                        'f1 score',
-                        'auc'],
+ 'evaluation_metrics': [
+    'evaluation metric',
+    'evaluation metrics',
+    'performance metric',
+    'performance metrics',
+    'benchmark metric',
+    'benchmark metrics',
+    'primary metric',
+
+    # General classification metrics
+    'accuracy',
+    'precision',
+    'recall',
+    'f1 score',
+    'f1-score',
+    'auc',
+
+    # NLP / language-model evaluation metrics
+    'rouge',
+    'rouge-l',
+    'bertscore',
+    'moverscore',
+    'bleurt',
+    'bleu'
+],
  'initial_conditions': ['initial conditions', 'initial condition'],
  'model_parameters': ['parameter values',
                       'parameters were set',
