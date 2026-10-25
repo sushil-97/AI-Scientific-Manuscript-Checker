@@ -426,6 +426,10 @@ if uploaded_file is not None:
                 st.json(result["center_findings"])
                 st.markdown("#### 🔍 Sample Size Evidence Debug")
                 st.json(result["sample_size_findings"])
+                st.markdown("#### 🔍 Sample Size Comparison Debug")
+                st.json(
+                    result["sample_size_screening"]["same_role_comparisons"]
+                )
                 st.write("DEBUG — Accordance phrase test")
 
                 import fitz
