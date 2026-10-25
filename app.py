@@ -420,6 +420,8 @@ if uploaded_file is not None:
                 result = analyze_manuscript(
                     temp_path
                 )
+                st.markdown("#### 🔍 Study Characteristics Debug")
+                st.json(result["study_characters"])
                 st.write("DEBUG — Accordance phrase test")
 
                 import fitz
