@@ -3005,15 +3005,79 @@ def evaluate_sample_size_consistency(
         if len(sections_available) < 2:
             continue
 
-        all_values = set()
+       all_values = set()
 
-        for values in section_values.values():
-            all_values.update(values)
-
-        if len(all_values) == 1:
-            result = "CONSISTENT"
-        else:
-            result = "POTENTIAL_DISCREPANCY"
+       for values in section_values.values():
+           all_values.update(values)
+       
+       # ---------------------------------------------
+       # Direct same-value consistency
+       # ---------------------------------------------
+       
+       if len(all_values) == 1:
+       
+           result = "CONSISTENT"
+       
+       # ---------------------------------------------
+       # Aggregate-vs-subgroup consistency
+       #
+       # Example:
+       # Abstract: 94 patients analyzed
+       # Results: 50 intervention + 44 control
+       #
+       # 50 + 44 = 94
+       # ---------------------------------------------
+       
+       elif role in ["ANALYZED", "RANDOMIZED"]:
+       
+           aggregate_match = False
+       
+           section_names = list(
+               section_values.keys()
+           )
+       
+           for section_a in section_names:
+       
+               values_a = section_values[
+                   section_a
+               ]
+       
+               for section_b in section_names:
+       
+                   if section_a == section_b:
+                       continue
+       
+                   values_b = section_values[
+                       section_b
+                   ]
+       
+                   # Require one side to contain a single
+                   # reported total and the other side to
+                   # contain at least two subgroup counts.
+                   if (
+                       len(values_a) == 1
+                       and len(values_b) >= 2
+                   ):
+       
+                       total_value = next(
+                           iter(values_a)
+                       )
+       
+                       if sum(values_b) == total_value:
+                           aggregate_match = True
+                           break
+       
+               if aggregate_match:
+                   break
+       
+           if aggregate_match:
+               result = "CONSISTENT"
+           else:
+               result = "POTENTIAL_DISCREPANCY"
+       
+       else:
+       
+           result = "POTENTIAL_DISCREPANCY"
 
         comparisons.append({
             "role": role,
