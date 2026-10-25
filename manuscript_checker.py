@@ -400,7 +400,7 @@ computational_reproducibility_indicators = {'code_availability': ['code availabi
                         'convergence criterion',
                         'convergence criteria']}
 
-reproducibility_sections = ['methods', 'experiments']
+reproducibility_sections = ['methods', 'experiments','data_availability']
 
 missing_information_patterns = ['\\bnot reported\\b',
  '\\bnot provided\\b',
