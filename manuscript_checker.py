@@ -2517,7 +2517,13 @@ def classify_sample_size_role(context, expression=None):
         "COMPLETED": [
             r'\bcompleted the study\b',
             r'\bcompleted follow-up\b',
-            r'\bcompleted treatment\b'
+            r'\bcompleted treatment\b',
+        
+            # Follow-up completion language
+            r'\bsuccessfully followed\b',
+            r'\bsuccessfully followed (?:up )?to\b',
+            r'\bfollowed (?:up )?to \d+\s*(?:days?|weeks?|months?|years?)\b',
+            r'\bcompleted \d+\s*(?:days?|weeks?|months?|years?) of follow-up\b'
         ],
 
         "EXCLUDED": [
