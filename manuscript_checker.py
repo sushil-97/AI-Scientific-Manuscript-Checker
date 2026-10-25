@@ -3888,14 +3888,19 @@ def contains_placeholder_value(
         keyword
     )
 
-    # Examples:
+    # Detect placeholder dashes such as:
     # ODE solver —
-    # Optimizer —
-    # Parameter bounds —
-    
+    # Optimizer -
+    # Parameter bounds: —
+    #
+    # But do NOT treat hyphenated terms such as
+    # "Precision-Recall" as placeholders.
+
     pattern = (
         keyword_pattern
-        + r'\s*[:=]?\s*[—–-]'
+        + r'\s*[:=]?\s*'
+        + r'[—–-]'
+        + r'(?![A-Za-z0-9])'
     )
 
     return bool(
