@@ -3805,6 +3805,7 @@ def analyze_manuscript_text(full_text):
         "center_screening": center_screening,
         "cam_screening": cam_screening,
         "durc_screening": durc_screening,
+        "pvalue_findings": pvalue_findings,
         "statistical_report": statistical_report,
         "sample_size_screening": sample_size_screening,
         "sample_size_findings": sample_size_findings,
