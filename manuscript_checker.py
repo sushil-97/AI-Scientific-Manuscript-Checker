@@ -3462,6 +3462,94 @@ def evaluate_sample_size_consistency(
         "reason": reason
     }
 
+def detect_computational_subtype(sections):
+
+    # Focus on sections that describe what the study actually did
+    relevant_sections = [
+        "title",
+        "abstract",
+        "methods",
+        "experiments"
+    ]
+
+    text = " ".join(
+        sections.get(section, "")
+        for section in relevant_sections
+    ).lower()
+
+    # -----------------------------------------
+    # Simulation / mathematical modelling
+    # -----------------------------------------
+
+    simulation_patterns = [
+        r'\bsimulation\b',
+        r'\bsimulations\b',
+        r'\bsimulated\b',
+        r'\bmathematical model\b',
+        r'\bmathematical modelling\b',
+        r'\bmathematical modeling\b',
+        r'\bode\b',
+        r'\bordinary differential equation\b',
+        r'\bdifferential equations?\b',
+        r'\bnumerical solver\b',
+        r'\binitial conditions?\b'
+    ]
+
+    # -----------------------------------------
+    # Machine learning / NLP / AI
+    # -----------------------------------------
+
+    ml_nlp_patterns = [
+        r'\bmachine learning\b',
+        r'\bdeep learning\b',
+        r'\bnatural language processing\b',
+        r'\bnlp\b',
+        r'\blarge language model\b',
+        r'\blarge language models\b',
+        r'\bllm\b',
+        r'\bllms\b',
+        r'\btransformer\b',
+        r'\btransformers\b',
+        r'\bpretrained model\b',
+        r'\bpretrained language model\b',
+        r'\bfine[\s-]?tuning\b',
+        r'\bbenchmark(?:ing)?\b'
+    ]
+
+    simulation_evidence = [
+        pattern
+        for pattern in simulation_patterns
+        if re.search(pattern, text, flags=re.IGNORECASE)
+    ]
+
+    ml_nlp_evidence = [
+        pattern
+        for pattern in ml_nlp_patterns
+        if re.search(pattern, text, flags=re.IGNORECASE)
+    ]
+
+    # -----------------------------------------
+    # Classification
+    # -----------------------------------------
+
+    if ml_nlp_evidence and not simulation_evidence:
+        subtype = "ML_NLP"
+
+    elif simulation_evidence and not ml_nlp_evidence:
+        subtype = "SIMULATION"
+
+    elif ml_nlp_evidence and simulation_evidence:
+        subtype = "MIXED"
+
+    else:
+        subtype = "GENERAL_COMPUTATIONAL"
+
+    return {
+        "subtype": subtype,
+        "simulation_evidence": simulation_evidence,
+        "ml_nlp_evidence": ml_nlp_evidence
+    }
+
 def detect_reproducibility_indicators(
     sections,
     indicators
@@ -4093,6 +4181,10 @@ def analyze_manuscript_text(full_text):
     sample_size_screening = evaluate_sample_size_consistency(study_characters, sample_size_findings)
     print("✓ Sample Size Consistency Screening Completed")
 
+    computational_subtype = detect_computational_subtype(
+        sections
+    )
+
     # 10. Reproducibility Screening
     reproducibility_results = detect_reproducibility_indicators(sections, computational_reproducibility_indicators)
     reproducibility_report = build_reproducibility_report(study_characters, reproducibility_results)
@@ -4134,6 +4226,7 @@ def analyze_manuscript_text(full_text):
         "statistical_report": statistical_report,
         "sample_size_screening": sample_size_screening,
         "sample_size_findings": sample_size_findings,
+        "computational_subtype": computational_subtype,
         "reproducibility_report": reproducibility_report,
         "manuscript_report": manuscript_report,
         "overall_decision": overall_decision
