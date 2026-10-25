@@ -2218,15 +2218,75 @@ def determine_sample_size_applicability(study_characters):
 
 
 
-def classify_sample_size_role(context):
+def classify_sample_size_role(context, expression=None):
 
     context_lower = context.lower()
 
+    # --------------------------------------------------
+    # Build expression-specific context
+    # --------------------------------------------------
+
+    target_context = context_lower
+
+    if expression:
+
+        expression_lower = expression.lower()
+
+        match = re.search(
+            re.escape(expression_lower),
+            context_lower
+        )
+
+        if match:
+
+            # Small window around THIS specific sample-size
+            # expression. This prevents another number elsewhere
+            # in the same sentence from determining the role.
+            start = max(0, match.start() - 35)
+            end = min(len(context_lower), match.end() + 35)
+
+            target_context = context_lower[start:end]
+
+    # ---------------------------------
+    # PLANNED
+    # ---------------------------------
+
+    planned_patterns = [
+        r'\bplanned sample size\b',
+        r'\btarget sample size\b',
+        r'\brequired sample size\b',
+        r'\bcalculated sample size\b',
+        r'\bestimated sample size\b',
+        r'\bminimum sample size\b',
+        r'\bminimal sample size\b',
+        r'\bsample size would be\b',
+        r'\bsample size was calculated\b',
+        r'\bsample size was estimated\b',
+        r'\bpatients? per arm\b',
+        r'\bparticipants? per arm\b',
+        r'\bsubjects? per arm\b'
+    ]
+
+    for pattern in planned_patterns:
+        if re.search(pattern, target_context):
+            return "PLANNED"
+
+    # ---------------------------------
+    # SCREENED
+    # ---------------------------------
+
+    screened_patterns = [
+        r'\bscreened\b',
+        r'\bwere screened\b',
+        r'\bwas screened\b'
+    ]
+
+    for pattern in screened_patterns:
+        if re.search(pattern, target_context):
+            return "SCREENED"
+
     # ---------------------------------
     # ANALYZED
-    # Check before EXCLUDED because a sentence may describe:
-    # "8 patients were excluded, leaving 247 patients
-    #  for final analysis."
     # ---------------------------------
 
     analyzed_patterns = [
@@ -2240,12 +2300,11 @@ def classify_sample_size_role(context):
     ]
 
     for pattern in analyzed_patterns:
-        if re.search(pattern, context_lower):
+        if re.search(pattern, target_context):
             return "ANALYZED"
 
     # ---------------------------------
     # RANDOMIZED
-    # Only explicit randomization language
     # ---------------------------------
 
     randomized_patterns = [
@@ -2256,7 +2315,7 @@ def classify_sample_size_role(context):
     ]
 
     for pattern in randomized_patterns:
-        if re.search(pattern, context_lower):
+        if re.search(pattern, target_context):
             return "RANDOMIZED"
 
     # ---------------------------------
@@ -2270,7 +2329,7 @@ def classify_sample_size_role(context):
     ]
 
     for pattern in completed_patterns:
-        if re.search(pattern, context_lower):
+        if re.search(pattern, target_context):
             return "COMPLETED"
 
     # ---------------------------------
@@ -2286,34 +2345,27 @@ def classify_sample_size_role(context):
     ]
 
     for pattern in excluded_patterns:
-        if re.search(pattern, context_lower):
+        if re.search(pattern, target_context):
             return "EXCLUDED"
 
     # ---------------------------------
-    # ENROLLED / STUDY SAMPLE
+    # ENROLLED
     # ---------------------------------
 
     enrolled_patterns = [
         r'\benrolled\b',
         r'\brecruited\b',
         r'\bincluded in (?:the )?study\b',
-
-        # "This study included 784 patients"
-        r'\bstudy included\s+\d+\s+(?:patients?|participants?|subjects?)\b',
-
-        # "A total of 784 patients were included"
-        r'\btotal of\s+\d+\s+(?:patients?|participants?|subjects?)\b.{0,40}\b(?:was|were)\s+included\b',
-
-        # "784 patients were included"
-        r'\b\d+\s+(?:patients?|participants?|subjects?)\b.{0,50}\b(?:was|were)\s+included\b'
+        r'\bstudy included\b',
+        r'\bwere included\b',
+        r'\bwas included\b'
     ]
 
     for pattern in enrolled_patterns:
-        if re.search(pattern, context_lower):
+        if re.search(pattern, target_context):
             return "ENROLLED"
 
     return "UNSPECIFIED"
-
 
 def add_sample_size_roles(findings):
 
@@ -2328,15 +2380,15 @@ def add_sample_size_roles(findings):
                 finding.get(
                     "local_context",
                     finding["context"]
-                )
+                ),
+                finding.get("expression")
             )
         )
 
         enriched.append(new_finding)
 
     return enriched
-
-
+ 
 
 def remove_duplicate_sample_sizes(findings):
 
