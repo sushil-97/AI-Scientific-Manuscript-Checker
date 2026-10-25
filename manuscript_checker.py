@@ -3095,6 +3095,10 @@ def evaluate_sample_size_consistency(
         for comparison
         in final_population_comparisons
     )
+    participant_flow_consistent = any(
+        flow.get("result") == "CONSISTENT"
+        for flow in participant_flow
+    )
 
     if discrepancy_found:
 
@@ -3123,7 +3127,17 @@ def evaluate_sample_size_consistency(
             "The final participant population was consistent "
             "between the Methods and Results sections."
         )
+     
+    elif participant_flow_consistent:
 
+        status = "PASS_CANDIDATE"
+    
+        reason = (
+            "Participant flow was internally consistent: "
+            "the reported exclusions account for the change "
+            "between the enrolled and final participant populations."
+        ) 
+   
     else:
 
         status = "REVIEW"
