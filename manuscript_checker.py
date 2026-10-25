@@ -609,7 +609,6 @@ def detect_study_characters(text):
 
     results = {}
 
-    results = {}
 
     for study_type, keywords in STUDY_INDICATORS.items():
 
@@ -846,6 +845,39 @@ def detect_study_characters(text):
             "detected": detected,
             "matches": matches
         }
+        if study_type == "computational_study":
+
+            evidence = []
+        
+            sentences = sent_tokenize(text)
+        
+            for sentence in sentences:
+        
+                normalized_sentence = re.sub(
+                    r'\s+',
+                    ' ',
+                    sentence
+                ).strip()
+        
+                for keyword in matches:
+        
+                    pattern = (
+                        r'\b'
+                        + re.escape(keyword)
+                        + r'\b'
+                    )
+        
+                    if re.search(
+                        pattern,
+                        normalized_sentence,
+                        flags=re.IGNORECASE
+                    ):
+                        evidence.append({
+                            "indicator": keyword,
+                            "context": normalized_sentence
+                        })
+        
+            results[study_type]["evidence"] = evidence
 
         if study_type == "human_study":
             results[study_type]["evidence"] = evidence
