@@ -2477,7 +2477,6 @@ def classify_sample_size_role(context, expression=None):
 
         text_after_expression = context_lower[
             expression_end:
-            expression_end + 150
         ]
 
         # ----------------------------------------------
