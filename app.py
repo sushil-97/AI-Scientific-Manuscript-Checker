@@ -383,6 +383,15 @@ if uploaded_file is not None:
         f"PDF ready for analysis: {uploaded_file.name}"
     )
 
+    # --------------------------------------------------
+    # Developer Debug Mode
+    # --------------------------------------------------
+
+    show_debug = st.sidebar.checkbox(
+        "Developer Debug Mode",
+        value=False
+    )
+
     if st.button(
         "Analyze Manuscript",
         type="primary",
@@ -410,69 +419,90 @@ if uploaded_file is not None:
 
 
             # --------------------------------------------------
-            # RUN ANALYSIS
+            # ANALYZE MANUSCRIPT
             # --------------------------------------------------
 
-            # --------------------------------------------------
-            # Developer Debug Mode
-            # --------------------------------------------------
-            
-            show_debug = st.sidebar.checkbox(
-                "Developer Debug Mode",
-                value=False
-            )
-            
-            
-            # --------------------------------------------------
-            # Analyze manuscript
-            # --------------------------------------------------
-            
             with st.spinner("Analyzing manuscript..."):
-            
-                result = analyze_manuscript(temp_path)
-            
-            
-            # --------------------------------------------------
-            # Developer Debug Output
-            # --------------------------------------------------
-            
-            if show_debug:
-                st.success("DEBUG MODE IS ON")
-                st.write("Result exists:", result is not None)
-                st.write("Available result keys:", list(result.keys()))
-            
-                st.markdown("### 🔧 Developer Debug Information")
-            
-                st.markdown("#### 🔍 Study Characteristics")
-                st.json(result["study_characters"])
-            
-                st.markdown("#### 🔍 Center Evidence")
-                st.json(result["center_findings"])
-            
-                st.markdown("#### 🔍 Sample Size Evidence")
-                st.json(result["sample_size_findings"])
-            
-                st.markdown("#### 🔍 Sample Size Comparisons")
-                st.json(
-                    result["sample_size_screening"]["same_role_comparisons"]
+
+                result = analyze_manuscript(
+                    temp_path
                 )
-            
-                st.markdown("#### 🔍 Statistical Report")
-                st.json(result["statistical_report"])
-            
-                st.markdown("#### 🔍 Computational Subtype")
-                st.json(result["computational_subtype"])
-            
-                st.markdown("#### 🔍 Raw Reproducibility Detection")
-                st.json(result["reproducibility_results"])
-            
-                st.markdown("#### 🔍 Reproducibility Report")
-                st.json(result["reproducibility_report"])
-            
-                st.markdown("#### 🔍 Raw P-Value Findings")
-                st.json(result["pvalue_findings"])
-                                
-                
+
+
+            # --------------------------------------------------
+            # DEVELOPER DEBUG OUTPUT
+            # --------------------------------------------------
+
+            if show_debug:
+
+                st.markdown(
+                    "### 🔧 Developer Debug Information"
+                )
+
+                st.markdown(
+                    "#### 🔍 Study Characteristics"
+                )
+                st.json(
+                    result["study_characters"]
+                )
+
+                st.markdown(
+                    "#### 🔍 Center Evidence"
+                )
+                st.json(
+                    result["center_findings"]
+                )
+
+                st.markdown(
+                    "#### 🔍 Sample Size Evidence"
+                )
+                st.json(
+                    result["sample_size_findings"]
+                )
+
+                st.markdown(
+                    "#### 🔍 Sample Size Comparisons"
+                )
+                st.json(
+                    result[
+                        "sample_size_screening"
+                    ]["same_role_comparisons"]
+                )
+
+                st.markdown(
+                    "#### 🔍 Statistical Report"
+                )
+                st.json(
+                    result["statistical_report"]
+                )
+
+                st.markdown(
+                    "#### 🔍 Computational Subtype"
+                )
+                st.json(
+                    result["computational_subtype"]
+                )
+
+                st.markdown(
+                    "#### 🔍 Raw Reproducibility Detection"
+                )
+                st.json(
+                    result["reproducibility_results"]
+                )
+
+                st.markdown(
+                    "#### 🔍 Reproducibility Report"
+                )
+                st.json(
+                    result["reproducibility_report"]
+                )
+
+                st.markdown(
+                    "#### 🔍 Raw P-Value Findings"
+                )
+                st.json(
+                    result["pvalue_findings"]
+                )
 
 
             manuscript_report = result[
@@ -482,7 +512,7 @@ if uploaded_file is not None:
             overall = result[
                 "overall_decision"
             ]
-
+            
             editorial = manuscript_report[
                 "editorial_screening"
             ]
