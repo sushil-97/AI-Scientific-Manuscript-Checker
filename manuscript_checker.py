@@ -3550,6 +3550,22 @@ def analyze_manuscript_text(full_text):
     print("✓ Statistical Consistency Screening Completed")
 
     # 9. Sample Size Consistency
+    print("\n===== RESULTS SECTION DEBUG =====")
+
+    results_text = sections.get("results", "")
+    
+    print(results_text)
+    
+    print("\n===== TARGET CHECK =====")
+    print("441 present:", "441" in results_text)
+    print("394 present:", "394" in results_text)
+    print("47 present:", "47" in results_text)
+    
+    print("newborn present:", "newborn" in results_text.lower())
+    print("babies present:", "babies" in results_text.lower())
+    
+    print("===== END RESULTS SECTION DEBUG =====\n")
+ 
     sample_size_findings = extract_sample_sizes(sections)
     sample_size_findings = add_sample_size_roles(sample_size_findings)
     sample_size_findings = remove_duplicate_sample_sizes(sample_size_findings)
