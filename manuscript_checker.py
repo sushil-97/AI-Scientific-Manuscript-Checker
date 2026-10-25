@@ -701,34 +701,93 @@ def detect_study_characters(text):
         # Computational-study logic
         # --------------------------------------------------
 
-        elif study_type == "computational_study":
+        if study_type == "computational_study":
 
-            strong_indicators = {
+            strong_computational = [
                 "computational",
                 "simulation",
                 "benchmark"
-            }
-
-            weak_indicators = {
+            ]
+        
+            weak_computational = [
                 "modeling",
                 "modelling",
                 "algorithm"
-            }
-
+            ]
+        
             strong_matches = [
-                match for match in matches
-                if match.lower() in strong_indicators
+                keyword
+                for keyword in matches
+                if keyword in strong_computational
             ]
-
+        
             weak_matches = [
-                match for match in matches
-                if match.lower() in weak_indicators
+                keyword
+                for keyword in matches
+                if keyword in weak_computational
             ]
-
-            detected = (
-                len(strong_matches) >= 1
-                or len(set(weak_matches)) >= 2
-            )
+        
+            # Remove affiliation/contact uses of "computational"
+            methodological_strong_matches = []
+        
+            sentences = sent_tokenize(text)
+        
+            for keyword in strong_matches:
+        
+                keyword_is_methodological = False
+        
+                for sentence in sentences:
+        
+                    normalized_sentence = re.sub(
+                        r'\s+',
+                        ' ',
+                        sentence
+                    ).strip()
+        
+                    if not re.search(
+                        r'\b' + re.escape(keyword) + r'\b',
+                        normalized_sentence,
+                        flags=re.IGNORECASE
+                    ):
+                        continue
+        
+                    # Do not treat institutional affiliations
+                    # as computational-study evidence.
+                    affiliation_patterns = [
+                        r'\bdepartment of\b',
+                        r'\bschool of\b',
+                        r'\bfaculty of\b',
+                        r'\binstitute of\b',
+                        r'\bcenter for\b',
+                        r'\bcentre for\b'
+                    ]
+        
+                    affiliation_context = any(
+                        re.search(
+                            pattern,
+                            normalized_sentence,
+                            flags=re.IGNORECASE
+                        )
+                        for pattern in affiliation_patterns
+                    )
+        
+                    if not affiliation_context:
+                        keyword_is_methodological = True
+                        break
+        
+                if keyword_is_methodological:
+                    methodological_strong_matches.append(
+                        keyword
+                    )
+        
+            if methodological_strong_matches:
+                detected = True
+        
+            elif len(set(weak_matches)) >= 2:
+                detected = True
+        
+            else:
+                detected = False
 
         # --------------------------------------------------
         # Systematic-review logic
