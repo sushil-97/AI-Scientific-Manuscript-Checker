@@ -400,6 +400,45 @@ computational_reproducibility_indicators = {'code_availability': ['code availabi
                         'convergence criterion',
                         'convergence criteria']}
 
+REPRODUCIBILITY_REQUIREMENTS = {
+
+    "SIMULATION": [
+        "initial_conditions",
+        "model_parameters",
+        "numerical_solver",
+        "parameter_bounds",
+        "simulation_setup",
+        "software_environment",
+        "tolerance_settings"
+    ],
+
+    "ML_NLP": [
+        "code_availability",
+        "evaluation_metrics",
+        "software_environment"
+    ],
+
+    "MIXED": [
+        "code_availability",
+        "evaluation_metrics",
+        "initial_conditions",
+        "model_parameters",
+        "numerical_solver",
+        "optimizer",
+        "parameter_bounds",
+        "random_seed",
+        "simulation_setup",
+        "software_environment",
+        "tolerance_settings"
+    ],
+
+    "GENERAL_COMPUTATIONAL": [
+        "code_availability",
+        "evaluation_metrics",
+        "software_environment"
+    ]
+}
+
 reproducibility_sections = ['methods', 'experiments','data_availability']
 
 missing_information_patterns = ['\\bnot reported\\b',
@@ -3661,7 +3700,8 @@ def detect_reproducibility_indicators(
 
 def build_reproducibility_report(
     study_characteristics,
-    reproducibility_results
+    reproducibility_results,
+    computational_subtype
 ):
 
     computational = study_characteristics[
@@ -3687,7 +3727,14 @@ def build_reproducibility_report(
                 "study indicators were detected."
             )
         }
+    subtype = computational_subtype["subtype"]
 
+    required_categories = REPRODUCIBILITY_REQUIREMENTS.get(
+        subtype,
+        REPRODUCIBILITY_REQUIREMENTS[
+            "GENERAL_COMPUTATIONAL"
+        ]
+    )
     # ---------------------------------
     # Group findings by state
     # ---------------------------------
@@ -3700,20 +3747,25 @@ def build_reproducibility_report(
     for category, result in (
         reproducibility_results.items()
     ):
-
+    
+        # Ignore indicators that are not applicable
+        # to this computational subtype.
+        if category not in required_categories:
+            continue
+    
         state = result["state"]
-
+    
         if state == "REPORTED":
             reported.append(category)
-
+    
         elif state == "EXPLICITLY_UNAVAILABLE":
             explicitly_unavailable.append(
                 category
             )
-
+    
         elif state == "NOT_DETECTED":
             not_detected.append(category)
-
+    
         elif state == "MIXED_EVIDENCE":
             mixed_evidence.append(category)
 
@@ -4186,7 +4238,7 @@ def analyze_manuscript_text(full_text):
 
     # 10. Reproducibility Screening
     reproducibility_results = detect_reproducibility_indicators(sections, computational_reproducibility_indicators)
-    reproducibility_report = build_reproducibility_report(study_characters, reproducibility_results)
+    reproducibility_report = build_reproducibility_report(study_characters, reproducibility_results,computational_subtype)
     print("✓ Reproducibility Screening Completed")
 
     # 11. Master Manuscript Report
