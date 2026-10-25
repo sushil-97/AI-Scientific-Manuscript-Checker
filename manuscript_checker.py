@@ -1423,13 +1423,46 @@ def evaluate_data_availability(
 
         elif not identifier_found:
 
-            status = "REVIEW"
+            # Some public repositories, particularly code/model
+            # repositories such as GitHub, do not inherently
+            # require a DOI or accession number.
+            identifier_optional_repositories = {
+                "github"
+            }
 
-            reason = (
-                "A repository was detected for potential "
-                "mandated data, but no persistent identifier "
-                "or accession number was identified."
+            repository_names = {
+                repository.lower()
+                for repository in repositories_found
+            }
+
+            identifier_optional = bool(
+                repository_names
+                & identifier_optional_repositories
             )
+
+            if identifier_optional:
+
+                status = "PASS_CANDIDATE"
+
+                reason = (
+                    "Potential mandated data and a Data Availability "
+                    "Statement were detected, with resources available "
+                    "through a recognised public repository. "
+                    "No persistent identifier was detected, but the "
+                    "identified repository does not inherently require "
+                    "an accession number or DOI. Editorial verification "
+                    "is still recommended."
+                )
+
+            else:
+
+                status = "REVIEW"
+
+                reason = (
+                    "A repository was detected for potential "
+                    "mandated data, but no persistent identifier "
+                    "or accession number was identified."
+                )
 
         else:
 
