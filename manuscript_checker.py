@@ -2458,6 +2458,40 @@ def classify_sample_size_role(context, expression=None):
     expression_start = None
     expression_end = None
 
+    # --------------------------------------------------
+    # Explicit completed/followed cohort
+    # --------------------------------------------------
+    # If the same sample-size expression is followed by
+    # language showing that this cohort successfully
+    # completed follow-up, treat it as COMPLETED rather
+    # than simply ENROLLED.
+    #
+    # Example:
+    # "394 newborns ... were enrolled, screened ... and
+    # successfully followed to 28 days."
+    # --------------------------------------------------
+    
+    if expression_end is not None:
+    
+        text_after_expression = context_lower[
+            expression_end:
+            expression_end + 150
+        ]
+    
+        completed_followup_patterns = [
+            r'\bsuccessfully followed\b',
+            r'\bcompleted follow-up\b',
+            r'\bcompleted the study\b',
+            r'\bcompleted treatment\b',
+            r'\bfollowed (?:up )?to \d+\s*(?:days?|weeks?|months?|years?)\b'
+        ]
+    
+        if any(
+            re.search(pattern, text_after_expression)
+            for pattern in completed_followup_patterns
+        ):
+            return "COMPLETED"
+
     if expression:
 
         match = re.search(
