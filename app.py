@@ -435,76 +435,146 @@ if uploaded_file is not None:
 
             if show_debug:
 
+                st.divider()
+            
                 st.markdown(
-                    "### 🔧 Developer Debug Information"
+                    """
+                    ## 🛠️ Developer Diagnostics
+            
+                    Internal detection evidence and intermediate outputs used for
+                    validation and troubleshooting. These results are not part of
+                    the final editorial assessment.
+                    """
                 )
-
-                st.markdown(
-                    "#### 🔍 Study Characteristics"
+            
+                # --------------------------------------------------
+                # STUDY CLASSIFICATION
+                # --------------------------------------------------
+            
+                with st.expander(
+                    "🧬 Study Classification",
+                    expanded=True
+                ):
+            
+                    st.caption(
+                        "Detected manuscript study types and supporting indicators."
+                    )
+            
+                    st.json(
+                        result["study_characters"]
+                    )
+            
+                    st.markdown("**Computational Subtype**")
+            
+                    st.json(
+                        result["computational_subtype"]
+                    )
+            
+            
+                # --------------------------------------------------
+                # CENTER DETECTION
+                # --------------------------------------------------
+            
+                with st.expander(
+                    "🏥 Center Detection"
+                ):
+            
+                    st.caption(
+                        "Evidence used to classify the manuscript as "
+                        "single-center, multi-center, or undetermined."
+                    )
+            
+                    st.json(
+                        result["center_findings"]
+                    )
+            
+            
+                # --------------------------------------------------
+                # SAMPLE SIZE
+                # --------------------------------------------------
+            
+                with st.expander(
+                    "👥 Sample Size Detection"
+                ):
+            
+                    st.caption(
+                        "Extracted participant counts, assigned roles, "
+                        "and cross-section comparisons."
+                    )
+            
+                    st.markdown("**Detected Counts**")
+            
+                    st.json(
+                        result["sample_size_findings"]
+                    )
+            
+                    st.markdown("**Same-Role Comparisons**")
+            
+                    st.json(
+                        result[
+                            "sample_size_screening"
+                        ]["same_role_comparisons"]
+                    )
+            
+            
+                # --------------------------------------------------
+                # STATISTICAL CONSISTENCY
+                # --------------------------------------------------
+            
+                with st.expander(
+                    "📊 Statistical Consistency"
+                ):
+            
+                    st.caption(
+                        "Detected p-values, significance thresholds, "
+                        "and statistical consistency results."
+                    )
+            
+                    st.markdown("**Statistical Report**")
+            
+                    st.json(
+                        result["statistical_report"]
+                    )
+            
+                    st.markdown("**Raw P-Value Findings**")
+            
+                    st.json(
+                        result["pvalue_findings"]
+                    )
+            
+            
+                # --------------------------------------------------
+                # REPRODUCIBILITY
+                # --------------------------------------------------
+            
+                with st.expander(
+                    "🔬 Reproducibility Detection"
+                ):
+            
+                    st.caption(
+                        "Raw reproducibility indicators and the resulting "
+                        "computational reproducibility assessment."
+                    )
+            
+                    st.markdown("**Detected Indicators**")
+            
+                    st.json(
+                        result["reproducibility_results"]
+                    )
+            
+                    st.markdown("**Assessment**")
+            
+                    st.json(
+                        result["reproducibility_report"]
+                    )
+            
+            
+                st.caption(
+                    "Developer diagnostics • Internal validation view"
                 )
-                st.json(
-                    result["study_characters"]
-                )
-
-                st.markdown(
-                    "#### 🔍 Center Evidence"
-                )
-                st.json(
-                    result["center_findings"]
-                )
-
-                st.markdown(
-                    "#### 🔍 Sample Size Evidence"
-                )
-                st.json(
-                    result["sample_size_findings"]
-                )
-
-                st.markdown(
-                    "#### 🔍 Sample Size Comparisons"
-                )
-                st.json(
-                    result[
-                        "sample_size_screening"
-                    ]["same_role_comparisons"]
-                )
-
-                st.markdown(
-                    "#### 🔍 Statistical Report"
-                )
-                st.json(
-                    result["statistical_report"]
-                )
-
-                st.markdown(
-                    "#### 🔍 Computational Subtype"
-                )
-                st.json(
-                    result["computational_subtype"]
-                )
-
-                st.markdown(
-                    "#### 🔍 Raw Reproducibility Detection"
-                )
-                st.json(
-                    result["reproducibility_results"]
-                )
-
-                st.markdown(
-                    "#### 🔍 Reproducibility Report"
-                )
-                st.json(
-                    result["reproducibility_report"]
-                )
-
-                st.markdown(
-                    "#### 🔍 Raw P-Value Findings"
-                )
-                st.json(
-                    result["pvalue_findings"]
-                )
-
-
+            
+                st.divider()
+                
             manuscript_report = result[
                 "manuscript_report"
             ]
