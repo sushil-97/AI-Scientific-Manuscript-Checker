@@ -432,6 +432,8 @@ if uploaded_file is not None:
                 )
                 st.markdown("#### 🔍 P-Value Extraction Debug")
                 st.json(result["statistical_report"])
+                st.markdown("#### 🔍 Raw P-Value Findings")
+                st.json(result["pvalue_findings"])
                 
 
                 import fitz
