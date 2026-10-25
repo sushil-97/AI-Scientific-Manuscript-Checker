@@ -462,7 +462,8 @@ if uploaded_file is not None:
                         "but was not preserved in any parsed section."
                     )
                     
-                                
+                st.markdown("#### 🔍 Reproducibility Debug")
+                st.json(result["reproducibility_report"])                                
 
                 import fitz
                 
