@@ -3032,7 +3032,8 @@ def analyze_manuscript_text(full_text):
         print(
             "VALUE:", finding.get("numeric_value"),
             "| ROLE:", finding.get("role"),
-            "| SECTION:", finding.get("section")
+            "| SECTION:", finding.get("section"),
+            "sample_size_findings": sample_size_findings
         )
         print(
             "CONTEXT:",
