@@ -436,10 +436,30 @@ if uploaded_file is not None:
                 st.json(result["pvalue_findings"])
                 st.markdown("#### 🔍 0.019 Text Debug")
 
-                if "0.019" in result["analysis_text"]:
-                    st.success("0.019 was found in extracted manuscript text.")
+                st.markdown("#### 🔍 0.019 Section Debug")
+
+                found_019_sections = []
+                
+                for section_name, section_text in result["sections"].items():
+                
+                    if "0.019" in section_text:
+                
+                        found_019_sections.append({
+                            "section": section_name,
+                            "context": section_text[
+                                max(0, section_text.find("0.019") - 200):
+                                section_text.find("0.019") + 200
+                            ]
+                        })
+                
+                if found_019_sections:
+                    st.json(found_019_sections)
                 else:
-                    st.warning("0.019 was NOT found in extracted manuscript text.")
+                    st.warning(
+                        "0.019 exists in the extracted manuscript text "
+                        "but was not preserved in any parsed section."
+                    )
+                    
                                 
 
                 import fitz
