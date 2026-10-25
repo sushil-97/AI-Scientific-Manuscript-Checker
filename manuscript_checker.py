@@ -2983,6 +2983,8 @@ def analyze_manuscript(pdf_path):
     final_analysis = analyze_manuscript_text(
         full_text
     )
+    st.markdown("#### 🔍 Study Characteristics Debug")
+    st.json(result["study_characters"])
 
     return final_analysis
  
