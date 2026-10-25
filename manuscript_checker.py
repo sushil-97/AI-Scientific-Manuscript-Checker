@@ -3914,7 +3914,6 @@ def analyze_manuscript_text(full_text):
         "ethics_screening": ethics_screening,
         "data_screening": data_screening,
         "das_text": das_text,
-        "das_evidence_debug": das_result["evidence"],
         "center_findings": center_findings,
         "center_screening": center_screening,
         "cam_screening": cam_screening,
