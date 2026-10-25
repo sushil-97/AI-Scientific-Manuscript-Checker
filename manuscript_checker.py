@@ -2147,12 +2147,78 @@ def evaluate_claim_against_pvalue(
     return "NOT_ASSESSABLE"
 
 
+def detect_significance_threshold(sections, default=0.05):
+
+    preferred_sections = [
+        "methods",
+        "experiments"
+    ]
+
+    threshold_patterns = [
+        r'\bp[\s-]*value\s+of\s+(0?\.\d+)\s+'
+        r'was\s+taken\s+as\s+statistically\s+significant',
+
+        r'\bsignificance\s+threshold\s+(?:of|was)\s+'
+        r'(0?\.\d+)',
+
+        r'\bthreshold\s+of\s+(0?\.\d+)',
+
+        r'\bstatistical\s+significance\s+was\s+'
+        r'(?:set|defined)\s+at\s+'
+        r'(?:p\s*[<≤]\s*)?(0?\.\d+)'
+    ]
+
+    for section_name in preferred_sections:
+
+        text = sections.get(
+            section_name,
+            ""
+        )
+
+        text = re.sub(
+            r'\s+',
+            ' ',
+            text
+        )
+
+        for pattern in threshold_patterns:
+
+            match = re.search(
+                pattern,
+                text,
+                flags=re.IGNORECASE
+            )
+
+            if match:
+
+                return {
+                    "threshold": float(
+                        match.group(1)
+                    ),
+                    "source": section_name,
+                    "detected": True
+                }
+
+    return {
+        "threshold": default,
+        "source": "default",
+        "detected": False
+    }
+ 
 
 def build_statistical_consistency_report(
     sections,
     pvalue_findings,
     threshold=0.05
 ):
+    threshold_result = detect_significance_threshold(
+        sections,
+        default=threshold
+    )
+    
+    effective_threshold = threshold_result[
+        "threshold"
+    ]
 
     abstract_claims = detect_significance_claims(
         sections.get("abstract", "")
@@ -2214,7 +2280,7 @@ def build_statistical_consistency_report(
             check = evaluate_claim_against_pvalue(
                 claim["claim"],
                 pvalue["numeric_value"],
-                threshold
+                effective_threshold
             )
 
             claim_pvalue_checks.append({
@@ -2313,6 +2379,10 @@ def build_statistical_consistency_report(
         "results_pvalues": sorted(
             results_numbers
         ),
+        "significance_threshold": effective_threshold,
+        "threshold_detected": threshold_result["detected"],
+        "threshold_source": threshold_result["source"],
+     
         "abstract_claims": sorted(
             abstract_claim_types
         ),
