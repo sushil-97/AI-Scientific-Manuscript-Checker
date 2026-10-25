@@ -2032,13 +2032,7 @@ def extract_sample_sizes(sections):
 
         for sentence in sentences:
 
-            # Remove common manuscript PDF line-number artifacts.
-            # Example:
-            # "118 Patients who..." -> "Patients who..."
-            # "344 individual patient" -> "individual patient"
-            #
-            # Only remove a number when it appears to be an embedded
-            # manuscript line marker immediately before participant words.
+            # Normalize PDF whitespace
             normalized = re.sub(
                 r'\s+',
                 ' ',
@@ -2055,63 +2049,65 @@ def extract_sample_sizes(sections):
 
                 for match in matches:
 
+                    # Extract numbers including comma-formatted values
+                    # Examples:
+                    # 784 -> 784
+                    # 2,676 -> 2676
+                    # 3,683 -> 3683
                     number_match = re.search(
                         r'\d{1,3}(?:,\d{3})*|\d+',
                         match
                     )
-                    
-                    if number_match:
-                        numeric_value = int(
-                            number_match.group().replace(",", "")
-                        )
-                    else:
-                        numeric_value = None
+
+                    if not number_match:
+                        continue
+
+                    numeric_value = int(
+                        number_match.group().replace(",", "")
                     )
+
                     # Ignore section-number artifacts such as:
-                    # "3.1 Patient Cohort" being extracted as "1 Patient"
+                    # "3.1 Patient Cohort" -> false "1 Patient"
                     if re.search(
-                        r'\b\d+\.\d+\s+' + re.escape(match) + r'\b',
+                        r'\b\d+\.\d+\s+'
+                        + re.escape(match)
+                        + r'\b',
                         normalized,
                         flags=re.IGNORECASE
                     ):
                         continue
 
-                    if number_match:
+                    # Capture local context around the sample-size expression
+                    match_position = normalized.lower().find(
+                        match.lower()
+                    )
 
-                        match_position = normalized.lower().find(
-                            match.lower()
+                    if match_position != -1:
+
+                        start = max(
+                            0,
+                            match_position - 80
                         )
-                        
-                        if match_position != -1:
-                        
-                            start = max(
-                                0,
-                                match_position - 80
-                            )
-                        
-                            end = min(
-                                len(normalized),
-                                match_position + len(match) + 80
-                            )
-                        
-                            local_context = normalized[start:end]
-                        
-                        else:
-                            local_context = normalized
-                        
-                        
-                        findings.append({
-                            "section": section_name,
-                            "expression": match,
-                            "numeric_value": int(
-                                number_match.group()
-                            ),
-                            "context": normalized,
-                            "local_context": local_context
-                        })
+
+                        end = min(
+                            len(normalized),
+                            match_position + len(match) + 80
+                        )
+
+                        local_context = normalized[start:end]
+
+                    else:
+                        local_context = normalized
+
+                    findings.append({
+                        "section": section_name,
+                        "expression": match,
+                        "numeric_value": numeric_value,
+                        "context": normalized,
+                        "local_context": local_context
+                    })
 
     return findings
-
 
 
 def determine_sample_size_applicability(study_characters):
