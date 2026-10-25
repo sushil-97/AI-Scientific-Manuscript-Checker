@@ -1321,33 +1321,34 @@ def detect_center_evidence(sections):
 
         for sentence in sent_tokenize(normalized_text):
 
+            # Existing explicit keyword detection
             for center_type, keywords in Center_Indicators.items():
-
-                for keyword in keywords:
-
-                    normalized_keyword = re.sub(
-                        r'\s+',
-                        ' ',
-                        keyword
-                    ).strip()
-
-                    pattern = (
-                        r'\b'
-                        + re.escape(normalized_keyword)
-                        + r'\b'
-                    )
-
-                    if re.search(
-                        pattern,
-                        sentence,
-                        flags=re.IGNORECASE
-                    ):
-
-                        findings[center_type].append({
-                            "section": section_name,
-                            "keyword": keyword,
-                            "evidence": sentence.strip()
-                        })
+                ...
+                ...
+        
+            # NEW contextual detection
+            number_words = (
+                r'two|three|four|five|six|seven|eight|nine|ten'
+            )
+        
+            multi_site_pattern = (
+                r'\b(?:'
+                + number_words +
+                r'|\d+)'
+                r'\s+'
+                r'(?:centers?|centres?|sites?|clinics?|hospitals?|institutions?)\b'
+            )
+        
+            if re.search(
+                multi_site_pattern,
+                sentence,
+                flags=re.IGNORECASE
+            ):
+                findings["multi_center"].append({
+                    "section": section_name,
+                    "keyword": "multiple-site expression",
+                    "evidence": sentence.strip()
+                })
 
                         break
 
