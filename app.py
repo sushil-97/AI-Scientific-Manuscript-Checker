@@ -430,7 +430,7 @@ if uploaded_file is not None:
                 st.json(
                     result["sample_size_screening"]["same_role_comparisons"]
                 )
-                st.write("DEBUG — Accordance phrase test")
+                
 
                 import fitz
                 
