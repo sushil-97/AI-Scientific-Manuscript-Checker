@@ -793,7 +793,7 @@ def detect_study_characters(text):
         # Systematic-review logic
         # --------------------------------------------------
 
-        elif study_type == "systematic_review":
+        if study_type == "systematic_review":
 
             strong_indicators = {
                 "systematic review",
@@ -828,8 +828,12 @@ def detect_study_characters(text):
         # All other study types
         # --------------------------------------------------
 
-        else:
-
+        if study_type not in [
+            "animal_study",
+            "computational_study",
+            "systematic_review"
+        ]:
+        
             detected = len(matches) > 0
 
 
