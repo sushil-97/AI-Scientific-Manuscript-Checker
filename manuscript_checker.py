@@ -2663,14 +2663,10 @@ def add_sample_size_roles(findings):
 
         new_finding["role"] = (
             classify_sample_size_role(
-                finding.get(
-                    "local_context",
-                    finding["context"]
-                ),
+                finding["context"],
                 finding.get("expression")
             )
         )
-
         enriched.append(new_finding)
 
     return enriched
