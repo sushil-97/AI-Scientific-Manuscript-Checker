@@ -3797,6 +3797,16 @@ def analyze_manuscript_text(full_text):
     mandated_findings = detect_mandated_data(sections)
     das_result = detect_data_availability_statement(sections)
     das_text = build_das_text(das_result)
+
+    print("\n===== DAS EVIDENCE DEBUG =====")
+
+    for i, item in enumerate(das_result["evidence"]):
+        print("ITEM:", i)
+        print(item)
+        print("-" * 70)
+    
+    print("===== END DAS EVIDENCE DEBUG =====\n")
+ 
     identifiers_found = detect_persistent_identifiers(das_text)
     data_access_types = determine_data_access_type(das_result, repositories_found=None)
     data_screening = evaluate_data_availability(
@@ -3907,6 +3917,7 @@ def analyze_manuscript_text(full_text):
         "ethics_screening": ethics_screening,
         "data_screening": data_screening,
         "das_text": das_text,
+        "das_evidence_debug": das_result["evidence"],
         "center_findings": center_findings,
         "center_screening": center_screening,
         "cam_screening": cam_screening,
