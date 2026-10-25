@@ -1354,6 +1354,69 @@ def detect_center_evidence(sections):
     return findings
 
 
+def detect_cam_evidence(sections):
+
+    findings = []
+
+    # Sections most relevant for intervention / treatment detection
+    preferred_sections = [
+        "abstract",
+        "methods",
+        "experiments",
+        "results"
+    ]
+
+    for section_name in preferred_sections:
+
+        if section_name not in sections:
+            continue
+
+        section_text = sections[section_name]
+
+        # Normalize whitespace from PDF extraction
+        normalized_text = re.sub(
+            r'\s+',
+            ' ',
+            section_text
+        ).strip()
+
+        for sentence in sent_tokenize(normalized_text):
+
+            for category, keywords in Cam_Indicators.items():
+
+                for keyword in keywords:
+
+                    normalized_keyword = re.sub(
+                        r'\s+',
+                        ' ',
+                        keyword
+                    ).strip()
+
+                    pattern = (
+                        r'\b'
+                        + re.escape(normalized_keyword)
+                        + r'\b'
+                    )
+
+                    if re.search(
+                        pattern,
+                        sentence,
+                        flags=re.IGNORECASE
+                    ):
+
+                        findings.append({
+                            "category": category,
+                            "keyword": keyword,
+                            "section": section_name,
+                            "evidence": sentence.strip()
+                        })
+
+                        # One finding per CAM category per sentence
+                        break
+
+    return findings
+
+
 def evaluate_cam_screening(cam_findings):
 
     if len(cam_findings) == 0:
