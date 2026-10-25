@@ -1455,9 +1455,47 @@ def detect_center_evidence(sections):
 
 
 
-def evaluate_center_screening(study_characters,center_findings):
+def evaluate_center_screening(
+    study_characters,
+    center_findings
+):
 
-    applicability = determine_center_applicability(study_characters)
+    # --------------------------------------------------
+    # SYSTEMATIC REVIEW / META-ANALYSIS
+    # --------------------------------------------------
+    # Center/site classification describes the design
+    # of a primary study.
+    #
+    # A systematic review may discuss single-center or
+    # multicenter studies without itself being either.
+    # --------------------------------------------------
+
+    systematic_review = study_characters.get(
+        "systematic_review",
+        {"detected": False}
+    )["detected"]
+
+    if systematic_review:
+
+        return {
+            "applicability": "NOT_APPLICABLE",
+            "classification": "NOT_ASSESSABLE",
+            "status": "NOT_TRIGGERED",
+            "reason": (
+                "Center/site classification is not "
+                "applicable to a systematic review "
+                "or meta-analysis."
+            )
+        }
+
+
+    # --------------------------------------------------
+    # NORMAL APPLICABILITY CHECK
+    # --------------------------------------------------
+
+    applicability = determine_center_applicability(
+        study_characters
+    )
 
     # Not a human/clinical study
     if applicability == "NOT_APPLICABLE":
@@ -1473,12 +1511,19 @@ def evaluate_center_screening(study_characters,center_findings):
         }
 
 
-    single_found = (len(center_findings["single_center"]) > 0)
+    single_found = (
+        len(center_findings["single_center"]) > 0
+    )
 
-    multi_found = (len(center_findings["multi_center"]) > 0)
+    multi_found = (
+        len(center_findings["multi_center"]) > 0
+    )
 
 
+    # --------------------------------------------------
     # Explicit single-center evidence
+    # --------------------------------------------------
+
     if single_found and not multi_found:
 
         return {
@@ -1492,7 +1537,10 @@ def evaluate_center_screening(study_characters,center_findings):
         }
 
 
+    # --------------------------------------------------
     # Explicit multi-center evidence
+    # --------------------------------------------------
+
     elif multi_found and not single_found:
 
         return {
@@ -1506,7 +1554,10 @@ def evaluate_center_screening(study_characters,center_findings):
         }
 
 
+    # --------------------------------------------------
     # Conflicting evidence
+    # --------------------------------------------------
+
     elif single_found and multi_found:
 
         return {
@@ -1520,7 +1571,10 @@ def evaluate_center_screening(study_characters,center_findings):
         }
 
 
-    # Human study, but center type not stated clearly
+    # --------------------------------------------------
+    # Human study, but center type unclear
+    # --------------------------------------------------
+
     else:
 
         return {
@@ -1533,7 +1587,6 @@ def evaluate_center_screening(study_characters,center_findings):
                 "design language."
             )
         }
-
 
 
 def detect_center_evidence(sections):
