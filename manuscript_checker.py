@@ -1047,7 +1047,57 @@ def build_das_text(das_result):
             item["sentence"]
         )
 
-    return " ".join(evidence_sentences)
+    das_text = " ".join(evidence_sentences)
+
+    # ---------------------------------------------
+    # Stop DAS text when the next manuscript
+    # declaration/section begins
+    # ---------------------------------------------
+
+    stop_headings = [
+        "authors contributions",
+        "author contributions",
+        "authors' contributions",
+        "author's contributions",
+        "acknowledgements",
+        "acknowledgments",
+        "competing interests",
+        "conflict of interest",
+        "conflicts of interest",
+        "funding",
+        "references"
+    ]
+
+    # Find the earliest following section heading
+    stop_positions = []
+
+    for heading in stop_headings:
+
+        match = re.search(
+            r'\b' + re.escape(heading) + r'\b',
+            das_text,
+            flags=re.IGNORECASE
+        )
+
+        if match:
+            stop_positions.append(
+                match.start()
+            )
+
+    if stop_positions:
+
+        das_text = das_text[
+            :min(stop_positions)
+        ]
+
+    # Normalize whitespace
+    das_text = re.sub(
+        r'\s+',
+        ' ',
+        das_text
+    ).strip()
+
+    return das_text
 
 
 
