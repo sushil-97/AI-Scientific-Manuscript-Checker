@@ -413,88 +413,61 @@ if uploaded_file is not None:
             # RUN ANALYSIS
             # --------------------------------------------------
 
-            with st.spinner(
-                "Analyzing manuscript..."
-            ):
-
-                result = analyze_manuscript(
-                    temp_path
+            # --------------------------------------------------
+            # Developer Debug Mode
+            # --------------------------------------------------
+            
+            show_debug = st.sidebar.checkbox(
+                "Developer Debug Mode",
+                value=False
+            )
+            
+            
+            # --------------------------------------------------
+            # Analyze manuscript
+            # --------------------------------------------------
+            
+            with st.spinner("Analyzing manuscript..."):
+            
+                result = analyze_manuscript(temp_path)
+            
+            
+            # --------------------------------------------------
+            # Developer Debug Output
+            # --------------------------------------------------
+            
+            if show_debug:
+            
+                st.markdown("### 🔧 Developer Debug Information")
+            
+                st.markdown("#### 🔍 Study Characteristics")
+                st.json(result["study_characters"])
+            
+                st.markdown("#### 🔍 Center Evidence")
+                st.json(result["center_findings"])
+            
+                st.markdown("#### 🔍 Sample Size Evidence")
+                st.json(result["sample_size_findings"])
+            
+                st.markdown("#### 🔍 Sample Size Comparisons")
+                st.json(
+                    result["sample_size_screening"]["same_role_comparisons"]
                 )
-                show_debug = st.sidebar.checkbox(
-                    "Developer Debug Mode",
-                    value=False
-                )
-                
-                if show_debug:
-                    
-                        st.markdown("#### 🔍 Study Characteristics Debug")
-                        st.json(result["study_characters"])
-                        st.markdown("#### 🔍 Center Evidence Debug")
-                        st.json(result["center_findings"])
-                        st.markdown("#### 🔍 Sample Size Evidence Debug")
-                        st.json(result["sample_size_findings"])
-                        st.markdown("#### 🔍 Sample Size Comparison Debug")
-                        st.json(
-                            result["sample_size_screening"]["same_role_comparisons"]
-                        )
-                        st.markdown("#### 🔍 Statistical Report Debug")
-                        st.json(result["statistical_report"])
-        
-                        st.markdown("#### 🔍 Computational Subtype Debug")
-                        st.json(result["computational_subtype"])
-        
-                        st.markdown("#### 🔍 Raw Reproducibility Detection")
-                        st.json(result["reproducibility_results"])
-                        
-                        st.markdown("#### 🔍 P-Value Extraction Debug")
-                        st.json(result["statistical_report"])
-                        st.markdown("#### 🔍 Raw P-Value Findings")
-                        st.json(result["pvalue_findings"])
-        
-                        st.markdown("#### 🔍 0.019 Section Debug")
-        
-                        found_019_sections = []
-                        
-                        for section_name, section_text in result["sections"].items():
-                        
-                            if "0.019" in section_text:
-                        
-                                found_019_sections.append({
-                                    "section": section_name,
-                                    "context": section_text[
-                                        max(0, section_text.find("0.019") - 200):
-                                        section_text.find("0.019") + 200
-                                    ]
-                                })
-                        
-                        if found_019_sections:
-                            st.json(found_019_sections)
-                        else:
-                            st.warning(
-                                "0.019 exists in the extracted manuscript text "
-                                "but was not preserved in any parsed section."
-                            )
-                            
-                        st.markdown("#### 🔍 Reproducibility Debug")
-                        st.json(result["reproducibility_report"])                                
-        
-                        import fitz
-                        
-                        debug_doc = fitz.open(temp_path)
-                        
-                        debug_text = "\n".join(
-                            page.get_text("text")
-                            for page in debug_doc
-                        )
-                        
-                        debug_doc.close()
-                        
-                        phrase = "in accordance with relevant guidelines and regulations"
-                        
-                        st.write(
-                            "Phrase found in extracted PDF text:",
-                            phrase.lower() in debug_text.lower()
-                        )
+            
+                st.markdown("#### 🔍 Statistical Report")
+                st.json(result["statistical_report"])
+            
+                st.markdown("#### 🔍 Computational Subtype")
+                st.json(result["computational_subtype"])
+            
+                st.markdown("#### 🔍 Raw Reproducibility Detection")
+                st.json(result["reproducibility_results"])
+            
+                st.markdown("#### 🔍 Reproducibility Report")
+                st.json(result["reproducibility_report"])
+            
+                st.markdown("#### 🔍 Raw P-Value Findings")
+                st.json(result["pvalue_findings"])
                                 
                 
 
