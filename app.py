@@ -422,8 +422,8 @@ if uploaded_file is not None:
                 )
                 st.markdown("#### 🔍 Study Characteristics Debug")
                 st.json(result["study_characters"])
-                st.markdown("#### 🔍 Center Detection Debug")
-                st.json(result["center_screening"])
+                st.markdown("#### 🔍 Center Evidence Debug")
+                st.json(result["center_findings"])
                 st.write("DEBUG — Accordance phrase test")
 
                 import fitz
