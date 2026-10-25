@@ -2698,17 +2698,19 @@ def classify_sample_size_role(context, expression=None):
         "SCREENED": [
             r'\bscreened\b',
             r'\bwere screened\b',
-            r'\bwas screened\b'
+            r'\bwas screened\b',
+            r'\bassessed for eligibility\b',
+            r'\bassessed for inclusion\b'
         ],
-
+     
         "ANALYZED": [
             r'\banaly[sz]ed\b',
-            r'\bincluded in (?:the )?analysis\b',
-            r'\bincluded in (?:the )?final analysis\b',
-            r'\bfor (?:the )?final analysis\b',
-            r'\bfor (?:the )?analysis\b',
+            r'\bincluded in (?:the )?(?:primary|final)?\s*analysis\b',
+            r'\bfor (?:the )?(?:primary|final)?\s*analysis\b',
             r'\bused in (?:the )?analysis\b',
-            r'\bused for (?:the )?analysis\b'
+            r'\bused for (?:the )?analysis\b',
+            r'\bfinal analysis\b',
+            r'\bprimary analysis\b'
         ],
 
         "RANDOMIZED": [
