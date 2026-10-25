@@ -2487,16 +2487,32 @@ def evaluate_sample_size_consistency(
         role = finding["role"]
         section = finding["section"]
         value = finding["numeric_value"]
-
-        # Do not compare numbers whose participant role
-        # could not be determined.
+    
         if role == "UNSPECIFIED":
             continue
-
-        role_section_values.setdefault(
-            role,
-            {}
-        )
+    
+        # ---------------------------------------------
+        # PLANNED sample sizes
+        # ---------------------------------------------
+        # Planned sample-size evidence should come from
+        # study-design sections. Introduction/background
+        # text may describe sample sizes from prior studies.
+        #
+        # Also, multiple PLANNED values within the same
+        # section may legitimately represent:
+        #   - total planned sample size
+        #   - planned sample size per arm
+        #
+        # Therefore PLANNED values should not be treated
+        # as ordinary same-role cross-section discrepancies.
+        # ---------------------------------------------
+    
+        if role == "PLANNED":
+            continue
+    
+        role_section_values.setdefault(role, {})
+        role_section_values[role].setdefault(section, set())
+        role_section_values[role][section].add(value)
 
         role_section_values[role].setdefault(
             section,
