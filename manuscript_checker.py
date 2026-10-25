@@ -2657,6 +2657,40 @@ def evaluate_sample_size_consistency(
     findings
 ):
 
+    # ---------------------------------
+    # Systematic review / meta-analysis
+    # ---------------------------------
+    # Participant counts in systematic
+    # reviews usually describe included
+    # studies or pooled populations rather
+    # than a newly recruited study cohort.
+    # ---------------------------------
+
+    systematic_review = study_characteristics.get(
+        "systematic_review",
+        {"detected": False}
+    )["detected"]
+
+    if systematic_review:
+
+        return {
+            "applicability": "NOT_APPLICABLE",
+            "same_role_comparisons": [],
+            "final_population_comparisons": [],
+            "participant_flow": [],
+            "raw_findings": findings,
+            "status": "NOT_TRIGGERED",
+            "reason": (
+                "Sample-size consistency screening is not "
+                "applicable to a systematic review or "
+                "meta-analysis."
+            )
+        }
+
+    # ---------------------------------
+    # Normal applicability check
+    # ---------------------------------
+
     applicability = determine_sample_size_applicability(
         study_characteristics
     )
