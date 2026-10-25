@@ -2727,7 +2727,8 @@ def classify_sample_size_role(context, expression=None):
             r'\bsuccessfully followed\b',
             r'\bsuccessfully followed (?:up )?to\b',
             r'\bfollowed (?:up )?to \d+\s*(?:days?|weeks?|months?|years?)\b',
-            r'\bcompleted \d+\s*(?:days?|weeks?|months?|years?) of follow-up\b'
+            r'\bcompleted \d+\s*(?:days?|weeks?|months?|years?) of follow-up\b',
+            r'\bfollow[\s-]?up was done\b'
         ],
 
         "EXCLUDED": [
