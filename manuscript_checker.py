@@ -2041,19 +2041,50 @@ def extract_sample_sizes(sections):
 
             for pattern in SAMPLE_SIZE_PATTERNS:
 
-                matches = re.findall(
+                # Use finditer instead of findall so that we know
+                # the exact position of every sample-size match.
+                matches = re.finditer(
                     pattern,
                     normalized,
                     flags=re.IGNORECASE
                 )
 
-                for match in matches:
+                for match_obj in matches:
 
-                    # Extract numbers including comma-formatted values
+                    match = match_obj.group()
+
+                    # ---------------------------------
+                    # Ignore section-number artifacts
+                    #
                     # Examples:
-                    # 784 -> 784
-                    # 2,676 -> 2676
-                    # 3,683 -> 3683
+                    # 2.2 Patient Inclusion...
+                    #     ^ "2 Patient"
+                    #
+                    # 3.1 Patient Baseline...
+                    #     ^ "1 Patient"
+                    # ---------------------------------
+
+                    match_start = match_obj.start()
+
+                    prefix = normalized[
+                        max(0, match_start - 10):
+                        match_start
+                    ]
+
+                    # If the matched number is the decimal part
+                    # of a section heading such as 2.2 or 3.1,
+                    # ignore it.
+                    if re.search(
+                        r'\b\d+\.$',
+                        prefix
+                    ):
+                        continue
+
+                    # ---------------------------------
+                    # Extract numeric value
+                    # including comma-formatted numbers
+                    # ---------------------------------
+
                     number_match = re.search(
                         r'\d{1,3}(?:,\d{3})*|\d+',
                         match
@@ -2066,38 +2097,21 @@ def extract_sample_sizes(sections):
                         number_match.group().replace(",", "")
                     )
 
-                    # Ignore section-number artifacts such as:
-                    # "3.1 Patient Cohort" -> false "1 Patient"
-                    if re.search(
-                        r'\b\d+\.\d+\s+'
-                        + re.escape(match)
-                        + r'\b',
-                        normalized,
-                        flags=re.IGNORECASE
-                    ):
-                        continue
+                    # ---------------------------------
+                    # Capture local context
+                    # ---------------------------------
 
-                    # Capture local context around the sample-size expression
-                    match_position = normalized.lower().find(
-                        match.lower()
+                    start = max(
+                        0,
+                        match_obj.start() - 80
                     )
 
-                    if match_position != -1:
+                    end = min(
+                        len(normalized),
+                        match_obj.end() + 80
+                    )
 
-                        start = max(
-                            0,
-                            match_position - 80
-                        )
-
-                        end = min(
-                            len(normalized),
-                            match_position + len(match) + 80
-                        )
-
-                        local_context = normalized[start:end]
-
-                    else:
-                        local_context = normalized
+                    local_context = normalized[start:end]
 
                     findings.append({
                         "section": section_name,
@@ -2108,7 +2122,7 @@ def extract_sample_sizes(sections):
                     })
 
     return findings
-
+ 
 
 def determine_sample_size_applicability(study_characters):
 
