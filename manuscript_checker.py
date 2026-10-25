@@ -4279,6 +4279,7 @@ def analyze_manuscript_text(full_text):
         "sample_size_findings": sample_size_findings,
         "computational_subtype": computational_subtype,
         "reproducibility_report": reproducibility_report,
+        "reproducibility_results": reproducibility_results,
         "manuscript_report": manuscript_report,
         "overall_decision": overall_decision
     }
