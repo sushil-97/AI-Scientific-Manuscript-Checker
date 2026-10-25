@@ -285,14 +285,21 @@ Durc_Indicators = {'biological_agent': ['pathogen',
 p_value_pattern = r'\bp\s*[=<>≤≥]\s*0?\.\d+\b'
 SIGNIFICANCE_THRESHOLD = 0.05
 
-SAMPLE_SIZE_PATTERNS = ['\\b[nN]\\s*=\\s*\\d+\\b',
- '\\b\\d+\\s+patients?\\b',
- '\\b\\d+\\s+participants?\\b',
- '\\b\\d+\\s+subjects?\\b',
- '\\b\\d+\\s+individuals?\\b',
- '\\b\\d+\\s+volunteers?\\b',
- '\\bsample\\s+of\\s+\\d+\\b',
- '\\btotal\\s+of\\s+\\d+\\s+(?:patients?|participants?|subjects?|individuals?)\\b']
+SAMPLE_NUMBER_PATTERN = r'(?:\d{1,3}(?:,\d{3})*|\d+)'
+
+SAMPLE_SIZE_PATTERNS = [
+    rf'\b[nN]\s*=\s*{SAMPLE_NUMBER_PATTERN}\b',
+
+    rf'\b{SAMPLE_NUMBER_PATTERN}\s+patients?\b',
+    rf'\b{SAMPLE_NUMBER_PATTERN}\s+participants?\b',
+    rf'\b{SAMPLE_NUMBER_PATTERN}\s+subjects?\b',
+    rf'\b{SAMPLE_NUMBER_PATTERN}\s+individuals?\b',
+    rf'\b{SAMPLE_NUMBER_PATTERN}\s+volunteers?\b',
+
+    rf'\bsample\s+of\s+{SAMPLE_NUMBER_PATTERN}\b',
+
+    rf'\btotal\s+of\s+{SAMPLE_NUMBER_PATTERN}\s+'
+    rf'(?:patients?|participants?|subjects?|individuals?)\b']
 
 Sample_size_roles = {'ANALYZED': ['analyzed', 'analysed', 'included in the analysis', 'included in the final analysis'],
  'COMPLETED': ['completed the study', 'completed follow-up', 'completed treatment'],
@@ -2052,8 +2059,16 @@ def extract_sample_sizes(sections):
                 for match in matches:
 
                     number_match = re.search(
-                        r'\d+',
+                        r'\d{1,3}(?:,\d{3})*|\d+',
                         match
+                    )
+                    
+                    if number_match:
+                        numeric_value = int(
+                            number_match.group().replace(",", "")
+                        )
+                    else:
+                        numeric_value = None
                     )
                     # Ignore section-number artifacts such as:
                     # "3.1 Patient Cohort" being extracted as "1 Patient"
