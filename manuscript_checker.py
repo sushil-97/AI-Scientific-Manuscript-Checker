@@ -222,14 +222,17 @@ Identifier_Patterns = {'arrayexpress_accession': '\\bE-[A-Z]+-\\d+\\b',
  'geo_accession': '\\bGSE\\d+\\b',
  'sra_accession': '\\b(?:SRP|SRA|SRR|SRX|SRS)\\d+\\b'}
 
-Center_Indicators = {'multi_center': ['multicenter',
-                  'multicentre',
-                  'multi-center',
-                  'multi-centre',
-                  'multiple centers',
-                  'multiple centres',
-                  'multiple hospitals',
-                  'multiple institutions'],
+Center_Indicators = {'multi_center': [
+                 'multicenter',
+                 'multicentre',
+                 'multi-center',
+                 'multi-centre',
+                 'multiple centers',
+                 'multiple centres',
+                 'multiple hospitals',
+                 'multiple institutions',
+                 'multiple sites',
+                 'multiple study sites'],
  'single_center': ['single-center',
                    'single-centre',
                    'single center',
@@ -1287,26 +1290,50 @@ def evaluate_center_screening(study_characters,center_findings):
 
 
 
-def detect_cam_evidence(sections):
+def detect_center_evidence(sections):
 
-    findings = []
+    findings = {
+        "single_center": [],
+        "multi_center": []
+    }
 
-    for section_name, section_text in sections.items():
+    # Sections most likely to contain study-design information
+    preferred_sections = [
+        "title",
+        "abstract",
+        "methods",
+        "experiments"
+    ]
 
-        if section_name == "references":
+    for section_name in preferred_sections:
+
+        if section_name not in sections:
             continue
 
-        sentences = sent_tokenize(section_text)
+        section_text = sections[section_name]
 
-        for sentence in sentences:
+        # Normalize PDF whitespace
+        normalized_text = re.sub(
+            r'\s+',
+            ' ',
+            section_text
+        ).strip()
 
-            for cam_category, keywords in Cam_Indicators.items():
+        for sentence in sent_tokenize(normalized_text):
+
+            for center_type, keywords in Center_Indicators.items():
 
                 for keyword in keywords:
 
+                    normalized_keyword = re.sub(
+                        r'\s+',
+                        ' ',
+                        keyword
+                    ).strip()
+
                     pattern = (
                         r'\b'
-                        + re.escape(keyword)
+                        + re.escape(normalized_keyword)
                         + r'\b'
                     )
 
@@ -1316,17 +1343,15 @@ def detect_cam_evidence(sections):
                         flags=re.IGNORECASE
                     ):
 
-                        findings.append({
-                            "category": cam_category,
-                            "keyword": keyword,
+                        findings[center_type].append({
                             "section": section_name,
+                            "keyword": keyword,
                             "evidence": sentence.strip()
                         })
 
                         break
 
     return findings
-
 
 
 def evaluate_cam_screening(cam_findings):
