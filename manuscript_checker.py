@@ -2540,6 +2540,20 @@ def classify_sample_size_role(context, expression=None):
             r'\b(?:than|compared (?:with|to))\s+those\b',
             text_after_expression
         )
+        # The completion language belongs to a different
+        # comparison population, not to this detected count.
+        #
+        # Example:
+        # "47 babies were less likely ... than those
+        # successfully followed to 28 days"
+        if (
+            comparison_population
+            and re.search(
+                r'\bthose\s+successfully followed\b',
+                text_after_expression
+            )
+        ):
+            return "UNSPECIFIED"
         
         if (
             not exclusion_before_completion
