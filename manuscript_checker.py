@@ -3970,6 +3970,14 @@ def analyze_manuscript_text(full_text):
     identifiers_found = detect_persistent_identifiers(das_text)
  
     repositories_found = detect_repositories(das_text)
+    print("\n===== REPOSITORY DEBUG =====")
+    print("DAS TEXT:")
+    print(repr(das_text))
+    print("KNOWN REPOSITORIES:")
+    print(Known_Repositories)
+    print("REPOSITORIES FOUND:")
+    print(repositories_found)
+    print("===== END REPOSITORY DEBUG =====\n")
     
     data_access_types = determine_data_access_type(
         das_result,
@@ -4088,6 +4096,11 @@ def analyze_manuscript_text(full_text):
         "ethics_screening": ethics_screening,
         "data_screening": data_screening,
         "das_text": das_text,
+        "repository_debug": {
+            "das_text": das_text,
+            "known_repositories": Known_Repositories,
+            "repositories_found": repositories_found
+        },
         "center_findings": center_findings,
         "center_screening": center_screening,
         "cam_screening": cam_screening,
