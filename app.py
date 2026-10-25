@@ -435,6 +435,9 @@ if uploaded_file is not None:
 
                 st.markdown("#### 🔍 Computational Subtype Debug")
                 st.json(result["computational_subtype"])
+
+                st.markdown("#### 🔍 Raw Reproducibility Detection")
+                st.json(result["reproducibility_results"])
                 
                 st.markdown("#### 🔍 P-Value Extraction Debug")
                 st.json(result["statistical_report"])
