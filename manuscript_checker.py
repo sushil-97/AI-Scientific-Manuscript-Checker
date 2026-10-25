@@ -514,7 +514,7 @@ def extract_sections(lines):
 
 def detect_study_characters(text):
 
-    results = {"_debug_version": "STUDY_DETECTOR_V2"}
+    results = {}
 
     for study_type, keywords in STUDY_INDICATORS.items():
 
