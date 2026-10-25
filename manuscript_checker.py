@@ -2133,13 +2133,19 @@ def classify_sample_size_role(context):
 
     # ---------------------------------
     # ANALYZED
-    # Check before generic "included"
+    # Check before EXCLUDED because a sentence may describe:
+    # "8 patients were excluded, leaving 247 patients
+    #  for final analysis."
     # ---------------------------------
 
     analyzed_patterns = [
         r'\banaly[sz]ed\b',
         r'\bincluded in (?:the )?analysis\b',
-        r'\bincluded in (?:the )?final analysis\b'
+        r'\bincluded in (?:the )?final analysis\b',
+        r'\bfor (?:the )?final analysis\b',
+        r'\bfor (?:the )?analysis\b',
+        r'\bused in (?:the )?analysis\b',
+        r'\bused for (?:the )?analysis\b'
     ]
 
     for pattern in analyzed_patterns:
@@ -2148,6 +2154,7 @@ def classify_sample_size_role(context):
 
     # ---------------------------------
     # RANDOMIZED
+    # Only explicit randomization language
     # ---------------------------------
 
     randomized_patterns = [
@@ -2199,13 +2206,13 @@ def classify_sample_size_role(context):
         r'\benrolled\b',
         r'\brecruited\b',
         r'\bincluded in (?:the )?study\b',
-    
+
         # "This study included 784 patients"
         r'\bstudy included\s+\d+\s+(?:patients?|participants?|subjects?)\b',
-    
+
         # "A total of 784 patients were included"
         r'\btotal of\s+\d+\s+(?:patients?|participants?|subjects?)\b.{0,40}\b(?:was|were)\s+included\b',
-    
+
         # "784 patients were included"
         r'\b\d+\s+(?:patients?|participants?|subjects?)\b.{0,50}\b(?:was|were)\s+included\b'
     ]
@@ -2215,7 +2222,6 @@ def classify_sample_size_role(context):
             return "ENROLLED"
 
     return "UNSPECIFIED"
-
 
 
 def add_sample_size_roles(findings):
