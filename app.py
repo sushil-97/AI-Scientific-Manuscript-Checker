@@ -469,7 +469,55 @@ if uploaded_file is not None:
                     st.json(
                         result["computational_subtype"]
                     )
-            
+
+
+                # --------------------------------------------------
+                # ETHICS, CONSENT & ACCORDANCE
+                # --------------------------------------------------
+
+                with st.expander(
+                    "⚖️ Ethics, Consent & Accordance"
+                ):
+                
+                    st.caption(
+                        "Supporting manuscript statements detected for "
+                        "ethics approval, informed consent, and accordance."
+                    )
+                
+                    st.markdown("**Ethics Approval Evidence**")
+                
+                    if result["ethics_screening"]["ethics_evidence"]:
+                        st.json(
+                            result["ethics_screening"]["ethics_evidence"]
+                        )
+                    else:
+                        st.info(
+                            "No ethics approval statement detected."
+                        )
+                
+                
+                    st.markdown("**Consent Evidence**")
+                
+                    if result["ethics_screening"]["consent_evidence"]:
+                        st.json(
+                            result["ethics_screening"]["consent_evidence"]
+                        )
+                    else:
+                        st.info(
+                            "No informed consent statement detected."
+                        )
+                
+                
+                    st.markdown("**Accordance Evidence**")
+                
+                    if result["ethics_screening"]["accordance_evidence"]:
+                        st.json(
+                            result["ethics_screening"]["accordance_evidence"]
+                        )
+                    else:
+                        st.info(
+                            "No accordance statement detected."
+                        )
             
                 # --------------------------------------------------
                 # CENTER DETECTION
