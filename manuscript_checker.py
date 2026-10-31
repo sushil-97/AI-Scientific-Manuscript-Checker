@@ -1157,9 +1157,13 @@ def check_ethics_affiliation_match(
             )
         }
 
-    ethics_sentence = ethics_item[
-        "sentence"
-    ]
+    # Remove PDF line-number artifacts that may appear
+    # inside institution names.
+    ethics_sentence = re.sub(
+        r'(?<=[A-Za-z])\s+\d{1,3}\s+(?=[A-Za-z])',
+        ' ',
+        ethics_sentence
+    )
 
     front_matter = sections.get(
         "title",
@@ -1171,6 +1175,17 @@ def check_ethics_affiliation_match(
     # --------------------------------------------------
 
     institution_patterns = [
+
+        # Ethical approval was obtained from
+        # Helsinki University Hospital Institutional Review Board
+        r'(?:ethical|ethics)\s+approval'
+        r'.{0,40}?\bfrom\s+'
+        r'(?:the\s+)?'
+        r'([A-Z][A-Za-z0-9&,\- ]+?'
+        r'(?:Hospital|University|Institute|'
+        r'Centre|Center|College|Clinic))'
+        r'(?=\s+(?:Institutional Review Board|IRB)\b'
+        r'|\s*(?:\(|,|\.|$))',
 
         # Ethics Committee of Tianjin Beichen Hospital
         r'(?:ethics committee|ethical committee)'
