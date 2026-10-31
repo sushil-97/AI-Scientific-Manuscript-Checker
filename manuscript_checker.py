@@ -1228,8 +1228,16 @@ def check_ethics_affiliation_match(
 
         institution_text = multi_match.group(1)
 
+        # Convert only the final list separator:
+        # ", and the University of Michigan"
+        # into a comma.
+        #
+        # Do NOT replace every "and", because "and" may be
+        # part of an institution name, e.g.
+        # "Kwame Nkrumah University of Science and Technology".
+        
         institution_text = re.sub(
-            r'\s+and\s+(?:the\s+)?',
+            r',\s+and\s+(?:the\s+)?',
             ', ',
             institution_text,
             flags=re.IGNORECASE
