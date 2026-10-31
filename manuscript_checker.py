@@ -1056,6 +1056,33 @@ def evaluate_ethics_screening(
         "accordance_statement",
         {"detected": False}
     )["detected"]
+     # --------------------------------------------------
+    # PRESERVE ETHICS / CONSENT / ACCORDANCE EVIDENCE
+    # --------------------------------------------------
+    
+    ethics_evidence = ethics_results.get(
+        "ethics_approval",
+        {}
+    ).get(
+        "evidence",
+        []
+    )
+    
+    consent_evidence = ethics_results.get(
+        "informed_consent",
+        {}
+    ).get(
+        "evidence",
+        []
+    )
+    
+    accordance_evidence = ethics_results.get(
+        "accordance_statement",
+        {}
+    ).get(
+        "evidence",
+        []
+    )
 
     waiver_found = ethics_results[
         "consent_waiver"
@@ -1122,7 +1149,7 @@ def evaluate_ethics_screening(
     # COMPUTATIONAL / SYNTHETIC STUDY
     # --------------------------------------------------
 
-    elif computational or synthetic:
+    elif computational:
 
         ethics_status = "NOT_TRIGGERED"
         consent_status = "NOT_TRIGGERED"
@@ -1139,15 +1166,22 @@ def evaluate_ethics_screening(
 
 
     return {
-        "ethics_status": ethics_status,
-        "consent_status": consent_status,
-        "ethics_statement_detected": ethics_found,
-        "consent_statement_detected": consent_found,
-        "consent_waiver_detected": waiver_found,
-        "ethics_exemption_detected": exemption_found,
-        "accordance_statement_detected": accordance_found
-    }
-
+         "ethics_status": ethics_status,
+         "consent_status": consent_status,
+     
+         "ethics_statement_detected": ethics_found,
+         "consent_statement_detected": consent_found,
+     
+         "consent_waiver_detected": waiver_found,
+         "ethics_exemption_detected": exemption_found,
+     
+         "accordance_statement_detected": accordance_found,
+     
+         # Supporting manuscript evidence
+         "ethics_evidence": ethics_evidence,
+         "consent_evidence": consent_evidence,
+         "accordance_evidence": accordance_evidence
+     }
 def detect_mandated_data(sections):
 
     findings = []
