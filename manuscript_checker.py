@@ -1159,12 +1159,17 @@ def check_ethics_affiliation_match(
 
     # Remove PDF line-number artifacts that may appear
     # inside institution names.
+    # FIRST get the sentence
+    ethics_sentence = ethics_item[
+        "sentence"
+    ]
+
+    # THEN clean PDF line-number artifacts
     ethics_sentence = re.sub(
         r'(?<=[A-Za-z])\s+\d{1,3}\s+(?=[A-Za-z])',
         ' ',
         ethics_sentence
     )
-
     front_matter = sections.get(
         "title",
         ""
