@@ -1149,105 +1149,34 @@ def check_ethics_affiliation_match(
     if not ethics_item:
         return {
             "status": "NOT_ASSESSABLE",
-            "ethics_institution": None,
-            "matched_affiliation": None,
+            "ethics_institutions": [],
+            "matched_institutions": [],
+            "unmatched_institutions": [],
             "reason": (
                 "No suitable ethics approval statement "
                 "was available for institution matching."
             )
         }
 
-    # Remove PDF line-number artifacts that may appear
-    # inside institution names.
-    # FIRST get the sentence
     ethics_sentence = ethics_item[
         "sentence"
     ]
 
-    # THEN clean PDF line-number artifacts
+    # Remove PDF line-number artifacts
     ethics_sentence = re.sub(
         r'(?<=[A-Za-z])\s+\d{1,3}\s+(?=[A-Za-z])',
         ' ',
         ethics_sentence
     )
+
     front_matter = sections.get(
         "title",
         ""
     )
 
-    # --------------------------------------------------
-    # EXTRACT INSTITUTION FROM ETHICS STATEMENT
-    # --------------------------------------------------
-
-    institution_patterns = [
-
-        # Ethical approval was obtained from
-        # Helsinki University Hospital Institutional Review Board
-        r'(?:ethical|ethics)\s+approval'
-        r'.{0,40}?\bfrom\s+'
-        r'(?:the\s+)?'
-        r'([A-Z][A-Za-z0-9&,\- ]+?'
-        r'(?:Hospital|University|Institute|'
-        r'Centre|Center|College|Clinic))'
-        r'(?=\s+(?:Institutional Review Board|IRB)\b'
-        r'|\s*(?:\(|,|\.|$))',
-
-        # Ethics Committee of Tianjin Beichen Hospital
-        r'(?:ethics committee|ethical committee)'
-        r'\s+of\s+'
-        r'([A-Z][A-Za-z0-9&,\- ]+?'
-        r'(?:Hospital|University|Institute|'
-        r'Centre|Center|College|Clinic))'
-        r'(?=\s*(?:\(|,|\.|$))',
-    
-        # Institutional Review Board of XYZ University
-        r'(?:institutional review board|IRB)'
-        r'\s+of\s+'
-        r'([A-Z][A-Za-z0-9&,\- ]+?'
-        r'(?:Hospital|University|Institute|'
-        r'Centre|Center|College|Clinic))'
-        r'(?=\s*(?:\(|,|\.|$))',
-    
-        # Massachusetts General Hospital institutional review board
-        r'([A-Z][A-Za-z0-9&,\- ]+?'
-        r'(?:Hospital|University|Institute|'
-        r'Centre|Center|College|Clinic))'
-        r'\s+(?:institutional review board|IRB)\b'
-    ]
-
-    ethics_institution = None
-
-    for pattern in institution_patterns:
-
-        match = re.search(
-            pattern,
-            ethics_sentence,
-            flags=re.IGNORECASE
-        )
-
-        if match:
-
-            ethics_institution = (
-                match.group(1).strip()
-            )
-
-            break
-
-    if not ethics_institution:
-
-        return {
-            "status": "NOT_ASSESSABLE",
-            "ethics_institution": None,
-            "matched_affiliation": None,
-            "reason": (
-                "An ethics statement was detected, "
-                "but the approving institution could "
-                "not be extracted reliably."
-            )
-        }
 
     # --------------------------------------------------
-    # NORMALIZE FOR COMPARISON
+    # NORMALIZATION
     # --------------------------------------------------
 
     def normalize(text):
@@ -1268,49 +1197,231 @@ def check_ethics_affiliation_match(
 
         return text
 
-    normalized_institution = normalize(
-        ethics_institution
-    )
 
     normalized_front_matter = normalize(
         front_matter
     )
 
+
     # --------------------------------------------------
-    # CHECK AFFILIATION
+    # EXTRACT ETHICS INSTITUTIONS
     # --------------------------------------------------
 
-    if (
-        normalized_institution
-        and normalized_institution
-        in normalized_front_matter
-    ):
+    institutions = []
+
+
+    # --------------------------------------------------
+    # MULTIPLE INSTITUTIONS
+    #
+    # Example:
+    # Institutional Review Boards of
+    # University A, University B, and University C
+    # --------------------------------------------------
+
+    multi_match = re.search(
+        r'institutional review boards?\s+of\s+(.+?)(?:\.|$)',
+        ethics_sentence,
+        flags=re.IGNORECASE
+    )
+
+    if multi_match:
+
+        institution_text = multi_match.group(1)
+
+        institution_text = re.sub(
+            r'\s+and\s+(?:the\s+)?',
+            ', ',
+            institution_text,
+            flags=re.IGNORECASE
+        )
+
+        candidates = [
+            item.strip()
+            for item in institution_text.split(",")
+            if item.strip()
+        ]
+
+        institution_keywords = [
+            "university",
+            "hospital",
+            "institute",
+            "centre",
+            "center",
+            "college",
+            "clinic"
+        ]
+
+        for candidate in candidates:
+
+            if any(
+                keyword in candidate.lower()
+                for keyword in institution_keywords
+            ):
+
+                institutions.append(
+                    candidate
+                )
+
+
+    # --------------------------------------------------
+    # SINGLE INSTITUTION
+    # --------------------------------------------------
+
+    if not institutions:
+
+        institution_patterns = [
+
+            # Ethical approval was obtained from
+            # Helsinki University Hospital IRB
+            r'(?:ethical|ethics)\s+approval'
+            r'.{0,40}?\bfrom\s+'
+            r'(?:the\s+)?'
+            r'([A-Z][A-Za-z0-9&,\- ]+?'
+            r'(?:Hospital|University|Institute|'
+            r'Centre|Center|College|Clinic))'
+            r'(?=\s+(?:Institutional Review Board|IRB)\b'
+            r'|\s*(?:\(|,|\.|$))',
+
+            # Ethics Committee of XYZ Hospital
+            r'(?:ethics committee|ethical committee)'
+            r'\s+of\s+'
+            r'([A-Z][A-Za-z0-9&,\- ]+?'
+            r'(?:Hospital|University|Institute|'
+            r'Centre|Center|College|Clinic))'
+            r'(?=\s*(?:\(|,|\.|$))',
+
+            # IRB of XYZ University
+            r'(?:institutional review board|IRB)'
+            r'\s+of\s+'
+            r'([A-Z][A-Za-z0-9&,\- ]+?'
+            r'(?:Hospital|University|Institute|'
+            r'Centre|Center|College|Clinic))'
+            r'(?=\s*(?:\(|,|\.|$))',
+
+            # XYZ Hospital institutional review board
+            r'([A-Z][A-Za-z0-9&,\- ]+?'
+            r'(?:Hospital|University|Institute|'
+            r'Centre|Center|College|Clinic))'
+            r'\s+(?:institutional review board|IRB)\b'
+        ]
+
+        for pattern in institution_patterns:
+
+            match = re.search(
+                pattern,
+                ethics_sentence,
+                flags=re.IGNORECASE
+            )
+
+            if match:
+
+                institutions.append(
+                    match.group(1).strip()
+                )
+
+                break
+
+
+    # --------------------------------------------------
+    # NOTHING EXTRACTABLE
+    # --------------------------------------------------
+
+    if not institutions:
 
         return {
-            "status": "MATCH",
-            "ethics_institution":
-                ethics_institution,
-            "matched_affiliation":
-                ethics_institution,
+            "status": "NOT_ASSESSABLE",
+            "ethics_institutions": [],
+            "matched_institutions": [],
+            "unmatched_institutions": [],
             "reason": (
-                "The ethics approval institution "
-                "was also detected in the author "
-                "affiliation/front matter."
+                "An ethics statement was detected, "
+                "but no named approving institution "
+                "could be extracted reliably."
             )
         }
 
-    return {
-        "status": "NO_MATCH",
-        "ethics_institution":
-            ethics_institution,
-        "matched_affiliation": None,
-        "reason": (
-            "The extracted ethics approval "
-            "institution was not detected in the "
-            "author affiliation/front matter."
-        )
-    }
 
+    # --------------------------------------------------
+    # REMOVE DUPLICATES
+    # --------------------------------------------------
+
+    unique_institutions = []
+
+    for institution in institutions:
+
+        if institution.lower() not in [
+            existing.lower()
+            for existing in unique_institutions
+        ]:
+            unique_institutions.append(
+                institution
+            )
+
+    institutions = unique_institutions
+
+
+    # --------------------------------------------------
+    # AFFILIATION MATCHING
+    # --------------------------------------------------
+
+    matched = []
+    unmatched = []
+
+    for institution in institutions:
+
+        normalized_institution = normalize(
+            institution
+        )
+
+        if (
+            normalized_institution
+            and normalized_institution
+            in normalized_front_matter
+        ):
+
+            matched.append(
+                institution
+            )
+
+        else:
+
+            unmatched.append(
+                institution
+            )
+
+
+    # --------------------------------------------------
+    # OVERALL INFORMATIONAL STATUS
+    # --------------------------------------------------
+
+    if matched:
+
+        status = "MATCH"
+
+        reason = (
+            "At least one named ethics approval "
+            "institution was detected in the author "
+            "affiliation/front matter."
+        )
+
+    else:
+
+        status = "NO_MATCH"
+
+        reason = (
+            "Named ethics approval institution(s) "
+            "were extracted, but none were detected "
+            "in the author affiliation/front matter."
+        )
+
+
+    return {
+        "status": status,
+        "ethics_institutions": institutions,
+        "matched_institutions": matched,
+        "unmatched_institutions": unmatched,
+        "reason": reason
+    }
 
 def evaluate_ethics_screening(
     study_characteristics,
