@@ -435,9 +435,6 @@ if uploaded_file is not None:
 
             if show_debug:
 
-                st.markdown("### 🧪 Ethics Screening Test")
-                st.json(result["ethics_screening"])
-
                 st.divider()
             
                 st.markdown(
@@ -482,43 +479,135 @@ if uploaded_file is not None:
                     "⚖️ Ethics, Consent & Accordance"
                 ):
                 
-                    st.caption(
-                        "Supporting manuscript statements detected for "
-                        "ethics approval, informed consent, and accordance."
+                    ethics_screening = result["ethics_screening"]
+                
+                    # --------------------------------------------------
+                    # ETHICS
+                    # --------------------------------------------------
+                
+                    st.markdown("#### 🏛️ Ethics Approval")
+                
+                    st.write(
+                        "**Status:**",
+                        ethics_screening["ethics_status"]
                     )
                 
-                    st.markdown("**Ethics Approval Evidence**")
+                    ethics_evidence = ethics_screening.get(
+                        "ethics_evidence",
+                        []
+                    )
                 
-                    if result["ethics_screening"]["ethics_evidence"]:
-                        st.json(
-                            result["ethics_screening"]["ethics_evidence"]
-                        )
+                    if ethics_evidence:
+                
+                        seen_sentences = set()
+                
+                        for item in ethics_evidence:
+                
+                            sentence = item["sentence"]
+                
+                            if sentence not in seen_sentences:
+                
+                                st.info(sentence)
+                
+                                st.caption(
+                                    f"Section: {item['section']} "
+                                    f"• Indicator: {item['keyword']}"
+                                )
+                
+                                seen_sentences.add(sentence)
+                
                     else:
-                        st.info(
+                
+                        st.caption(
                             "No ethics approval statement detected."
                         )
                 
                 
-                    st.markdown("**Consent Evidence**")
+                    # --------------------------------------------------
+                    # CONSENT
+                    # --------------------------------------------------
                 
-                    if result["ethics_screening"]["consent_evidence"]:
-                        st.json(
-                            result["ethics_screening"]["consent_evidence"]
-                        )
+                    st.markdown("#### ✍️ Informed Consent")
+                
+                    st.write(
+                        "**Status:**",
+                        ethics_screening["consent_status"]
+                    )
+                
+                    consent_evidence = ethics_screening.get(
+                        "consent_evidence",
+                        []
+                    )
+                
+                    if consent_evidence:
+                
+                        seen_sentences = set()
+                
+                        for item in consent_evidence:
+                
+                            sentence = item["sentence"]
+                
+                            if sentence not in seen_sentences:
+                
+                                st.info(sentence)
+                
+                                st.caption(
+                                    f"Section: {item['section']} "
+                                    f"• Indicator: {item['keyword']}"
+                                )
+                
+                                seen_sentences.add(sentence)
+                
                     else:
-                        st.info(
+                
+                        st.caption(
                             "No informed consent statement detected."
                         )
                 
                 
-                    st.markdown("**Accordance Evidence**")
+                    # --------------------------------------------------
+                    # ACCORDANCE
+                    # --------------------------------------------------
                 
-                    if result["ethics_screening"]["accordance_evidence"]:
-                        st.json(
-                            result["ethics_screening"]["accordance_evidence"]
-                        )
+                    st.markdown("#### 📜 Accordance Statement")
+                
+                    if ethics_screening[
+                        "accordance_statement_detected"
+                    ]:
+                
+                        st.write("**Detected:** Yes")
+                
                     else:
-                        st.info(
+                
+                        st.write("**Detected:** No")
+                
+                    accordance_evidence = ethics_screening.get(
+                        "accordance_evidence",
+                        []
+                    )
+                
+                    if accordance_evidence:
+                
+                        seen_sentences = set()
+                
+                        for item in accordance_evidence:
+                
+                            sentence = item["sentence"]
+                
+                            if sentence not in seen_sentences:
+                
+                                st.info(sentence)
+                
+                                st.caption(
+                                    f"Section: {item['section']} "
+                                    f"• Indicator: {item['keyword']}"
+                                )
+                
+                                seen_sentences.add(sentence)
+                
+                    else:
+                
+                        st.caption(
                             "No accordance statement detected."
                         )
             
