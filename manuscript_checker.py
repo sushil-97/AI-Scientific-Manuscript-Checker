@@ -1137,6 +1137,155 @@ def select_best_ethics_evidence(
     }
 
 
+def check_ethics_affiliation_match(
+    best_ethics_evidence,
+    sections
+):
+
+    ethics_item = best_ethics_evidence.get(
+        "ethics"
+    )
+
+    if not ethics_item:
+        return {
+            "status": "NOT_ASSESSABLE",
+            "ethics_institution": None,
+            "matched_affiliation": None,
+            "reason": (
+                "No suitable ethics approval statement "
+                "was available for institution matching."
+            )
+        }
+
+    ethics_sentence = ethics_item[
+        "sentence"
+    ]
+
+    front_matter = sections.get(
+        "title",
+        ""
+    )
+
+    # --------------------------------------------------
+    # EXTRACT INSTITUTION FROM ETHICS STATEMENT
+    # --------------------------------------------------
+
+    institution_patterns = [
+
+        # Ethics Committee of Tianjin Beichen Hospital
+        r'(?:ethics committee|ethical committee)'
+        r'\s+of\s+'
+        r'([A-Z][A-Za-z0-9&,\- ]+?'
+        r'(?:Hospital|University|Institute|'
+        r'Centre|Center|College|Clinic))'
+        r'(?=\s*(?:\(|,|\.|$))',
+
+        # Institutional Review Board of XYZ University
+        r'(?:institutional review board|IRB)'
+        r'\s+of\s+'
+        r'([A-Z][A-Za-z0-9&,\- ]+?'
+        r'(?:Hospital|University|Institute|'
+        r'Centre|Center|College|Clinic))'
+        r'(?=\s*(?:\(|,|\.|$))'
+    ]
+
+    ethics_institution = None
+
+    for pattern in institution_patterns:
+
+        match = re.search(
+            pattern,
+            ethics_sentence,
+            flags=re.IGNORECASE
+        )
+
+        if match:
+
+            ethics_institution = (
+                match.group(1).strip()
+            )
+
+            break
+
+    if not ethics_institution:
+
+        return {
+            "status": "NOT_ASSESSABLE",
+            "ethics_institution": None,
+            "matched_affiliation": None,
+            "reason": (
+                "An ethics statement was detected, "
+                "but the approving institution could "
+                "not be extracted reliably."
+            )
+        }
+
+    # --------------------------------------------------
+    # NORMALIZE FOR COMPARISON
+    # --------------------------------------------------
+
+    def normalize(text):
+
+        text = text.lower()
+
+        text = re.sub(
+            r'[^a-z0-9\s]',
+            ' ',
+            text
+        )
+
+        text = re.sub(
+            r'\s+',
+            ' ',
+            text
+        ).strip()
+
+        return text
+
+    normalized_institution = normalize(
+        ethics_institution
+    )
+
+    normalized_front_matter = normalize(
+        front_matter
+    )
+
+    # --------------------------------------------------
+    # CHECK AFFILIATION
+    # --------------------------------------------------
+
+    if (
+        normalized_institution
+        and normalized_institution
+        in normalized_front_matter
+    ):
+
+        return {
+            "status": "MATCH",
+            "ethics_institution":
+                ethics_institution,
+            "matched_affiliation":
+                ethics_institution,
+            "reason": (
+                "The ethics approval institution "
+                "was also detected in the author "
+                "affiliation/front matter."
+            )
+        }
+
+    return {
+        "status": "NO_MATCH",
+        "ethics_institution":
+            ethics_institution,
+        "matched_affiliation": None,
+        "reason": (
+            "The extracted ethics approval "
+            "institution was not detected in the "
+            "author affiliation/front matter."
+        )
+    }
+
+
 def evaluate_ethics_screening(
     study_characteristics,
     ethics_results
@@ -4416,6 +4565,8 @@ def analyze_manuscript_text(full_text):
     best_ethics_evidence = select_best_ethics_evidence(ethics_results)
     ethics_screening = evaluate_ethics_screening(study_characters, ethics_results)
     ethics_screening["best_evidence"] = best_ethics_evidence
+    ethics_affiliation_check = check_ethics_affiliation_match(best_ethics_evidence,sections)
+    ethics_screening["affiliation_check"] = ethics_affiliation_check
     print("✓ Ethics & Consent Screening Completed")
 
     # 4. Data Availability
