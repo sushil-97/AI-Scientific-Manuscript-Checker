@@ -1402,20 +1402,35 @@ def check_ethics_affiliation_match(
     # OVERALL INFORMATIONAL STATUS
     # --------------------------------------------------
 
-    if matched:
-
-        status = "MATCH"
-
+    # --------------------------------------------------
+    # OVERALL INFORMATIONAL STATUS
+    # --------------------------------------------------
+    
+    if matched and not unmatched:
+    
+        status = "FULL_MATCH"
+    
         reason = (
-            "At least one named ethics approval "
-            "institution was detected in the author "
-            "affiliation/front matter."
+            "All named ethics approval institutions "
+            "were detected in the author affiliation/"
+            "front matter."
         )
-
+    
+    elif matched and unmatched:
+    
+        status = "PARTIAL_MATCH"
+    
+        reason = (
+            "At least one named ethics approval institution "
+            "was detected in the author affiliation/front "
+            "matter, while one or more institutions were "
+            "not matched."
+        )
+    
     else:
-
+    
         status = "NO_MATCH"
-
+    
         reason = (
             "Named ethics approval institution(s) "
             "were extracted, but none were detected "
