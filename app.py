@@ -630,37 +630,49 @@ if uploaded_file is not None:
                         st.info("NOT ASSESSABLE")
                     
                     
-                    ethics_institution = affiliation_check.get(
-                        "ethics_institution"
+                    ethics_institutions = affiliation_check.get(
+                        "ethics_institutions",
+                        []
                     )
                     
-                    if ethics_institution:
+                    if ethics_institutions:
                     
                         st.write(
-                            "**Ethics Approval Institution:**",
-                            ethics_institution
+                            "**Ethics Approval Institution(s):**"
                         )
                     
+                        for institution in ethics_institutions:
+                            st.write(f"- {institution}")
                     
-                    matched_affiliation = affiliation_check.get(
-                        "matched_affiliation"
+                    
+                    matched_institutions = affiliation_check.get(
+                        "matched_institutions",
+                        []
                     )
                     
-                    if matched_affiliation:
+                    if matched_institutions:
                     
                         st.write(
-                            "**Matched Author Affiliation:**",
-                            matched_affiliation
+                            "**Matched Author Affiliation(s):**"
                         )
                     
+                        for institution in matched_institutions:
+                            st.write(f"- {institution}")
                     
-                    reason = affiliation_check.get(
-                        "reason"
+                    
+                    unmatched_institutions = affiliation_check.get(
+                        "unmatched_institutions",
+                        []
                     )
                     
-                    if reason:
+                    if unmatched_institutions:
                     
-                        st.caption(reason)       
+                        st.write(
+                            "**No Affiliation Match Found:**"
+                        )
+                    
+                        for institution in unmatched_institutions:
+                            st.write(f"- {institution}")
             
                 # --------------------------------------------------
                 # CENTER DETECTION
