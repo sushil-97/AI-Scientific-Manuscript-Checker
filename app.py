@@ -597,7 +597,14 @@ if uploaded_file is not None:
                             "No accordance statement detected."
                         )
                                           
-                    
+                    st.markdown("#### 🧪 Author Affiliation / Front Matter")
+
+                    st.write(
+                        result["sections"].get(
+                            "title",
+                            "No title/front-matter section detected."
+                        )
+                    )                  
                     
                     affiliation_check = ethics_screening.get(
                         "affiliation_check",
