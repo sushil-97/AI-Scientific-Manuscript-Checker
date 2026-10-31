@@ -1019,6 +1019,124 @@ def ethics_indicator_evidence(sections, indicators):
     return results
 
 
+def select_best_ethics_evidence(
+    ethics_results
+):
+
+    def choose_best(
+        evidence,
+        preferred_patterns
+    ):
+
+        if not evidence:
+            return None
+
+        candidates = []
+
+        for item in evidence:
+
+            sentence = item["sentence"]
+
+            score = 0
+
+            for pattern in preferred_patterns:
+
+                if re.search(
+                    pattern,
+                    sentence,
+                    flags=re.IGNORECASE
+                ):
+                    score += 1
+
+            # Prefer Methods/Ethics sections
+            if item["section"] in [
+                "ethics",
+                "methods"
+            ]:
+                score += 2
+
+            # Avoid extremely long PDF-contaminated
+            # declaration sentences.
+            if len(sentence) > 600:
+                score -= 3
+
+            candidates.append(
+                (
+                    score,
+                    -len(sentence),
+                    item
+                )
+            )
+
+        candidates.sort(
+            key=lambda x: (
+                x[0],
+                x[1]
+            ),
+            reverse=True
+        )
+
+        return candidates[0][2]
+
+
+    ethics_best = choose_best(
+        ethics_results.get(
+            "ethics_approval",
+            {}
+        ).get(
+            "evidence",
+            []
+        ),
+        [
+            r'\bapproved by\b',
+            r'\bethics committee\b',
+            r'\binstitutional review board\b',
+            r'\bethics approval\b'
+        ]
+    )
+
+
+    consent_best = choose_best(
+        ethics_results.get(
+            "informed_consent",
+            {}
+        ).get(
+            "evidence",
+            []
+        ),
+        [
+            r'\binformed consent\b',
+            r'\bwritten informed consent\b',
+            r'\bconsent was obtained\b',
+            r'\bconsent was waived\b',
+            r'\brequirement for .*consent was waived\b'
+        ]
+    )
+
+
+    accordance_best = choose_best(
+        ethics_results.get(
+            "accordance_statement",
+            {}
+        ).get(
+            "evidence",
+            []
+        ),
+        [
+            r'\bin accordance with\b',
+            r'\bdeclaration of helsinki\b',
+            r'\bhelsinki declaration\b'
+        ]
+    )
+
+
+    return {
+        "ethics": ethics_best,
+        "consent": consent_best,
+        "accordance": accordance_best
+    }
+
+
 def evaluate_ethics_screening(
     study_characteristics,
     ethics_results
@@ -1182,6 +1300,7 @@ def evaluate_ethics_screening(
          "consent_evidence": consent_evidence,
          "accordance_evidence": accordance_evidence
      }
+ 
 def detect_mandated_data(sections):
 
     findings = []
@@ -4294,7 +4413,9 @@ def analyze_manuscript_text(full_text):
 
     # 3. Ethics & Consent
     ethics_results = ethics_indicator_evidence(sections, ETHICS_INDICATORS)
+    best_ethics_evidence = select_best_ethics_evidence(ethics_results)
     ethics_screening = evaluate_ethics_screening(study_characters, ethics_results)
+    ethics_screening["best_evidence"] = best_ethics_evidence
     print("✓ Ethics & Consent Screening Completed")
 
     # 4. Data Availability
