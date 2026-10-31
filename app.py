@@ -596,6 +596,19 @@ if uploaded_file is not None:
                         st.caption(
                             "No accordance statement detected."
                         )
+                    # --------------------------------------------------
+                    # TEMPORARY FRONT-MATTER DEBUG
+                    # --------------------------------------------------
+                    
+                    st.markdown("#### 🧪 Author Affiliation / Front Matter")
+                    
+                    st.write(
+                        result["sections"].get(
+                            "title",
+                            "No title/front-matter section detected."
+                        )
+                    )                      
+                           
             
                 # --------------------------------------------------
                 # CENTER DETECTION
@@ -700,6 +713,8 @@ if uploaded_file is not None:
                 )
             
                 st.divider()
+
+            
                 
             manuscript_report = result[
                 "manuscript_report"
