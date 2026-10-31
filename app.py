@@ -435,6 +435,9 @@ if uploaded_file is not None:
 
             if show_debug:
 
+                st.markdown("### 🧪 Ethics Screening Test")
+                st.json(result["ethics_screening"])
+
                 st.divider()
             
                 st.markdown(
