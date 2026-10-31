@@ -601,12 +601,61 @@ if uploaded_file is not None:
                         "#### 🏥 Ethics Institution / Affiliation Check"
                     )
                     
-                    st.json(
-                        ethics_screening.get(
-                            "affiliation_check",
-                            {}
+                    affiliation_check = ethics_screening.get(
+                        "affiliation_check",
+                        {}
+                    )
+                    
+                    st.markdown(
+                        "#### 🏥 Ethics Institution / Affiliation Check"
+                    )
+                    
+                    match_status = affiliation_check.get(
+                        "status",
+                        "NOT_ASSESSABLE"
+                    )
+                    
+                    if match_status == "MATCH":
+                        st.success("MATCH")
+                    
+                    elif match_status == "NO_MATCH":
+                        st.warning("NO MATCH")
+                    
+                    else:
+                        st.info("NOT ASSESSABLE")
+                    
+                    
+                    ethics_institution = affiliation_check.get(
+                        "ethics_institution"
+                    )
+                    
+                    if ethics_institution:
+                    
+                        st.write(
+                            "**Ethics Approval Institution:**",
+                            ethics_institution
                         )
-                    )       
+                    
+                    
+                    matched_affiliation = affiliation_check.get(
+                        "matched_affiliation"
+                    )
+                    
+                    if matched_affiliation:
+                    
+                        st.write(
+                            "**Matched Author Affiliation:**",
+                            matched_affiliation
+                        )
+                    
+                    
+                    reason = affiliation_check.get(
+                        "reason"
+                    )
+                    
+                    if reason:
+                    
+                        st.caption(reason)       
             
                 # --------------------------------------------------
                 # CENTER DETECTION
