@@ -481,6 +481,11 @@ if uploaded_file is not None:
                 
                     ethics_screening = result["ethics_screening"]
                 
+                    best_evidence = ethics_screening.get(
+                        "best_evidence",
+                        {}
+                    )
+                
                     # --------------------------------------------------
                     # ETHICS
                     # --------------------------------------------------
@@ -492,29 +497,20 @@ if uploaded_file is not None:
                         ethics_screening["ethics_status"]
                     )
                 
-                    ethics_evidence = ethics_screening.get(
-                        "ethics_evidence",
-                        []
+                    ethics_statement = best_evidence.get(
+                        "ethics"
                     )
                 
-                    if ethics_evidence:
+                    if ethics_statement:
                 
-                        seen_sentences = set()
+                        st.info(
+                            ethics_statement["sentence"]
+                        )
                 
-                        for item in ethics_evidence:
-                
-                            sentence = item["sentence"]
-                
-                            if sentence not in seen_sentences:
-                
-                                st.info(sentence)
-                
-                                st.caption(
-                                    f"Section: {item['section']} "
-                                    f"• Indicator: {item['keyword']}"
-                                )
-                
-                                seen_sentences.add(sentence)
+                        st.caption(
+                            f"Section: {ethics_statement['section']} "
+                            f"• Indicator: {ethics_statement['keyword']}"
+                        )
                 
                     else:
                 
@@ -534,29 +530,29 @@ if uploaded_file is not None:
                         ethics_screening["consent_status"]
                     )
                 
-                    consent_evidence = ethics_screening.get(
-                        "consent_evidence",
-                        []
+                    st.write(
+                        "**Waiver Detected:**",
+                        "Yes"
+                        if ethics_screening[
+                            "consent_waiver_detected"
+                        ]
+                        else "No"
                     )
                 
-                    if consent_evidence:
+                    consent_statement = best_evidence.get(
+                        "consent"
+                    )
                 
-                        seen_sentences = set()
+                    if consent_statement:
                 
-                        for item in consent_evidence:
+                        st.info(
+                            consent_statement["sentence"]
+                        )
                 
-                            sentence = item["sentence"]
-                
-                            if sentence not in seen_sentences:
-                
-                                st.info(sentence)
-                
-                                st.caption(
-                                    f"Section: {item['section']} "
-                                    f"• Indicator: {item['keyword']}"
-                                )
-                
-                                seen_sentences.add(sentence)
+                        st.caption(
+                            f"Section: {consent_statement['section']} "
+                            f"• Indicator: {consent_statement['keyword']}"
+                        )
                 
                     else:
                 
@@ -571,39 +567,29 @@ if uploaded_file is not None:
                 
                     st.markdown("#### 📜 Accordance Statement")
                 
-                    if ethics_screening[
-                        "accordance_statement_detected"
-                    ]:
-                
-                        st.write("**Detected:** Yes")
-                
-                    else:
-                
-                        st.write("**Detected:** No")
-                
-                    accordance_evidence = ethics_screening.get(
-                        "accordance_evidence",
-                        []
+                    st.write(
+                        "**Detected:**",
+                        "Yes"
+                        if ethics_screening[
+                            "accordance_statement_detected"
+                        ]
+                        else "No"
                     )
                 
-                    if accordance_evidence:
+                    accordance_statement = best_evidence.get(
+                        "accordance"
+                    )
                 
-                        seen_sentences = set()
+                    if accordance_statement:
                 
-                        for item in accordance_evidence:
+                        st.info(
+                            accordance_statement["sentence"]
+                        )
                 
-                            sentence = item["sentence"]
-                
-                            if sentence not in seen_sentences:
-                
-                                st.info(sentence)
-                
-                                st.caption(
-                                    f"Section: {item['section']} "
-                                    f"• Indicator: {item['keyword']}"
-                                )
-                
-                                seen_sentences.add(sentence)
+                        st.caption(
+                            f"Section: {accordance_statement['section']} "
+                            f"• Indicator: {accordance_statement['keyword']}"
+                        )
                 
                     else:
                 
