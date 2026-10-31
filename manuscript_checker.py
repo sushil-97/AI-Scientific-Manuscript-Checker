@@ -1179,14 +1179,20 @@ def check_ethics_affiliation_match(
         r'(?:Hospital|University|Institute|'
         r'Centre|Center|College|Clinic))'
         r'(?=\s*(?:\(|,|\.|$))',
-
+    
         # Institutional Review Board of XYZ University
         r'(?:institutional review board|IRB)'
         r'\s+of\s+'
         r'([A-Z][A-Za-z0-9&,\- ]+?'
         r'(?:Hospital|University|Institute|'
         r'Centre|Center|College|Clinic))'
-        r'(?=\s*(?:\(|,|\.|$))'
+        r'(?=\s*(?:\(|,|\.|$))',
+    
+        # Massachusetts General Hospital institutional review board
+        r'([A-Z][A-Za-z0-9&,\- ]+?'
+        r'(?:Hospital|University|Institute|'
+        r'Centre|Center|College|Clinic))'
+        r'\s+(?:institutional review board|IRB)\b'
     ]
 
     ethics_institution = None
