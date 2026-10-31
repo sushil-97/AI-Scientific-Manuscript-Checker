@@ -620,13 +620,20 @@ if uploaded_file is not None:
                         "NOT_ASSESSABLE"
                     )
                     
-                    if match_status == "MATCH":
-                        st.success("MATCH")
+                    if match_status == "FULL_MATCH":
+                    
+                        st.success("FULL MATCH")
+                    
+                    elif match_status == "PARTIAL_MATCH":
+                    
+                        st.warning("PARTIAL MATCH")
                     
                     elif match_status == "NO_MATCH":
+                    
                         st.warning("NO MATCH")
                     
                     else:
+                    
                         st.info("NOT ASSESSABLE")
                     
                     
