@@ -33,6 +33,7 @@ def test_sample_size_report_recognizes_two_arm_allocation():
     study_characteristics = {
         "systematic_review": {"detected": False},
         "clinical_trial": {"detected": True},
+        "human_study": {"detected": True},
     }
 
     result = evaluate_sample_size_consistency(
