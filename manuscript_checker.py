@@ -4103,18 +4103,20 @@ def evaluate_sample_size_consistency(
     # Final decision
     # ---------------------------------
 
-    discrepancy_found = any(
-        comparison["result"]
-        == "POTENTIAL_DISCREPANCY"
+        # ---------------------------------
+    # Final decision
+    # ---------------------------------
 
+    discrepancy_found = any(
+        comparison["result"] == "POTENTIAL_DISCREPANCY"
         for comparison in comparisons
     )
 
     final_population_consistent = any(
         comparison["result"] == "CONSISTENT"
-        for comparison
-        in final_population_comparisons
+        for comparison in final_population_comparisons
     )
+
     participant_flow_consistent = any(
         flow.get("result") == "CONSISTENT"
         for flow in participant_flow
@@ -4127,23 +4129,22 @@ def evaluate_sample_size_consistency(
             and allocation_consistency["result"] == "POTENTIAL_DISCREPANCY"
         )
     ):
-    
         status = "REVIEW"
 
-            if (
-                allocation_consistency is not None
-                and allocation_consistency["result"] == "POTENTIAL_DISCREPANCY"
-            ):
-                reason = (
-                    "A potential participant allocation discrepancy was detected: "
-                    "the allocated total does not match the randomized "
-                    "participant count."
-                )
-            else:
-                reason = (
-                    "Different participant counts were detected "
-                    "for the same sample-size role across manuscript sections."
-                )
+        if (
+            allocation_consistency is not None
+            and allocation_consistency["result"] == "POTENTIAL_DISCREPANCY"
+        ):
+            reason = (
+                "A potential participant allocation discrepancy was detected: "
+                "the allocated total does not match the randomized "
+                "participant count."
+            )
+        else:
+            reason = (
+                "Different participant counts were detected "
+                "for the same sample-size role across manuscript sections."
+            )
 
     elif comparisons:
 
