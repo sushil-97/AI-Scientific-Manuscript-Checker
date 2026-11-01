@@ -76,3 +76,4 @@ def test_case_12b_sample_size_discrepancy():
         sample_screening["status"]
         == "REVIEW"
     )
+    
