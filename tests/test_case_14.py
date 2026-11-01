@@ -23,6 +23,8 @@ def test_case_14_cam_acupuncture():
     result = analyze_manuscript_text(
         manuscript_text
     )
+    print("\n===== CASE 14 CAM SCREENING =====")
+    print(result["cam_screening"])
 
     # CAM screening should be generated
     assert (
