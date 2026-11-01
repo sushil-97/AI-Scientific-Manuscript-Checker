@@ -4120,15 +4120,30 @@ def evaluate_sample_size_consistency(
         for flow in participant_flow
     )
 
-    if discrepancy_found:
-
+    if (
+        discrepancy_found
+        or (
+            allocation_consistency is not None
+            and allocation_consistency["result"] == "POTENTIAL_DISCREPANCY"
+        )
+    ):
+    
         status = "REVIEW"
 
-        reason = (
-            "Different participant counts were detected "
-            "for the same sample-size role across manuscript "
-            "sections."
-        )
+            if (
+                allocation_consistency is not None
+                and allocation_consistency["result"] == "POTENTIAL_DISCREPANCY"
+            ):
+                reason = (
+                    "A potential participant allocation discrepancy was detected: "
+                    "the allocated total does not match the randomized "
+                    "participant count."
+                )
+            else:
+                reason = (
+                    "Different participant counts were detected "
+                    "for the same sample-size role across manuscript sections."
+                )
 
     elif comparisons:
 
