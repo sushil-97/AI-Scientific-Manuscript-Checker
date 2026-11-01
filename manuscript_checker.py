@@ -3035,6 +3035,7 @@ def build_statistical_consistency_report(
 
     claim_pvalue_checks = []
 
+    # Check Abstract claims against Abstract p-values
     for pvalue in abstract_pvalues:
 
         for claim in abstract_claims:
@@ -3046,6 +3047,25 @@ def build_statistical_consistency_report(
             )
 
             claim_pvalue_checks.append({
+                "section": "abstract",
+                "claim": claim["claim"],
+                "pvalue": pvalue["numeric_value"],
+                "result": check
+            })
+
+    # Check Results claims against Results p-values
+    for pvalue in results_pvalues:
+
+        for claim in results_claims:
+
+            check = evaluate_claim_against_pvalue(
+                claim["claim"],
+                pvalue["numeric_value"],
+                effective_threshold
+            )
+
+            claim_pvalue_checks.append({
+                "section": "results",
                 "claim": claim["claim"],
                 "pvalue": pvalue["numeric_value"],
                 "result": check
