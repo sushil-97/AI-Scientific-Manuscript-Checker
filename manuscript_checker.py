@@ -4070,6 +4070,14 @@ def evaluate_sample_size_consistency(
             ),
             "interpretation": "INFORMATIONAL_ONLY"
         })
+
+    # ---------------------------------
+    # Randomization-to-allocation check
+    # ---------------------------------
+    
+    allocation_consistency = (
+        detect_two_arm_allocation_consistency(findings)
+    )
     # ---------------------------------
     # Final decision
     # ---------------------------------
@@ -4127,6 +4135,15 @@ def evaluate_sample_size_consistency(
             "Participant flow was internally consistent: "
             "the reported exclusions account for the change "
             "between the enrolled and final participant populations."
+        )
+     
+    elif allocation_consistency is not None:
+
+        status = "PASS_CANDIDATE"
+    
+        reason = (
+            "The reported allocation across two study arms "
+            "matches the randomized participant total."
         ) 
    
     else:
@@ -4145,6 +4162,7 @@ def evaluate_sample_size_consistency(
         "final_population_comparisons":
             final_population_comparisons,
         "participant_flow": participant_flow,
+        "allocation_consistency": allocation_consistency,
         "raw_findings": findings,
         "status": status,
         "reason": reason
