@@ -60,3 +60,40 @@ def test_case_06_human_single_center():
         ["status"]
         == "FULL_MATCH"
     )
+        # Ethics status should pass
+    assert (
+        result["ethics_screening"]
+        ["ethics_status"]
+        == "PASS"
+    )
+
+    # Consent waiver should require editorial review
+    assert (
+        result["ethics_screening"]
+        ["consent_status"]
+        == "REVIEW_WAIVER"
+    )
+
+    # Extracted ethics institution should be correct
+    assert (
+        result["ethics_screening"]
+        ["affiliation_check"]
+        ["ethics_institutions"]
+        == ["Tianjin Beichen Hospital"]
+    )
+
+    # Institution should match the author affiliation
+    assert (
+        result["ethics_screening"]
+        ["affiliation_check"]
+        ["matched_institutions"]
+        == ["Tianjin Beichen Hospital"]
+    )
+
+    # There should be no unmatched ethics institutions
+    assert (
+        result["ethics_screening"]
+        ["affiliation_check"]
+        ["unmatched_institutions"]
+        == []
+    )
