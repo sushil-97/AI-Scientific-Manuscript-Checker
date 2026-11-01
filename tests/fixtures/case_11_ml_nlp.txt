@@ -1,0 +1,23 @@
+Computational Natural Language Processing Study
+
+Abstract
+
+We developed a machine learning algorithm for automated classification of scientific text using natural language processing.
+
+The model was evaluated using precision, recall, F1-score, and accuracy.
+
+Methods
+
+The computational framework was implemented in Python using machine learning and natural language processing libraries.
+
+The algorithm was trained and evaluated using publicly available textual datasets.
+
+Model performance was evaluated using precision, recall, F1-score, and accuracy.
+
+No human participants were involved in this study.
+
+Code and Data Availability
+
+The source code used for the computational analysis is publicly available on GitHub.
+
+The datasets used in this study are publicly available and can be accessed through the project repository.
