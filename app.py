@@ -673,6 +673,8 @@ if uploaded_file is not None:
                     
                         for institution in unmatched_institutions:
                             st.write(f"- {institution}")
+
+                    
             
                 # --------------------------------------------------
                 # CENTER DETECTION
@@ -724,23 +726,31 @@ if uploaded_file is not None:
                 # STATISTICAL CONSISTENCY
                 # --------------------------------------------------
             
-                with st.expander(
-                    "📊 Statistical Consistency"
-                ):
-            
+                with st.expander("📊 Statistical Consistency"):
+
                     st.caption(
                         "Detected p-values, significance thresholds, "
                         "and statistical consistency results."
                     )
-            
+                
                     st.markdown("**Statistical Report**")
-            
+                
                     st.json(
                         result["statistical_report"]
                     )
-            
+                
+                    # NEW: Show individual claim vs p-value comparisons
+                    st.markdown("### Statistical Comparison Details")
+                
+                    st.json(
+                        result["statistical_report"].get(
+                            "claim_pvalue_checks",
+                            []
+                        )
+                    )
+                
                     st.markdown("**Raw P-Value Findings**")
-            
+                
                     st.json(
                         result["pvalue_findings"]
                     )
