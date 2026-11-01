@@ -44,5 +44,6 @@ def test_case_11_ml_nlp():
     # Computational subtype should be ML/NLP
     assert (
         result["computational_subtype"]
+        ["subtype"]
         == "ML_NLP"
     )
