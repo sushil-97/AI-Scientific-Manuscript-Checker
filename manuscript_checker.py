@@ -1925,7 +1925,7 @@ def determine_data_access_type(das_result, repositories_found=None):
 
     request_patterns = [
         r"\bavailable on request\b",
-        r"\bupon reasonable request\b",
+        r"\bupon reasonable (?:written )?request\b",
         r"\bupon request\b",
         r"\bavailable from the corresponding author\b"
     ]
