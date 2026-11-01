@@ -3630,8 +3630,56 @@ def remove_duplicate_sample_sizes(findings):
             )
 
     return unique_findings
+ 
 
+def detect_two_arm_allocation_consistency(findings):
+    """
+    Detect explicitly reported equal allocation to two arms
+    and compare it with the randomized participant count.
+    """
 
+    randomized_values = {
+        finding["numeric_value"]
+        for finding in findings
+        if finding["role"] == "RANDOMIZED"
+        and finding["section"] == "results"
+    }
+
+    for finding in findings:
+        if finding["role"] != "ALLOCATED":
+            continue
+
+        if finding["section"] != "results":
+            continue
+
+        context = finding["context"].lower()
+
+        # Require explicit evidence of two named arms.
+        two_arm_evidence = re.search(
+            r'\beach\s+of\s+the\s+'
+            r'["“]?[a-z][\w-]*["”]?\s+and\s+'
+            r'["“]?[a-z][\w-]*["”]?\s+'
+            r'(?:\w+\s+){0,3}arms?\b',
+            context
+        )
+
+        if not two_arm_evidence:
+            continue
+
+        allocated_per_arm = finding["numeric_value"]
+        allocated_total = allocated_per_arm * 2
+
+        if allocated_total in randomized_values:
+            return {
+                "randomized": allocated_total,
+                "allocated_per_arm": allocated_per_arm,
+                "number_of_arms": 2,
+                "allocated_total": allocated_total,
+                "result": "CONSISTENT"
+            }
+
+    return None
+ 
 
 def evaluate_sample_size_consistency(
     study_characteristics,
