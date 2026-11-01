@@ -23,8 +23,6 @@ def test_case_10b_statistical_discrepancy():
     result = analyze_manuscript_text(
         manuscript_text
     )
-    print("\n===== CASE 10B OVERALL DECISION =====")
-    print(result["overall_decision"])
     
 
     # Basic smoke checks first
@@ -62,4 +60,26 @@ def test_case_10b_statistical_discrepancy():
     assert (
         statistical_report["status"]
         == "DISCREPANCY"
+    )
+        overall_decision = result["overall_decision"]
+
+    # A module-level statistical discrepancy must
+    # propagate to the manuscript-level decision
+    assert (
+        overall_decision["overall_status"]
+        == "REVIEW"
+    )
+
+    # At least one review item should exist
+    assert (
+        overall_decision["review_count"]
+        >= 1
+    )
+
+    # Statistical Consistency should appear as
+    # a discrepancy in the overall review items
+    assert any(
+        item["module"] == "Statistical Consistency"
+        and item["status"] == "DISCREPANCY"
+        for item in overall_decision["review_items"]
     )
