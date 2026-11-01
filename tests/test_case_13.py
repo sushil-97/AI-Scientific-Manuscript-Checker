@@ -23,11 +23,7 @@ def test_case_13_mandated_data_missing_identifier():
     result = analyze_manuscript_text(
         manuscript_text
     )
-    print("\n===== CASE 13 DAS TEXT =====")
-    print(result["das_text"])
-
-    print("\n===== CASE 13 DATA SCREENING =====")
-    print(result["data_screening"])
+    
     # Data Availability screening should be generated
     assert (
         result["data_screening"]
@@ -38,4 +34,42 @@ def test_case_13_mandated_data_missing_identifier():
     assert (
         result["das_text"]
         is not None
+    )
+        data_screening = result["data_screening"]
+
+    # Sequencing data should trigger mandated-data screening
+    assert (
+        data_screening["applicability"]
+        == "MANDATED"
+    )
+
+    # A Data Availability Statement should be detected
+    assert (
+        data_screening["statement_detected"]
+        is True
+    )
+
+    # GEO should be recognized as a public repository
+    assert (
+        data_screening["repositories"]
+        == ["geo"]
+    )
+
+    assert (
+        "public_repository"
+        in data_screening["access_type"]
+    )
+
+    # No accession number or persistent identifier
+    # was provided in the manuscript
+    assert (
+        data_screening["persistent_identifiers"]
+        == {}
+    )
+
+    # Mandated data in GEO without an identifier
+    # should require editorial review
+    assert (
+        data_screening["status"]
+        == "REVIEW"
     )
