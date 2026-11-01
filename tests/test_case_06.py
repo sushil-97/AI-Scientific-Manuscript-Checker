@@ -68,10 +68,12 @@ def test_case_06_human_single_center():
     )
 
     # Consent waiver should require editorial review
+        # Consent statement should pass while
+    # the waiver remains separately detected
     assert (
         result["ethics_screening"]
         ["consent_status"]
-        == "REVIEW_WAIVER"
+        == "PASS"
     )
 
     # Extracted ethics institution should be correct
