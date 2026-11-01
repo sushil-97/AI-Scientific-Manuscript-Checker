@@ -35,7 +35,7 @@ def test_case_13_mandated_data_missing_identifier():
         result["das_text"]
         is not None
     )
-        data_screening = result["data_screening"]
+    data_screening = result["data_screening"]
 
     # Sequencing data should trigger mandated-data screening
     assert (
