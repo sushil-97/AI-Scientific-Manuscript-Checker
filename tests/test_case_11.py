@@ -23,6 +23,14 @@ def test_case_11_ml_nlp():
     result = analyze_manuscript_text(
         manuscript_text
     )
+    print("\n===== CASE 11 DATA SCREENING =====")
+    print(result["data_screening"])
+
+    print("\n===== CASE 11 REPRODUCIBILITY =====")
+    print(result["reproducibility_report"])
+
+    print("\n===== CASE 11 REPOSITORY / DAS =====")
+    print("DAS:", result["das_text"])
 
     # Computational study should be detected
     assert (
