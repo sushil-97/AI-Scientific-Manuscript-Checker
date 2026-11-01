@@ -23,7 +23,11 @@ def test_case_13_mandated_data_missing_identifier():
     result = analyze_manuscript_text(
         manuscript_text
     )
+    print("\n===== CASE 13 DAS TEXT =====")
+    print(result["das_text"])
 
+    print("\n===== CASE 13 DATA SCREENING =====")
+    print(result["data_screening"])
     # Data Availability screening should be generated
     assert (
         result["data_screening"]
