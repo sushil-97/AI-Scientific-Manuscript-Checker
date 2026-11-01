@@ -4808,6 +4808,12 @@ def analyze_manuscript_text(full_text):
         parsed = parse_pvalue(finding["value"])
         finding.update(parsed)
     statistical_report = build_statistical_consistency_report(sections, pvalue_findings)
+    print("\n=== STATISTICAL DEBUG ===")
+
+    for item in statistical_report.get("claim_pvalue_checks", []):
+        print(item)
+    
+    print("=== END DEBUG ===\n")
     print("✓ Statistical Consistency Screening Completed")
 
     # 9. Sample Size Consistency
