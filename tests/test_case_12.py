@@ -44,6 +44,7 @@ def test_case_12_sample_size_attrition():
         == "APPLICABLE"
     )
 
+    
     # Verify important participant-count roles
     extracted_counts = {
         (
