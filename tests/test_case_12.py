@@ -23,6 +23,11 @@ def test_case_12_sample_size_attrition():
     result = analyze_manuscript_text(
         manuscript_text
     )
+    print("\n===== CASE 12 SAMPLE SIZE FINDINGS =====")
+    print(result["sample_size_findings"])
+
+    print("\n===== CASE 12 SAMPLE SIZE SCREENING =====")
+    print(result["sample_size_screening"])
 
     # Sample-size findings should be extracted
     assert len(
