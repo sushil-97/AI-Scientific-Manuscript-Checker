@@ -23,8 +23,7 @@ def test_case_01_simulation():
     result = analyze_manuscript_text(
         manuscript_text
     )
-    print("\n===== CASE 01 REPRODUCIBILITY =====")
-    print(result["reproducibility_report"])
+    
 
     # Computational study should be detected
     assert (
@@ -54,4 +53,41 @@ def test_case_01_simulation():
         result["reproducibility_report"]
         ["applicability"]
         == "APPLICABLE"
+    )
+        # Simulation reproducibility should require review
+    assert (
+        result["reproducibility_report"]
+        ["status"]
+        == "REVIEW"
+    )
+
+    # Expected reproducibility information
+    # should be detected
+    assert set(
+        result["reproducibility_report"]
+        ["reported"]
+    ) == {
+        "initial_conditions",
+        "model_parameters",
+        "software_environment"
+    }
+
+    # Missing simulation reproducibility details
+    # should be identified
+    assert set(
+        result["reproducibility_report"]
+        ["not_detected"]
+    ) == {
+        "numerical_solver",
+        "parameter_bounds",
+        "simulation_setup",
+        "tolerance_settings"
+    }
+
+    # No indicators are explicitly reported
+    # as unavailable
+    assert (
+        result["reproducibility_report"]
+        ["explicitly_unavailable"]
+        == []
     )
