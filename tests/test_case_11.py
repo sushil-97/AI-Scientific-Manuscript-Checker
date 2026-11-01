@@ -23,14 +23,7 @@ def test_case_11_ml_nlp():
     result = analyze_manuscript_text(
         manuscript_text
     )
-    print("\n===== CASE 11 DATA SCREENING =====")
-    print(result["data_screening"])
-
-    print("\n===== CASE 11 REPRODUCIBILITY =====")
-    print(result["reproducibility_report"])
-
-    print("\n===== CASE 11 REPOSITORY / DAS =====")
-    print("DAS:", result["das_text"])
+    
 
     # Computational study should be detected
     assert (
@@ -54,4 +47,64 @@ def test_case_11_ml_nlp():
         result["computational_subtype"]
         ["subtype"]
         == "ML_NLP"
+    )
+        # Data Availability Statement should be detected
+    assert (
+        result["data_screening"]
+        ["statement_detected"]
+        is True
+    )
+
+    # GitHub should be recognized as a repository
+    assert (
+        result["data_screening"]
+        ["repositories"]
+        == ["github"]
+    )
+
+    # Repository access should be classified as public
+    assert (
+        "public_repository"
+        in result["data_screening"]
+        ["access_type"]
+    )
+
+    # Data availability should pass screening
+    assert (
+        result["data_screening"]
+        ["status"]
+        == "PASS_CANDIDATE"
+    )
+
+    # Computational reproducibility should apply
+    assert (
+        result["reproducibility_report"]
+        ["applicability"]
+        == "APPLICABLE"
+    )
+
+    # Required ML/NLP reproducibility indicators
+    # should all be detected
+    assert set(
+        result["reproducibility_report"]
+        ["reported"]
+    ) == {
+        "code_availability",
+        "evaluation_metrics",
+        "software_environment"
+    }
+
+    # No required reproducibility indicators
+    # should be missing
+    assert (
+        result["reproducibility_report"]
+        ["not_detected"]
+        == []
+    )
+
+    # Reproducibility screening should pass
+    assert (
+        result["reproducibility_report"]
+        ["status"]
+        == "PASS_CANDIDATE"
     )
