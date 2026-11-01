@@ -1,0 +1,21 @@
+Statistical Discrepancy Study
+
+Abstract
+
+This study evaluated the effectiveness of an experimental intervention.
+
+Methods
+
+A total of 150 participants were included in the study.
+
+Statistical significance was defined as p < 0.05.
+
+Results
+
+A total of 150 participants were included in the final analysis.
+
+The intervention produced a statistically significant improvement compared with the control group (p = 0.21).
+
+Data Availability
+
+The data generated during this study are available from the corresponding author on reasonable request.
