@@ -1,0 +1,23 @@
+Experimental Animal Study
+
+Abstract
+
+This experimental study investigated the biological response to a treatment using a mouse model.
+
+Methods
+
+Twenty-four mice were included in the animal experiment.
+
+The animals were housed under controlled laboratory conditions and were randomly assigned to experimental and control groups.
+
+All animal procedures were reviewed and approved by the Institutional Animal Care and Use Committee.
+
+Following completion of the experiment, the mice were euthanized according to the approved experimental protocol.
+
+Results
+
+A total of 24 mice completed the experimental protocol.
+
+Data Availability
+
+The data generated during this study are available from the corresponding author on reasonable request.
