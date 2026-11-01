@@ -3573,17 +3573,20 @@ def classify_sample_size_role(context, expression=None):
     # --------------------------------------------------
     # Fallback
     # --------------------------------------------------
-
+    
+    # When a specific sample-size expression was located,
+    # do not assign a role based on unrelated keywords
+    # elsewhere in the sentence.
+    if expression_start is not None:
+        return "UNSPECIFIED"
+    
+    # Preserve sentence-level classification when no
+    # specific expression was supplied or located.
     for role, patterns in role_patterns.items():
-
         for pattern in patterns:
-
-            if re.search(
-                pattern,
-                context_lower
-            ):
+            if re.search(pattern, context_lower):
                 return role
-
+    
     return "UNSPECIFIED"
 
 
