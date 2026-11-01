@@ -4158,8 +4158,24 @@ def evaluate_sample_size_consistency(
             "between the enrolled and final participant populations."
         )
      
-    elif allocation_consistency is not None:
-
+    elif (
+        allocation_consistency is not None
+        and allocation_consistency["result"] == "POTENTIAL_DISCREPANCY"
+    ):
+    
+        status = "REVIEW"
+    
+        reason = (
+            "A potential participant allocation discrepancy was detected: "
+            "the reported allocation across two study arms does not "
+            "match the randomized participant total."
+        )
+    
+    elif (
+        allocation_consistency is not None
+        and allocation_consistency["result"] == "CONSISTENT"
+    ):
+    
         status = "PASS_CANDIDATE"
     
         reason = (
