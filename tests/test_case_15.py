@@ -23,11 +23,40 @@ def test_case_15_durc_positive():
     result = analyze_manuscript_text(
         manuscript_text
     )
-    print("\n===== CASE 15 DURC SCREENING =====")
-    print(result["durc_screening"])
 
     # DURC screening should be generated
     assert (
         result["durc_screening"]
         is not None
+    )
+    durc_screening = result["durc_screening"]
+
+    # Biological-agent evidence should be detected
+    assert (
+        durc_screening["biological_agent_detected"]
+        is True
+    )
+
+    # Experimental-action evidence should be detected
+    assert (
+        durc_screening["experimental_action_detected"]
+        is True
+    )
+
+    # Risk-context evidence should be detected
+    assert (
+        durc_screening["risk_context_detected"]
+        is True
+    )
+
+    # All three signals should trigger potential DURC screening
+    assert (
+        durc_screening["classification"]
+        == "POTENTIAL_DURC"
+    )
+
+    # Potential DURC content should require specialist review
+    assert (
+        durc_screening["status"]
+        == "REVIEW"
     )
