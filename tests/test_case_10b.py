@@ -61,7 +61,7 @@ def test_case_10b_statistical_discrepancy():
         statistical_report["status"]
         == "DISCREPANCY"
     )
-        overall_decision = result["overall_decision"]
+    overall_decision = result["overall_decision"]
 
     # A module-level statistical discrepancy must
     # propagate to the manuscript-level decision
