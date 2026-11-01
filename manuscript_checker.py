@@ -3472,9 +3472,18 @@ def classify_sample_size_role(context, expression=None):
 
         "RANDOMIZED": [
             r'\brandomi[sz]ed\b',
+            r'\brandomi[sz]ation\b',
             r'\brandomly assigned\b',
             r'\brandomly allocated\b',
             r'\ballocated at random\b'
+        ],
+        
+        "ALLOCATED": [
+            r'\ballocated to\b',
+            r'\ballocated into\b',
+            r'\ballocated to each\b',
+            r'\bassigned to each\b',
+            r'\bassigned to (?:the )?(?:treatment|control|intervention)\s+(?:group|arm)\b'
         ],
 
         "COMPLETED": [
