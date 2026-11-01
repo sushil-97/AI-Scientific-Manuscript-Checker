@@ -45,3 +45,32 @@ def test_case_08_systematic_review():
         ["consent_status"]
         == "NOT_APPLICABLE"
     )
+        # Negative wording should not classify this
+    # systematic review as a human-participant study
+    assert (
+        result["study_characters"]
+        ["human_study"]
+        ["detected"]
+        is False
+    )
+
+    # Center screening should not be triggered
+    assert (
+        result["center_screening"]
+        ["status"]
+        == "NOT_TRIGGERED"
+    )
+
+    # Sample-size consistency should not be triggered
+    assert (
+        result["sample_size_screening"]
+        ["status"]
+        == "NOT_TRIGGERED"
+    )
+
+    # Computational reproducibility should not be triggered
+    assert (
+        result["reproducibility_report"]
+        ["status"]
+        == "NOT_TRIGGERED"
+    )
