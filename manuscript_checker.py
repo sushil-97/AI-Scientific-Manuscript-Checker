@@ -2831,6 +2831,7 @@ def detect_significance_claims(text):
             r'\bnonsignificant\b',
 
             r'\bno\s+statistically\s+significant\b',
+            r'\bno\s+statically\s+significant\b',
 
             r'\bno\s+significant\s+difference\b'
         ]
