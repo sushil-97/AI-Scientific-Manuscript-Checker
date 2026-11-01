@@ -3677,6 +3677,27 @@ def detect_two_arm_allocation_consistency(findings):
                 "allocated_total": allocated_total,
                 "result": "CONSISTENT"
             }
+        
+        # A discrepancy requires a randomized count from
+        # the same reported participant-flow context.
+        same_context_randomized = {
+            randomized_finding["numeric_value"]
+            for randomized_finding in findings
+            if randomized_finding["role"] == "RANDOMIZED"
+            and randomized_finding["section"] == finding["section"]
+            and randomized_finding["context"] == finding["context"]
+        }
+        
+        if len(same_context_randomized) == 1:
+            randomized_total = next(iter(same_context_randomized))
+        
+            return {
+                "randomized": randomized_total,
+                "allocated_per_arm": allocated_per_arm,
+                "number_of_arms": 2,
+                "allocated_total": allocated_total,
+                "result": "POTENTIAL_DISCREPANCY"
+            }
 
     return None
  
