@@ -23,11 +23,7 @@ def test_case_10_statistical_consistency():
     result = analyze_manuscript_text(
         manuscript_text
     )
-    print("\n===== CASE 10 P-VALUE FINDINGS =====")
-    print(result["pvalue_findings"])
-
-    print("\n===== CASE 10 STATISTICAL REPORT =====")
-    print(result["statistical_report"])
+   
 
     # P-values should be detected
     assert len(
