@@ -23,6 +23,18 @@ def test_case_12b_sample_size_discrepancy():
     result = analyze_manuscript_text(
         manuscript_text
     )
+    
+
+    # Sample-size findings should be extracted
+    assert len(
+        result["sample_size_findings"]
+    ) >= 1
+
+    # Sample-size screening should be generated
+    assert (
+        result["sample_size_screening"]
+        is not None
+    )
     sample_findings = result["sample_size_findings"]
     sample_screening = result["sample_size_screening"]
 
@@ -63,15 +75,4 @@ def test_case_12b_sample_size_discrepancy():
     assert (
         sample_screening["status"]
         == "REVIEW"
-    )
-
-    # Sample-size findings should be extracted
-    assert len(
-        result["sample_size_findings"]
-    ) >= 1
-
-    # Sample-size screening should be generated
-    assert (
-        result["sample_size_screening"]
-        is not None
     )
