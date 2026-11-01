@@ -1,0 +1,25 @@
+Multi-Center Randomized Clinical Study
+
+Abstract
+
+This randomized clinical study evaluated the effectiveness of an intervention across multiple study centers.
+
+Methods
+
+A total of 200 participants were enrolled and randomly assigned to intervention and control groups.
+
+Statistical significance was defined as p < 0.05.
+
+Results
+
+A total of 200 participants were included in the final analysis.
+
+The intervention group showed a significant improvement compared with the control group (p = 0.032).
+
+A second outcome was also statistically significant (p = 0.018).
+
+No significant difference was observed for the secondary safety outcome (p = 0.21).
+
+Data Availability
+
+The data generated during this study are available from the corresponding author on reasonable request.
