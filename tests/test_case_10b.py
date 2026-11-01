@@ -23,6 +23,11 @@ def test_case_10b_statistical_discrepancy():
     result = analyze_manuscript_text(
         manuscript_text
     )
+    print("\n===== CASE 10B P-VALUE FINDINGS =====")
+    print(result["pvalue_findings"])
+
+    print("\n===== CASE 10B STATISTICAL REPORT =====")
+    print(result["statistical_report"])
 
     # Basic smoke checks first
     assert len(
