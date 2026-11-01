@@ -346,12 +346,13 @@ SAMPLE_SIZE_PATTERNS = [
     # Pediatric / neonatal participant terms
     rf'\b{SAMPLE_NUMBER_PATTERN}\s+newborns?\b',
     rf'\b{SAMPLE_NUMBER_PATTERN}\s+babies\b',
+    rf'\b{SAMPLE_NUMBER_PATTERN}\s+infants?\b',
 
     rf'\bsample\s+of\s+{SAMPLE_NUMBER_PATTERN}\b',
 
     rf'\btotal\s+of\s+{SAMPLE_NUMBER_PATTERN}\s+'
     rf'(?:patients?|participants?|subjects?|individuals?|'
-    rf'newborns?|babies)\b'
+    rf'newborns?|babies|infants?)\b'
 ]
 Sample_size_roles = {'ANALYZED': ['analyzed', 'analysed', 'included in the analysis', 'included in the final analysis'],
  'COMPLETED': ['completed the study', 'completed follow-up', 'completed treatment'],
