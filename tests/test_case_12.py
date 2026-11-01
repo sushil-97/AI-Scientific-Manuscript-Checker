@@ -23,11 +23,46 @@ def test_case_12_sample_size_attrition():
     result = analyze_manuscript_text(
         manuscript_text
     )
-    print("\n===== CASE 12 SAMPLE SIZE FINDINGS =====")
-    print(result["sample_size_findings"])
+    sample_findings = result["sample_size_findings"]
+    sample_screening = result["sample_size_screening"]
 
-    print("\n===== CASE 12 SAMPLE SIZE SCREENING =====")
-    print(result["sample_size_screening"])
+    # Sample-size screening should be applicable
+    assert (
+        sample_screening["applicability"]
+        == "APPLICABLE"
+    )
+
+    # Verify important participant-count roles
+    extracted_counts = {
+        (
+            finding["numeric_value"],
+            finding["role"]
+        )
+        for finding in sample_findings
+    }
+
+    assert (120, "ENROLLED") in extracted_counts
+    assert (12, "EXCLUDED") in extracted_counts
+    assert (10, "EXCLUDED") in extracted_counts
+    assert (98, "ANALYZED") in extracted_counts
+    assert (98, "COMPLETED") in extracted_counts
+
+    # Enrollment-to-analysis difference should be treated
+    # as participant flow, not an automatic discrepancy
+    assert sample_screening["participant_flow"] == [
+        {
+            "enrolled_values": [120],
+            "analyzed_values": [98],
+            "interpretation": "INFORMATIONAL_ONLY"
+        }
+    ]
+
+    # Current logic requests review because there is not
+    # enough directly comparable cross-section information
+    assert (
+        sample_screening["status"]
+        == "REVIEW"
+    )
 
     # Sample-size findings should be extracted
     assert len(
