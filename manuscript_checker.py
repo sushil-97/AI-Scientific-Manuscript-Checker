@@ -1716,7 +1716,8 @@ def detect_data_availability_statement(sections):
 
         r"\bavailable (?:from|upon) reasonable request\b",
 
-        r"\bavailable (?:on|upon) request\b"
+        r"\bavailable (?:on|upon) request\b",
+        r"\bdata (?:will|shall) be made available\b"
     ]
 
     for section_name, section_text in sections.items():
