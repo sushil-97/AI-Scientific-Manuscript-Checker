@@ -23,6 +23,8 @@ def test_case_01_simulation():
     result = analyze_manuscript_text(
         manuscript_text
     )
+    print("\n===== CASE 01 REPRODUCIBILITY =====")
+    print(result["reproducibility_report"])
 
     # Computational study should be detected
     assert (
