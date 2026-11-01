@@ -23,11 +23,28 @@ def test_case_14_cam_acupuncture():
     result = analyze_manuscript_text(
         manuscript_text
     )
-    print("\n===== CASE 14 CAM SCREENING =====")
-    print(result["cam_screening"])
-
+    
     # CAM screening should be generated
     assert (
         result["cam_screening"]
         is not None
+    )
+    cam_screening = result["cam_screening"]
+
+    # CAM content should be detected
+    assert (
+        cam_screening["cam_detected"]
+        is True
+    )
+
+    # Acupuncture should be classified correctly
+    assert (
+        cam_screening["categories"]
+        == ["acupuncture"]
+    )
+
+    # CAM content should require editorial review
+    assert (
+        cam_screening["status"]
+        == "REVIEW"
     )
