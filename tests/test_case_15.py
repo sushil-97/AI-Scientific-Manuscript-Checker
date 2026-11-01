@@ -23,6 +23,8 @@ def test_case_15_durc_positive():
     result = analyze_manuscript_text(
         manuscript_text
     )
+    print("\n===== CASE 15 DURC SCREENING =====")
+    print(result["durc_screening"])
 
     # DURC screening should be generated
     assert (
