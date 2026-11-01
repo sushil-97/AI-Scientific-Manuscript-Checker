@@ -23,6 +23,8 @@ def test_case_10b_statistical_discrepancy():
     result = analyze_manuscript_text(
         manuscript_text
     )
+    print("\n===== CASE 10B OVERALL DECISION =====")
+    print(result["overall_decision"])
     
 
     # Basic smoke checks first
