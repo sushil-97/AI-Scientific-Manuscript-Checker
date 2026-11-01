@@ -11,8 +11,10 @@ SECTION_PATTERNS = {'abstract': ['^abstract$'],
  'competing_interests': ['^(?:\\d+\\.?\\s*)?(competing interests|conflict of interest|conflicts of '
                          'interest)$'],
  'conclusion': ['^(?:\\d+\\.?\\s*)?(conclusion|conclusions)$'],
- 'data_availability': [
-     r'^(?:\d+\.?\s*)?(data availability|availability of data and materials|code and data availability)$'
+ "data_availability": [
+     r"^\s*data availability\s*:\s*(.*)$",
+     r"^\s*availability of data\s*:\s*(.*)$",
+     r"^\s*availability of data and materials\s*:\s*(.*)$"
  ],
  'discussion': ['^(?:\\d+\\.?\\s*)?discussion$'],
  'ethics': ['^(?:\\d+\\.?\\s*)?(ethics|ethics statement|ethical approval|ethics approval)$'],
