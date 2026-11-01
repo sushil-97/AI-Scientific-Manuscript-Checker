@@ -8,8 +8,40 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from manuscript_checker import analyze_manuscript_text
 
 
-def test_import():
+def test_case_08_systematic_review():
 
-    assert callable(
-        analyze_manuscript_text
+    fixture_path = (
+        Path(__file__).parent
+        / "fixtures"
+        / "case_08_systematic_review.txt"
+    )
+
+    manuscript_text = fixture_path.read_text(
+        encoding="utf-8"
+    )
+
+    result = analyze_manuscript_text(
+        manuscript_text
+    )
+
+    # Systematic review should be detected
+    assert (
+        result["study_characters"]
+        ["systematic_review"]
+        ["detected"]
+        is True
+    )
+
+    # Ethics should not be required
+    assert (
+        result["ethics_screening"]
+        ["ethics_status"]
+        == "NOT_APPLICABLE"
+    )
+
+    # Consent should not be required
+    assert (
+        result["ethics_screening"]
+        ["consent_status"]
+        == "NOT_APPLICABLE"
     )
