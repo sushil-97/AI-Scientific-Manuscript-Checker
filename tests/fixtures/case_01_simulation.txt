@@ -1,0 +1,27 @@
+Computational Simulation Study
+
+Abstract
+
+This computational study used a simulation model to investigate the spread of an infectious disease.
+
+A compartmental SIR model was used to simulate disease transmission under different scenarios.
+
+Methods
+
+The simulation was implemented in Python.
+
+The model included susceptible, infected, and recovered populations.
+
+Initial conditions were defined for the simulated population, and model parameters included transmission and recovery rates.
+
+Multiple simulation scenarios were evaluated by varying the model parameters.
+
+The numerical equations were solved computationally to generate the simulated epidemic trajectories.
+
+Results
+
+The simulation demonstrated differences in epidemic dynamics across the evaluated parameter settings.
+
+Data Availability
+
+The simulation results generated during this study are available from the corresponding author on reasonable request.
