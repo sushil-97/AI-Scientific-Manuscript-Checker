@@ -3033,30 +3033,24 @@ def build_statistical_consistency_report(
     # 2. Claim vs p-value
     # ---------------------------------
 
+        # ---------------------------------
+    # 2. Claim vs p-value
+    # ---------------------------------
+
     claim_pvalue_checks = []
 
-    # Check Abstract claims against Abstract p-values
-    for pvalue in abstract_pvalues:
+    # Evaluate each p-value using the claim
+    # detected in its own local context.
+    for pvalue in (
+        abstract_pvalues
+        + results_pvalues
+    ):
 
-        for claim in abstract_claims:
+        local_claims = detect_significance_claims(
+            pvalue.get("context", "")
+        )
 
-            check = evaluate_claim_against_pvalue(
-                claim["claim"],
-                pvalue["numeric_value"],
-                effective_threshold
-            )
-
-            claim_pvalue_checks.append({
-                "section": "abstract",
-                "claim": claim["claim"],
-                "pvalue": pvalue["numeric_value"],
-                "result": check
-            })
-
-    # Check Results claims against Results p-values
-    for pvalue in results_pvalues:
-
-        for claim in results_claims:
+        for claim in local_claims:
 
             check = evaluate_claim_against_pvalue(
                 claim["claim"],
@@ -3065,7 +3059,7 @@ def build_statistical_consistency_report(
             )
 
             claim_pvalue_checks.append({
-                "section": "results",
+                "section": pvalue["section"],
                 "claim": claim["claim"],
                 "pvalue": pvalue["numeric_value"],
                 "result": check
