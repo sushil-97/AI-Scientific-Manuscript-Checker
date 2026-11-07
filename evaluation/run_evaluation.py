@@ -60,9 +60,9 @@ for case in cases:
 
         if (
             screening_flow is not None
-            and screening_flow.get("screened") == 69
-            and screening_flow.get("randomized") == 52
-            and screening_flow.get("difference") == 17
+            and screening_flow.get("screened") == int(case["expected_screened"])
+            and screening_flow.get("randomized") == int(case["expected_randomized"])
+            and screening_flow.get("difference") == int(case["expected_difference"])
             and screening_flow.get("interpretation") == "INFORMATIONAL_ONLY"
         ):
             actual = "INFORMATIONAL_ONLY"
