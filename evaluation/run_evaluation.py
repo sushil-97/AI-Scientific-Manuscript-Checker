@@ -19,18 +19,11 @@ with open(CSV_PATH, "r", encoding="utf-8") as file:
 
 print("Evaluation cases loaded:", len(cases))
 
-print("DEBUG: CSV headers:", list(cases[0].keys()), flush=True)
-
-print("DEBUG: All case IDs:", [
-    repr(case["case_id"])
-    for case in cases
-], flush=True)
 
 for case in cases:
     case_id = case["case_id"]
     expected = case["expected_result"]
 
-    print(f"DEBUG: Processing case {case_id}", flush=True)
 
     manuscript_path = MANUSCRIPT_DIR / f"{case_id}.txt"
     print(
@@ -45,10 +38,7 @@ for case in cases:
         continue
 
     result = analyze_manuscript(str(manuscript_path))
-    print(
-        f"DEBUG: Analysis completed for {case_id}",
-        flush=True
-    )
+    
 
     comparisons = result[
         "sample_size_screening"
