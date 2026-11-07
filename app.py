@@ -368,8 +368,8 @@ st.info(
 st.header("Upload Manuscript")
 
 uploaded_file = st.file_uploader(
-    "Upload a scientific manuscript in PDF format",
-    type=["pdf"]
+    "Upload a scientific manuscript",
+    type=["pdf", "docx","txt"]
 )
 
 
