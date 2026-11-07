@@ -94,3 +94,40 @@ Data are available upon reasonable request.
         and comparison["sections"].get("results") == [120]
         for comparison in comparisons
     )
+
+def test_current_study_discrepancy_with_prior_study_reference():
+
+    manuscript = """
+Title
+Synthetic Randomized Clinical Trial
+
+Abstract
+A total of 120 patients were randomized.
+
+Methods
+This randomized clinical trial included human participants.
+
+Results
+A previous clinical trial randomized 85 patients.
+In the present study, 115 patients were randomized.
+
+Discussion
+The findings were compared with earlier research.
+
+Data Availability
+Data are available upon reasonable request.
+"""
+
+    result = analyze_manuscript_text(manuscript)
+
+    comparisons = result[
+        "sample_size_screening"
+    ]["same_role_comparisons"]
+
+    assert any(
+        comparison["role"] == "RANDOMIZED"
+        and comparison["result"] == "POTENTIAL_DISCREPANCY"
+        and comparison["sections"].get("abstract") == [120]
+        and comparison["sections"].get("results") == [115]
+        for comparison in comparisons
+    )
