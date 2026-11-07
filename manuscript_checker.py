@@ -3614,6 +3614,28 @@ def classify_sample_size_role(context, expression=None):
     
     return "UNSPECIFIED"
 
+    
+
+
+def is_prior_study_reference(context):
+    """
+    Detect explicit references to earlier studies.
+    """
+
+    context_lower = context.lower()
+
+    prior_study_patterns = [
+        r'\ba previous (?:clinical )?trial\b',
+        r'\ba previous study\b',
+        r'\ba prior study\b',
+        r'\ban earlier study\b'
+    ]
+
+    return any(
+        re.search(pattern, context_lower)
+        for pattern in prior_study_patterns
+    )
+
 
 def add_sample_size_roles(findings):
 
