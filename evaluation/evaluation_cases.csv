@@ -4,3 +4,4 @@ EVAL_002,Abstract and Results randomized counts differ,randomized_consistency,PO
 EVAL_003,Previous study count alongside consistent current study,randomized_consistency,CONSISTENT,,,
 EVAL_004,Previous study count alongside genuine current study discrepancy,randomized_consistency,POTENTIAL_DISCREPANCY,,,
 EVAL_005,Screened count greater than randomized count,screening_flow,INFORMATIONAL_ONLY,69,52,17
+EVAL_006,Screened count smaller than randomized count,screening_flow,POTENTIAL_DISCREPANCY,45,52,-7
