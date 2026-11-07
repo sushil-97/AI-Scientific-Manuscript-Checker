@@ -1,0 +1,6 @@
+case_id,scenario,expected_result
+EVAL_001,Consistent randomized counts,CONSISTENT
+EVAL_002,Abstract and Results randomized counts differ,POTENTIAL_DISCREPANCY
+EVAL_003,Previous study count alongside consistent current study,CONSISTENT
+EVAL_004,Previous study count alongside genuine current study discrepancy,POTENTIAL_DISCREPANCY
+EVAL_005,Screened count greater than randomized count,INFORMATIONAL_ONLY
