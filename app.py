@@ -725,14 +725,7 @@ if uploaded_file is not None:
                     allocation = result["sample_size_screening"].get(
                         "allocation_consistency"
                     )
-                    # TEMPORARY UI TEST — REMOVE AFTER VERIFICATION
-                    allocation = {
-                        "randomized": 52,
-                        "allocated_per_arm": 25,
-                        "number_of_arms": 2,
-                        "allocated_total": 50,
-                        "result": "POTENTIAL_DISCREPANCY"
-                    }
+                    
                     
                     if allocation is not None:
                     
