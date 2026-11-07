@@ -87,12 +87,12 @@ for case in cases:
     status = "PASS" if actual == expected else "FAIL"
     if status == "FAIL":
         failed_cases.append(case_id)
-        evaluation_results.append({
+    evaluation_results.append({
             "case_id": case_id,
             "expected": expected,
             "actual": actual,
             "status": status
-        })
+    })
 
     print(
         f"{case_id} | Expected: {expected} | "
