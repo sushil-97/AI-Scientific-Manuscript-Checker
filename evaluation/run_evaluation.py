@@ -19,7 +19,7 @@ with open(CSV_PATH, "r", encoding="utf-8") as file:
 
 print("Evaluation cases loaded:", len(cases))
 
-
+failed_cases = []
 for case in cases:
     case_id = case["case_id"]
     expected = case["expected_result"]
@@ -83,9 +83,18 @@ for case in cases:
         actual = "NOT_EVALUATED"
 
     status = "PASS" if actual == expected else "FAIL"
+    if status == "FAIL":
+        failed_cases.append(case_id)
 
     print(
         f"{case_id} | Expected: {expected} | "
         f"Actual: {actual} | {status}",
         flush=True
     )
+
+if failed_cases:
+    raise SystemExit(
+        f"Evaluation failed for: {', '.join(failed_cases)}"
+    )
+
+print("All evaluated manuscripts passed.")
