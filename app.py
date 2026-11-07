@@ -765,9 +765,22 @@ if uploaded_file is not None:
                                 "does not match the randomized participant count. "
                                 "Editorial verification is recommended."
                             )
+                            
+                        # Display supporting manuscript evidence
+                        evidence = allocation.get("evidence")
+                        
+                        if evidence:
+                            st.markdown("**Manuscript Evidence**")
+                        
+                            st.write(
+                                f"**Section:** {evidence['section'].title()}"
+                            )
+                        
+                            st.info(evidence["text"])
                     
                         with st.expander("View allocation evidence (JSON)"):
                             st.json(allocation)
+
                     
                     else:
                         st.info(
