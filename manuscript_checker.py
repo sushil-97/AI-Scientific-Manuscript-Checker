@@ -3635,7 +3635,58 @@ def is_prior_study_reference(context):
         re.search(pattern, context_lower)
         for pattern in prior_study_patterns
     )
+ 
+def is_prior_study_finding(finding):
+    """
+    Determine whether a specific participant count
+    belongs to a previous study.
 
+    Conservative first version: supports explicit
+    prior/current clauses separated by contrast words.
+    """
+
+    context = finding["context"].lower()
+    value = finding["numeric_value"]
+
+    # Split sentences that contrast previous and current studies.
+    clauses = re.split(
+        r'\b(?:whereas|while|however)\b',
+        context
+    )
+
+    # Only attribute a count when it occurs in one
+    # unambiguous clause.
+    matching_clauses = [
+        clause
+        for clause in clauses
+        if re.search(rf'\b{value}\b', clause)
+    ]
+
+    if len(matching_clauses) != 1:
+        return False
+
+    clause = matching_clauses[0]
+
+    prior_patterns = [
+        r'\bprevious (?:clinical )?trial\b',
+        r'\bprevious study\b',
+        r'\bprior study\b',
+        r'\bearlier study\b'
+    ]
+
+    current_patterns = [
+        r'\bpresent study\b',
+        r'\bcurrent study\b',
+        r'\bthis study\b'
+    ]
+
+    if any(re.search(p, clause) for p in current_patterns):
+        return False
+
+    return any(
+        re.search(p, clause)
+        for p in prior_patterns
+    )
 
 def add_sample_size_roles(findings):
 
@@ -3898,7 +3949,7 @@ def evaluate_sample_size_consistency(
             continue
         # Ignore explicit prior-study references when
         # comparing current-study participant counts.
-        if is_prior_study_reference(finding["context"]):
+        if is_prior_study_finding(finding):
             continue
     
         # ---------------------------------------------
