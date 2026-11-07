@@ -3839,13 +3839,15 @@ def detect_screening_to_randomization_flow(findings):
             randomized = randomized_finding["numeric_value"]
 
             if randomized > screened:
-                continue
-
+                interpretation = "POTENTIAL_DISCREPANCY"
+            else:
+                interpretation = "INFORMATIONAL_ONLY"
+            
             return {
                 "screened": screened,
                 "randomized": randomized,
                 "difference": screened - randomized,
-                "interpretation": "INFORMATIONAL_ONLY",
+                "interpretation": interpretation,
                 "evidence": {
                     "section": "results",
                     "text": screened_finding["context"]
