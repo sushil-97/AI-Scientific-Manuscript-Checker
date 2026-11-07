@@ -33,6 +33,12 @@ for case in cases:
     print(f"DEBUG: Processing case {case_id}", flush=True)
 
     manuscript_path = MANUSCRIPT_DIR / f"{case_id}.txt"
+    print(
+        f"DEBUG: {case_id} | "
+        f"Path: {manuscript_path} | "
+        f"Exists: {manuscript_path.exists()}",
+        flush=True
+    )
 
     if not manuscript_path.exists():
         print(f"{case_id} | SKIPPED: Manuscript not created yet")
