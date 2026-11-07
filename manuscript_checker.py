@@ -3675,7 +3675,11 @@ def detect_two_arm_allocation_consistency(findings):
                 "allocated_per_arm": allocated_per_arm,
                 "number_of_arms": 2,
                 "allocated_total": allocated_total,
-                "result": "CONSISTENT"
+                "result": "CONSISTENT",
+                "evidence": {
+                    "section": finding["section"],
+                    "text": finding["context"]
+                }
             }
         
         # A discrepancy requires a randomized count from
@@ -3696,7 +3700,11 @@ def detect_two_arm_allocation_consistency(findings):
                 "allocated_per_arm": allocated_per_arm,
                 "number_of_arms": 2,
                 "allocated_total": allocated_total,
-                "result": "POTENTIAL_DISCREPANCY"
+                "result": "POTENTIAL_DISCREPANCY",
+                "evidence": {
+                    "section": finding["section"],
+                    "text": finding["context"]
+                }
             }
 
     return None
