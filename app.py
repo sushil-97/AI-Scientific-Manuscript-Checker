@@ -380,7 +380,7 @@ uploaded_file = st.file_uploader(
 if uploaded_file is not None:
 
     st.success(
-        f"PDF ready for analysis: {uploaded_file.name}"
+        f"Manuscript ready for analysis: {uploaded_file.name}"
     )
 
     # --------------------------------------------------
@@ -406,9 +406,13 @@ if uploaded_file is not None:
             # SAVE TEMPORARY PDF
             # --------------------------------------------------
 
+            file_extension = os.path.splitext(
+                uploaded_file.name
+            )[1].lower()
+            
             with tempfile.NamedTemporaryFile(
                 delete=False,
-                suffix=".pdf"
+                suffix=file_extension
             ) as temp_file:
 
                 temp_file.write(
