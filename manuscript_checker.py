@@ -3896,6 +3896,10 @@ def evaluate_sample_size_consistency(
     
         if role == "UNSPECIFIED":
             continue
+        # Ignore explicit prior-study references when
+        # comparing current-study participant counts.
+        if is_prior_study_reference(finding["context"]):
+            continue
     
         # ---------------------------------------------
         # PLANNED sample sizes
