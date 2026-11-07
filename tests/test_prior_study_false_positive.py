@@ -29,6 +29,19 @@ Data are available upon reasonable request.
     sample_size = result["sample_size_screening"]
 
     comparisons = sample_size["same_role_comparisons"]
+    print("\n--- PRIOR STUDY DEBUG ---")
+
+    for finding in result["sample_size_findings"]:
+        print("Role:", finding["role"])
+        print("Value:", finding["numeric_value"])
+        print("Section:", finding["section"])
+        print("Context:", repr(finding["context"]))
+        print("-------------------------")
+    
+    print("\n--- SAME ROLE COMPARISONS ---")
+    
+    for comparison in comparisons:
+        print(comparison)
 
     assert not any(
         comparison["role"] == "RANDOMIZED"
