@@ -1,0 +1,20 @@
+
+Title
+Effectiveness of Treatment B in a Randomized Clinical Trial
+
+Abstract
+A total of 150 patients were randomized.
+
+Methods
+This randomized clinical trial enrolled adult human participants.
+A total of 150 patients were randomized into two treatment groups.
+
+Results
+A total of 142 patients were randomized.
+Both treatment groups received the assigned intervention.
+
+Discussion
+The findings suggest that Treatment B may be effective.
+
+Data Availability
+Data are available upon reasonable request.
