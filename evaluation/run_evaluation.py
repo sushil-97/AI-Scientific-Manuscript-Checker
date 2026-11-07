@@ -57,6 +57,12 @@ for case in cases:
         screening_flow = result[
             "sample_size_screening"
         ].get("screening_to_randomization")
+        if case_id == "EVAL_006":
+            print(
+                "DEBUG EVAL_006 screening_flow:",
+                screening_flow,
+                flush=True
+            )
 
         if (
             screening_flow is not None
