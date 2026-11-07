@@ -2,6 +2,7 @@ import os
 import re
 import fitz
 import nltk
+from docx import Document
 from nltk.tokenize import sent_tokenize
 
 # Ensure tokenizer resources are available
@@ -5253,6 +5254,20 @@ def analyze_manuscript(file_path):
             full_text = file.read()
 
         print("✓ TXT Manuscript Loaded")
+     
+    elif file_extension == ".docx":
+
+        document = Document(file_path)
+
+        paragraphs = [
+            paragraph.text
+            for paragraph in document.paragraphs
+            if paragraph.text.strip()
+        ]
+    
+        full_text = "\n".join(paragraphs)
+    
+        print("✓ DOCX Manuscript Loaded")
 
     else:
         raise ValueError(
