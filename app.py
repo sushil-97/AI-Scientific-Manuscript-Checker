@@ -727,7 +727,47 @@ if uploaded_file is not None:
                     )
                     
                     if allocation is not None:
-                        st.json(allocation)
+                    
+                        col1, col2, col3 = st.columns(3)
+                    
+                        col1.metric(
+                            "Randomized",
+                            allocation["randomized"]
+                        )
+                    
+                        col2.metric(
+                            "Participants per Arm",
+                            allocation["allocated_per_arm"]
+                        )
+                    
+                        col3.metric(
+                            "Allocated Total",
+                            allocation["allocated_total"]
+                        )
+                    
+                        st.write(
+                            f"**Allocation calculation:** "
+                            f"{allocation['allocated_per_arm']} × "
+                            f"{allocation['number_of_arms']} = "
+                            f"{allocation['allocated_total']}"
+                        )
+                    
+                        if allocation["result"] == "CONSISTENT":
+                            st.success(
+                                "The reported allocation matches "
+                                "the randomized participant total."
+                            )
+                    
+                        elif allocation["result"] == "POTENTIAL_DISCREPANCY":
+                            st.warning(
+                                "Potential discrepancy: the allocated total "
+                                "does not match the randomized participant count. "
+                                "Editorial verification is recommended."
+                            )
+                    
+                        with st.expander("View allocation evidence (JSON)"):
+                            st.json(allocation)
+                    
                     else:
                         st.info(
                             "No directly comparable two-arm allocation "
