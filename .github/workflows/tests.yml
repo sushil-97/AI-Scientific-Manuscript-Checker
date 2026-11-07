@@ -25,3 +25,6 @@ jobs:
       - name: Run tests
         run: |
           pytest -v 
+
+      - name: Run manuscript evaluation
+        run: python evaluation/run_evaluation.py
