@@ -3563,11 +3563,37 @@ def classify_sample_size_role(context, expression=None):
 
         if nearby_candidates:
 
+            # Prefer a role phrase immediately following the
+            # participant count when it describes that count.
+            following_role = re.match(
+                r'\s+(?:infants?|participants?|patients?|subjects?)'
+                r'\s+(?:were|was|underwent)\s+'
+                r'(?:assessed for eligibility|screened|'
+                r'randomi[sz]ed|randomi[sz]ation)',
+                context_lower[expression_end:]
+            )
+        
+            if following_role:
+        
+                matched_text = following_role.group()
+        
+                if re.search(
+                    r'randomi[sz]ed|randomi[sz]ation',
+                    matched_text
+                ):
+                    return "RANDOMIZED"
+        
+                if re.search(
+                    r'screened|assessed for eligibility',
+                    matched_text
+                ):
+                    return "SCREENED"
+        
             closest = min(
                 nearby_candidates,
                 key=lambda x: x["distance"]
             )
-
+        
             return closest["role"]
 
     # --------------------------------------------------
