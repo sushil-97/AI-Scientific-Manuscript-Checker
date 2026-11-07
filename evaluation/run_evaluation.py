@@ -69,9 +69,9 @@ for case in cases:
             and screening_flow.get("screened") == int(case["expected_screened"])
             and screening_flow.get("randomized") == int(case["expected_randomized"])
             and screening_flow.get("difference") == int(case["expected_difference"])
-            and screening_flow.get("interpretation") == "INFORMATIONAL_ONLY"
+            and screening_flow.get("interpretation") == expected
         ):
-            actual = "INFORMATIONAL_ONLY"
+            actual = screening_flow["interpretation"]
         else:
             actual = "NOT_EVALUATED"
 
