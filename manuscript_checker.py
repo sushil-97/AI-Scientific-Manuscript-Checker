@@ -3709,6 +3709,50 @@ def detect_two_arm_allocation_consistency(findings):
 
     return None
  
+def detect_screening_to_randomization_flow(findings):
+    """
+    Calculate the difference between screened and randomized
+    participants when both counts are explicitly reported
+    in the same Results-section context.
+
+    This is informational only, not a discrepancy judgment.
+    """
+
+    for screened_finding in findings:
+        if screened_finding["role"] != "SCREENED":
+            continue
+
+        if screened_finding["section"] != "results":
+            continue
+
+        for randomized_finding in findings:
+            if randomized_finding["role"] != "RANDOMIZED":
+                continue
+
+            if randomized_finding["section"] != "results":
+                continue
+
+            if screened_finding["context"] != randomized_finding["context"]:
+                continue
+
+            screened = screened_finding["numeric_value"]
+            randomized = randomized_finding["numeric_value"]
+
+            if randomized > screened:
+                continue
+
+            return {
+                "screened": screened,
+                "randomized": randomized,
+                "difference": screened - randomized,
+                "interpretation": "INFORMATIONAL_ONLY",
+                "evidence": {
+                    "section": "results",
+                    "text": screened_finding["context"]
+                }
+            }
+
+    return None
 
 def evaluate_sample_size_consistency(
     study_characteristics,
