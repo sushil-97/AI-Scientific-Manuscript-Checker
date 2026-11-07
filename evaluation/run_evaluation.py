@@ -1,4 +1,10 @@
 from pathlib import Path
+import sys
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
+from manuscript_checker import analyze_manuscript
 import csv
 
 # Locate evaluation files
@@ -19,7 +25,40 @@ for case in cases:
 
     manuscript_path = MANUSCRIPT_DIR / f"{case_id}.txt"
 
+    if not manuscript_path.exists():
+        print(f"{case_id} | SKIPPED: Manuscript not created yet")
+        continue
+
+    result = analyze_manuscript(str(manuscript_path))
+
+    comparisons = result[
+        "sample_size_screening"
+    ]["same_role_comparisons"]
+
+    randomized_comparisons = [
+        comparison
+        for comparison in comparisons
+        if comparison["role"] == "RANDOMIZED"
+    ]
+
+    if any(
+        comparison["result"] == "POTENTIAL_DISCREPANCY"
+        for comparison in randomized_comparisons
+    ):
+        actual = "POTENTIAL_DISCREPANCY"
+
+    elif any(
+        comparison["result"] == "CONSISTENT"
+        for comparison in randomized_comparisons
+    ):
+        actual = "CONSISTENT"
+
+    else:
+        actual = "NOT_EVALUATED"
+
+    status = "PASS" if actual == expected else "FAIL"
+
     print(
         f"{case_id} | Expected: {expected} | "
-        f"File exists: {manuscript_path.exists()}"
+        f"Actual: {actual} | {status}"
     )
