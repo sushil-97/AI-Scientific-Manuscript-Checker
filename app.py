@@ -722,6 +722,67 @@ if uploaded_file is not None:
                     )
                     st.markdown("**Randomization-to-Allocation Consistency**")
 
+                    st.divider()
+
+                    st.markdown("**Screening-to-Randomization Flow**")
+
+                    screening = result["sample_size_screening"].get(
+                        "screening_to_randomization"
+                    )
+
+                    if screening is not None:
+
+                        col1, col2, col3 = st.columns(3)
+
+                        col1.metric(
+                            "Screened",
+                            screening["screened"]
+                        )
+
+                        col2.metric(
+                            "Randomized",
+                            screening["randomized"]
+                        )
+
+                        col3.metric(
+                            "Difference",
+                            screening["difference"]
+                        )
+
+                        st.write(
+                            f"**Calculation:** "
+                            f"{screening['screened']} − "
+                            f"{screening['randomized']} = "
+                            f"{screening['difference']}"
+                        )
+
+                        st.info(
+                            "This is an informational participant-flow "
+                            "calculation. The difference represents "
+                            "participants screened but not randomized. "
+                            "It does not automatically indicate a discrepancy."
+                        )
+
+                        evidence = screening.get("evidence")
+
+                        if evidence:
+                            st.markdown("**Manuscript Evidence**")
+
+                            st.write(
+                                f"**Section:** {evidence['section'].title()}"
+                            )
+
+                            st.info(evidence["text"])
+
+                        with st.expander("View screening flow evidence (JSON)"):
+                            st.json(screening)
+
+                    else:
+                        st.info(
+                            "No directly comparable screening-to-randomization "
+                            "relationship was detected."
+                        )
+
                     allocation = result["sample_size_screening"].get(
                         "allocation_consistency"
                     )
