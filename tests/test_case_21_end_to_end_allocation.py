@@ -118,3 +118,44 @@ upon reasonable request.
     assert "Early and Late treatment arms" in evidence["text"]
 
     assert sample_size["status"] == "PASS_CANDIDATE"
+
+def test_end_to_end_screening_to_randomization():
+
+    manuscript = """
+Title
+Synthetic Randomized Clinical Trial
+
+Abstract
+This randomized clinical trial investigated two treatment groups.
+
+Methods
+This prospective randomized clinical trial included
+human participants.
+
+Results
+A total of 69 infants were assessed for eligibility and
+52 infants underwent randomization with 26 participants
+allocated to each of the Early and Late treatment arms.
+
+Discussion
+The study compared outcomes between two treatment arms.
+
+Data Availability
+Data are available upon reasonable request.
+"""
+
+    result = analyze_manuscript_text(manuscript)
+
+    sample_size = result["sample_size_screening"]
+
+    screening = sample_size["screening_to_randomization"]
+
+    assert screening is not None
+
+    assert screening["screened"] == 69
+    assert screening["randomized"] == 52
+    assert screening["difference"] == 17
+
+    assert screening["interpretation"] == "INFORMATIONAL_ONLY"
+
+    assert screening["evidence"]["section"] == "results"
