@@ -44,6 +44,16 @@ upon reasonable request.
     assert allocation["allocated_total"] == 50
 
     assert allocation["result"] == "POTENTIAL_DISCREPANCY"
+        # Verify manuscript evidence traceability
+    evidence = allocation["evidence"]
+
+    assert evidence["section"] == "results"
+
+    assert "52 infants underwent randomization" in evidence["text"]
+
+    assert "25 participants allocated" in evidence["text"]
+
+    assert "Early and Late treatment arms" in evidence["text"]
 
     assert sample_size["status"] == "REVIEW"
 
