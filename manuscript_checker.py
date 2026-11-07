@@ -1,3 +1,4 @@
+import os
 import re
 import fitz
 import nltk
@@ -5204,17 +5205,14 @@ def analyze_manuscript_text(full_text):
 
 
 
-def analyze_manuscript(pdf_path):
+
+def analyze_manuscript(file_path):
     """
     Complete manuscript analysis pipeline.
 
-    Input:
-        pdf_path : Path to a scientific manuscript PDF
-
-    Output:
-        Complete manuscript analysis containing:
-        - Master manuscript report
-        - Overall editorial decision
+    Supports:
+        - PDF manuscripts
+        - TXT manuscripts
     """
 
     print("=" * 70)
@@ -5222,47 +5220,60 @@ def analyze_manuscript(pdf_path):
     print("=" * 70)
 
     # ------------------------------------------------------
-    # 1. OPEN PDF
+    # 1. IDENTIFY FILE FORMAT
     # ------------------------------------------------------
 
-    document = fitz.open(pdf_path)
-
-    print(f"✓ PDF Loaded: {len(document)} pages")
-
+    file_extension = os.path.splitext(file_path)[1].lower()
 
     # ------------------------------------------------------
     # 2. EXTRACT TEXT
     # ------------------------------------------------------
 
-    page_text = []
+    if file_extension == ".pdf":
 
-    for page in document:
-        text = page.get_text("text")
-        page_text.append(text)
+        document = fitz.open(file_path)
 
-    document.close()
+        try:
+            print(f"✓ PDF Loaded: {len(document)} pages")
 
-    full_text = "\n".join(page_text)
+            page_text = []
+
+            for page in document:
+                text = page.get_text("text")
+                page_text.append(text)
+
+            full_text = "\n".join(page_text)
+
+        finally:
+            document.close()
+
+    elif file_extension == ".txt":
+
+        with open(file_path, "r", encoding="utf-8-sig") as file:
+            full_text = file.read()
+
+        print("✓ TXT Manuscript Loaded")
+
+    else:
+        raise ValueError(
+            f"Unsupported manuscript format: {file_extension}"
+        )
 
     print(f"✓ Text Extracted: {len(full_text):,} characters")
 
+    # ------------------------------------------------------
+    # 3. VALIDATE EXTRACTED TEXT
+    # ------------------------------------------------------
 
-    # Basic extraction safety check
     if not full_text.strip():
         raise ValueError(
-            "No readable text could be extracted from the PDF."
+            "No readable text could be extracted from the manuscript."
         )
 
-
     # ------------------------------------------------------
-    # 3. RUN COMPLETE ANALYSIS ENGINE
+    # 4. RUN COMPLETE ANALYSIS ENGINE
     # ------------------------------------------------------
 
-    final_analysis = analyze_manuscript_text(
-        full_text
-    )
-    
+    final_analysis = analyze_manuscript_text(full_text)
 
     return final_analysis
- 
-
