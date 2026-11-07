@@ -20,6 +20,7 @@ with open(CSV_PATH, "r", encoding="utf-8") as file:
 print("Evaluation cases loaded:", len(cases))
 
 failed_cases = []
+evaluation_results = []
 for case in cases:
     case_id = case["case_id"]
     expected = case["expected_result"]
@@ -86,12 +87,52 @@ for case in cases:
     status = "PASS" if actual == expected else "FAIL"
     if status == "FAIL":
         failed_cases.append(case_id)
+        evaluation_results.append({
+            "case_id": case_id,
+            "expected": expected,
+            "actual": actual,
+            "status": status
+        })
 
     print(
         f"{case_id} | Expected: {expected} | "
         f"Actual: {actual} | {status}",
         flush=True
     )
+
+print("\n" + "=" * 85)
+print("             MANUSCRIPT EVALUATION SUMMARY")
+print("=" * 85)
+
+print(
+    f"{'Case ID':<12} "
+    f"{'Expected':<25} "
+    f"{'Actual':<25} "
+    f"{'Status':<8}"
+)
+
+print("-" * 85)
+
+for item in evaluation_results:
+    print(
+        f"{item['case_id']:<12} "
+        f"{item['expected']:<25} "
+        f"{item['actual']:<25} "
+        f"{item['status']:<8}"
+    )
+
+print("-" * 85)
+
+passed = sum(
+    item["status"] == "PASS"
+    for item in evaluation_results
+)
+
+print(f"Total Evaluated: {len(evaluation_results)}")
+print(f"Passed: {passed}")
+print(f"Failed: {len(failed_cases)}")
+
+print("=" * 85, flush=True)
 
 if failed_cases:
     raise SystemExit(
