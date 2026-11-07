@@ -23,6 +23,7 @@ failed_cases = []
 for case in cases:
     case_id = case["case_id"]
     expected = case["expected_result"]
+    detector = case["detector"]
 
 
     manuscript_path = MANUSCRIPT_DIR / f"{case_id}.txt"
@@ -50,7 +51,7 @@ for case in cases:
         if comparison["role"] == "RANDOMIZED"
     ]
 
-    if expected == "INFORMATIONAL_ONLY":
+    if detector == "screening_flow":
 
         screening_flow = result[
             "sample_size_screening"
