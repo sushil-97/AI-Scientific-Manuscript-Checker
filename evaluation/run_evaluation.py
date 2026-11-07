@@ -45,6 +45,10 @@ for case in cases:
         continue
 
     result = analyze_manuscript(str(manuscript_path))
+    print(
+        f"DEBUG: Analysis completed for {case_id}",
+        flush=True
+    )
 
     comparisons = result[
         "sample_size_screening"
@@ -75,5 +79,6 @@ for case in cases:
 
     print(
         f"{case_id} | Expected: {expected} | "
-        f"Actual: {actual} | {status}"
+        f"Actual: {actual} | {status}",
+        flush=True
     )
