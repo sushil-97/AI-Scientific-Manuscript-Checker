@@ -148,8 +148,17 @@ Data are available upon reasonable request.
 
     sample_size = result["sample_size_screening"]
 
+    print("\n--- EXTRACTED SAMPLE SIZE FINDINGS ---")
+    
+    for finding in result["sample_size_findings"]:
+        print("Role:", finding["role"])
+        print("Value:", finding["numeric_value"])
+        print("Section:", finding["section"])
+        print("Context:", repr(finding["context"]))
+        print("-------------------------")
+    
     screening = sample_size["screening_to_randomization"]
-
+    
     assert screening is not None
 
     assert screening["screened"] == 69
