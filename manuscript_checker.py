@@ -4152,6 +4152,13 @@ def evaluate_sample_size_consistency(
         detect_two_arm_allocation_consistency(findings)
     )
     # ---------------------------------
+    # Screening-to-randomization flow
+    # ---------------------------------
+    
+    screening_to_randomization = (
+        detect_screening_to_randomization_flow(findings)
+    )
+    # ---------------------------------
     # Final decision
     # ---------------------------------
 
@@ -4268,6 +4275,7 @@ def evaluate_sample_size_consistency(
             final_population_comparisons,
         "participant_flow": participant_flow,
         "allocation_consistency": allocation_consistency,
+        "screening_to_randomization": screening_to_randomization,
         "raw_findings": findings,
         "status": status,
         "reason": reason
