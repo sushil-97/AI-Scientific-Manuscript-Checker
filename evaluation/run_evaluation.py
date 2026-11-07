@@ -19,6 +19,13 @@ with open(CSV_PATH, "r", encoding="utf-8") as file:
 
 print("Evaluation cases loaded:", len(cases))
 
+print("DEBUG: CSV headers:", list(cases[0].keys()), flush=True)
+
+print("DEBUG: All case IDs:", [
+    repr(case["case_id"])
+    for case in cases
+], flush=True)
+
 for case in cases:
     case_id = case["case_id"]
     expected = case["expected_result"]
