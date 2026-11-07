@@ -3562,7 +3562,9 @@ def classify_sample_size_role(context, expression=None):
         ]
 
         if nearby_candidates:
-
+            if "52 infants" in context_lower:
+                print("DEBUG EXPRESSION:", repr(expression))
+                print("DEBUG TEXT AFTER:", repr(context_lower[expression_end:]))
             # Prefer a role phrase immediately following the
             # participant count when it describes that count.
             following_role = re.match(
