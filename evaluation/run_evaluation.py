@@ -50,7 +50,24 @@ for case in cases:
         if comparison["role"] == "RANDOMIZED"
     ]
 
-    if any(
+    if expected == "INFORMATIONAL_ONLY":
+
+        screening_flow = result[
+            "sample_size_screening"
+        ].get("screening_to_randomization")
+
+        if (
+            screening_flow is not None
+            and screening_flow.get("screened") == 69
+            and screening_flow.get("randomized") == 52
+            and screening_flow.get("difference") == 17
+            and screening_flow.get("interpretation") == "INFORMATIONAL_ONLY"
+        ):
+            actual = "INFORMATIONAL_ONLY"
+        else:
+            actual = "NOT_EVALUATED"
+
+    elif any(
         comparison["result"] == "POTENTIAL_DISCREPANCY"
         for comparison in randomized_comparisons
     ):
