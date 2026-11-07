@@ -23,6 +23,8 @@ for case in cases:
     case_id = case["case_id"]
     expected = case["expected_result"]
 
+    print(f"DEBUG: Processing case {case_id}", flush=True)
+
     manuscript_path = MANUSCRIPT_DIR / f"{case_id}.txt"
 
     if not manuscript_path.exists():
