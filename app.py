@@ -720,6 +720,19 @@ if uploaded_file is not None:
                             "sample_size_screening"
                         ]["same_role_comparisons"]
                     )
+                    st.markdown("**Randomization-to-Allocation Consistency**")
+
+                    allocation = result["sample_size_screening"].get(
+                        "allocation_consistency"
+                    )
+                    
+                    if allocation is not None:
+                        st.json(allocation)
+                    else:
+                        st.info(
+                            "No directly comparable two-arm allocation "
+                            "relationship was detected."
+                        )
             
             
                 # --------------------------------------------------
