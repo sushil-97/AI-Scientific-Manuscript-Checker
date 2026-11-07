@@ -46,7 +46,8 @@ upon reasonable request.
     assert allocation["result"] == "POTENTIAL_DISCREPANCY"
 
     assert sample_size["status"] == "REVIEW"
-        overall = result["overall_decision"]
+
+    overall = result["overall_decision"]
 
     assert overall["overall_status"] == "REVIEW"
 
