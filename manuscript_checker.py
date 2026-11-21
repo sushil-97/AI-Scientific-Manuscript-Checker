@@ -335,6 +335,7 @@ p_value_pattern = (
 SIGNIFICANCE_THRESHOLD = 0.05
 
 
+
 def normalize_written_sample_numbers(text):
     number_words = {
         "zero": 0,
@@ -348,6 +349,15 @@ def normalize_written_sample_numbers(text):
         "eight": 8,
         "nine": 9,
         "ten": 10,
+        "eleven": 11,
+        "twelve": 12,
+        "thirteen": 13,
+        "fourteen": 14,
+        "fifteen": 15,
+        "sixteen": 16,
+        "seventeen": 17,
+        "eighteen": 18,
+        "nineteen": 19,
         "twenty": 20,
         "thirty": 30,
         "forty": 40,
@@ -358,22 +368,57 @@ def normalize_written_sample_numbers(text):
         "ninety": 90
     }
 
-    pattern = (
+    tens_words = {
+        word: value
+        for word, value in number_words.items()
+        if value >= 20 and value % 10 == 0
+    }
+
+    units_words = {
+        word: value
+        for word, value in number_words.items()
+        if 1 <= value <= 9
+    }
+
+    # Match compound numbers such as fifty-two
+    compound_pattern = (
+        r'\b('
+        + '|'.join(tens_words.keys())
+        + r')[-\s]('
+        + '|'.join(units_words.keys())
+        + r')(?=\s+participants?\b)'
+    )
+
+    def replace_compound(match):
+        tens = number_words[match.group(1).lower()]
+        units = number_words[match.group(2).lower()]
+        return str(tens + units)
+
+    text = re.sub(
+        compound_pattern,
+        replace_compound,
+        text,
+        flags=re.IGNORECASE
+    )
+
+    # Match simple numbers such as fifty
+    simple_pattern = (
         r'\b('
         + '|'.join(number_words.keys())
         + r')(?=\s+participants?\b)'
     )
 
-    def replace_number(match):
-        word = match.group().lower()
+    def replace_simple(match):
+        word = match.group(1).lower()
         return str(number_words[word])
 
     return re.sub(
-        pattern,
-        replace_number,
+        simple_pattern,
+        replace_simple,
         text,
         flags=re.IGNORECASE
     )
+
 
 
 SAMPLE_NUMBER_PATTERN = r'(?:\d{1,3}(?:,\d{3})+|\d+)'
