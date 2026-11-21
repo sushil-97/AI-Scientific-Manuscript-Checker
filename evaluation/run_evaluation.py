@@ -36,7 +36,21 @@ for case in cases:
     )
 
     if not manuscript_path.exists():
-        print(f"{case_id} | SKIPPED: Manuscript not created yet")
+        print(
+            f"{case_id} | FAIL: Manuscript file missing",
+            flush=True
+        )
+    
+        failed_cases.append(case_id)
+    
+        evaluation_results.append({
+            "case_id": case_id,
+            "expected": expected,
+            "actual": "FILE_MISSING",
+            "status": "FAIL",
+            "detector": detector
+        })
+    
         continue
 
     result = analyze_manuscript(str(manuscript_path))
