@@ -66,12 +66,7 @@ for case in cases:
         if comparison["role"] == "RANDOMIZED"
     ]
     
-    if case_id == "EVAL_003":
-        print(
-            "EVAL_003 EVIDENCE:",
-            randomized_comparisons,
-            flush=True
-        )
+  
 
   
 
