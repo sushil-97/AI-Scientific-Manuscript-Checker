@@ -65,6 +65,12 @@ for case in cases:
         for comparison in comparisons
         if comparison["role"] == "RANDOMIZED"
     ]
+    if case_id == "EVAL_002":
+        print(
+            "RANDOMIZED COMPARISON DEBUG:",
+            randomized_comparisons,
+            flush=True
+        )
 
     if detector == "screening_flow":
 
