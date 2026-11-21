@@ -8,5 +8,4 @@ EVAL_006,Screened count smaller than randomized count,screening_flow,POTENTIAL_D
 EVAL_007,Screened and randomized counts are equal,screening_flow,INFORMATIONAL_ONLY,60,60,0,,,
 EVAL_008,Written and numeric randomized counts are consistent,randomized_consistency,CONSISTENT,,,,50,50,50
 EVAL_009,Written and numeric randomized counts differ,randomized_consistency,POTENTIAL_DISCREPANCY,,,,50,50,45
-EVAL_010,Compound written and numeric randomized counts are consistent,randomized_consistency,CONSISTENT,,,,,,
-
+EVAL_010,Compound written and numeric randomized counts are consistent,randomized_consistency,CONSISTENT,,,,52,52,52
