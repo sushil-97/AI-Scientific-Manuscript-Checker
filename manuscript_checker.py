@@ -3266,6 +3266,10 @@ def extract_sample_sizes(sections):
 
                     if not number_match:
                         continue
+                     
+                    number_start = (
+                        match_obj.start() + number_match.start()
+                    )
 
                     numeric_value = int(
                         number_match.group().replace(",", "")
@@ -3293,7 +3297,7 @@ def extract_sample_sizes(sections):
                         "numeric_value": numeric_value,
                         "context": normalized,
                         "local_context": local_context,
-                        "match_start": match_obj.start()
+                        "match_start": number_start
                     })
 
     return findings
