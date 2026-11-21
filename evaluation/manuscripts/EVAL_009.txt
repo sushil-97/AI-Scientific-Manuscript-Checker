@@ -1,0 +1,13 @@
+
+Title: Randomized Clinical Trial With Participant Count Discrepancy
+
+Abstract
+A total of fifty participants were randomized into two treatment groups.
+
+Methods
+Fifty participants were randomized into the study.
+
+Results
+A total of 45 participants were randomized into the study.
+
+All randomized participants completed the study.
