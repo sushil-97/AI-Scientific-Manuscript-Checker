@@ -1,0 +1,12 @@
+Title: Randomized Clinical Trial Evaluating Treatment Effectiveness
+
+Abstract
+A total of 60 participants were randomized into two treatment groups.
+
+Methods
+A total of 60 participants were screened for eligibility.
+
+Results
+Of the 60 participants screened, 60 participants were randomized into the study.
+
+All randomized participants completed the study.
