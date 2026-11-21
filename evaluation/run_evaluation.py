@@ -97,7 +97,8 @@ for case in cases:
             "case_id": case_id,
             "expected": expected,
             "actual": actual,
-            "status": status
+            "status": status,
+            "detector": detector
     })
 
     print(
@@ -146,6 +147,36 @@ print(f"Total Evaluated: {total}")
 print(f"Passed: {passed}")
 print(f"Failed: {len(failed_cases)}")
 print(f"Pass Rate: {pass_rate:.2f}%")
+
+print("\nDETECTOR-WISE EVALUATION")
+print("-" * 85)
+
+detector_results = {}
+
+for item in evaluation_results:
+    detector = item["detector"]
+
+    if detector not in detector_results:
+        detector_results[detector] = {
+            "total": 0,
+            "passed": 0
+        }
+
+    detector_results[detector]["total"] += 1
+
+    if item["status"] == "PASS":
+        detector_results[detector]["passed"] += 1
+
+for detector, counts in detector_results.items():
+    detector_pass_rate = (
+        counts["passed"] / counts["total"]
+    ) * 100
+
+    print(
+        f"{detector}: "
+        f"{counts['passed']}/{counts['total']} passed "
+        f"({detector_pass_rate:.2f}%)"
+    )
 
 print("=" * 85, flush=True)
 
