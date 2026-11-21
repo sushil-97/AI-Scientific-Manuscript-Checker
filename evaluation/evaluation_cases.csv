@@ -1,4 +1,4 @@
-case_id,scenario,detector,expected_result,expected_screened,expected_randomized,expected_difference,expected_abstract_count,expected_methods_count,expected_results_count
+case_id,scenario,detector,expected_result,expected_screened,expected_randomized,expected_difference,expected_abstract_count,expected_methods_count,expected_results_count,
 EVAL_001,Consistent randomized counts,randomized_consistency,CONSISTENT,,,
 EVAL_002,Abstract and Results randomized counts differ,randomized_consistency,POTENTIAL_DISCREPANCY,,,
 EVAL_003,Previous study count alongside consistent current study,randomized_consistency,CONSISTENT,,,
