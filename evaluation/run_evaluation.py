@@ -68,6 +68,13 @@ for case in cases:
     
     
     
+    if case_id == "EVAL_008":
+        print(
+            "EVAL_008 EVIDENCE:",
+            randomized_comparisons,
+            flush=True
+        )
+
 
   
 
