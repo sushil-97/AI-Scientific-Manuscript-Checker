@@ -134,9 +134,18 @@ passed = sum(
     for item in evaluation_results
 )
 
-print(f"Total Evaluated: {len(evaluation_results)}")
+total = len(evaluation_results)
+
+pass_rate = (
+    (passed / total) * 100
+    if total > 0
+    else 0.0
+)
+
+print(f"Total Evaluated: {total}")
 print(f"Passed: {passed}")
 print(f"Failed: {len(failed_cases)}")
+print(f"Pass Rate: {pass_rate:.2f}%")
 
 print("=" * 85, flush=True)
 
