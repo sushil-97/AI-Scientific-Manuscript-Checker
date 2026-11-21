@@ -7,3 +7,4 @@ EVAL_005,Screened count greater than randomized count,screening_flow,INFORMATION
 EVAL_006,Screened count smaller than randomized count,screening_flow,POTENTIAL_DISCREPANCY,45,52,-7
 EVAL_007,Screened and randomized counts are equal,screening_flow,INFORMATIONAL_ONLY,60,60,0
 EVAL_008,Written and numeric randomized counts are consistent,randomized_consistency,CONSISTENT,,,
+EVAL_009,Written and numeric randomized counts differ,randomized_consistency,POTENTIAL_DISCREPANCY,,,
