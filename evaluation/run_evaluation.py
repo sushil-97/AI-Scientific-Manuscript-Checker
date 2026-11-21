@@ -106,23 +106,37 @@ for case in cases:
         actual = "NOT_EVALUATED"
 
     
-    # Verify the evidence behind EVAL_002
-    if case_id == "EVAL_002":
     
-        expected_sections = {
-            "abstract": [150],
-            "methods": [150],
-            "results": [142]
+    # Validate randomized-count evidence when expected counts are provided
+    if detector == "randomized_consistency":
+    
+        evidence_columns = {
+            "abstract": "expected_abstract_count",
+            "methods": "expected_methods_count",
+            "results": "expected_results_count"
         }
     
-        evidence_matches = any(
-            comparison["sections"] == expected_sections
-            and comparison["result"] == "POTENTIAL_DISCREPANCY"
-            for comparison in randomized_comparisons
-        )
+        # Only validate evidence for cases with expected counts
+        if any(case.get(column) for column in evidence_columns.values()):
     
-        if not evidence_matches:
-            actual = "EVIDENCE_MISMATCH"
+            expected_sections = {
+                section: [int(case[column])]
+                for section, column in evidence_columns.items()
+                if case.get(column)
+            }
+    
+            evidence_matches = any(
+                all(
+                    comparison["sections"].get(section) == counts
+                    for section, counts in expected_sections.items()
+                )
+                and comparison["result"] == expected
+                for comparison in randomized_comparisons
+            )
+    
+            if not evidence_matches:
+                actual = "EVIDENCE_MISMATCH"
+
 
     status = "PASS" if actual == expected else "FAIL"
     if status == "FAIL":
