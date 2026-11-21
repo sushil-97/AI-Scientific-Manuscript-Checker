@@ -3320,7 +3320,11 @@ def determine_sample_size_applicability(study_characters):
 
 
 
-def classify_sample_size_role(context, expression=None):
+def classify_sample_size_role(
+    context,
+    expression=None,
+    match_start=None
+):
 
     context_lower = context.lower()
 
@@ -3333,14 +3337,19 @@ def classify_sample_size_role(context, expression=None):
 
     if expression:
 
-        match = re.search(
-            re.escape(expression.lower()),
-            context_lower
-        )
-
-        if match:
-            expression_start = match.start()
-            expression_end = match.end()
+        if match_start is not None:
+            expression_start = match_start
+            expression_end = match_start + len(expression)
+    
+        else:
+            match = re.search(
+                re.escape(expression.lower()),
+                context_lower
+            )
+    
+            if match:
+                expression_start = match.start()
+                expression_end = match.end()
 
     # --------------------------------------------------
     # Explicit participant-flow relationships
