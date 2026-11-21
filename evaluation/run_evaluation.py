@@ -19,26 +19,7 @@ def validate_randomized_evidence(comparisons, expected_sections, expected_result
     )
 
 
-if __name__ == "__main__":
-    sample_comparisons = [
-        {
-            "sections": {
-                "abstract": [150],
-                "methods": [150],
-                "results": [142]
-            },
-            "result": "POTENTIAL_DISCREPANCY"
-        }
-    ]
 
-    print(
-        "Evidence function test:",
-        validate_randomized_evidence(
-            sample_comparisons,
-            {"abstract": [150], "results": [142]},
-            "POTENTIAL_DISCREPANCY"
-        )
-    )
 
 
 # Locate evaluation files
@@ -162,14 +143,13 @@ for case in cases:
                 if case.get(column)
             }
     
-            evidence_matches = any(
-                all(
-                    comparison["sections"].get(section) == counts
-                    for section, counts in expected_sections.items()
-                )
-                and comparison["result"] == expected
-                for comparison in randomized_comparisons
+            
+            evidence_matches = validate_randomized_evidence(
+                randomized_comparisons,
+                expected_sections,
+                expected
             )
+
     
             if not evidence_matches:
                 actual = "EVIDENCE_MISMATCH"
