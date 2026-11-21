@@ -7,6 +7,40 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from manuscript_checker import analyze_manuscript
 import csv
 
+
+def validate_randomized_evidence(comparisons, expected_sections, expected_result):
+    return any(
+        all(
+            comparison["sections"].get(section) == counts
+            for section, counts in expected_sections.items()
+        )
+        and comparison["result"] == expected_result
+        for comparison in comparisons
+    )
+
+
+if __name__ == "__main__":
+    sample_comparisons = [
+        {
+            "sections": {
+                "abstract": [150],
+                "methods": [150],
+                "results": [142]
+            },
+            "result": "POTENTIAL_DISCREPANCY"
+        }
+    ]
+
+    print(
+        "Evidence function test:",
+        validate_randomized_evidence(
+            sample_comparisons,
+            {"abstract": [150], "results": [142]},
+            "POTENTIAL_DISCREPANCY"
+        )
+    )
+
+
 # Locate evaluation files
 BASE_DIR = Path(__file__).resolve().parent
 
