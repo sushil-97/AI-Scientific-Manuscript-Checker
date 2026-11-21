@@ -5,3 +5,4 @@ EVAL_003,Previous study count alongside consistent current study,randomized_cons
 EVAL_004,Previous study count alongside genuine current study discrepancy,randomized_consistency,POTENTIAL_DISCREPANCY,,,
 EVAL_005,Screened count greater than randomized count,screening_flow,INFORMATIONAL_ONLY,69,52,17
 EVAL_006,Screened count smaller than randomized count,screening_flow,POTENTIAL_DISCREPANCY,45,52,-7
+EVAL_007,Screened and randomized counts are equal,screening_flow,INFORMATIONAL_ONLY,60,60,0
