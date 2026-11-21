@@ -3292,7 +3292,8 @@ def extract_sample_sizes(sections):
                         "expression": match,
                         "numeric_value": numeric_value,
                         "context": normalized,
-                        "local_context": local_context
+                        "local_context": local_context,
+                        "match_start": match_obj.start()
                     })
 
     return findings
@@ -3719,7 +3720,8 @@ def remove_duplicate_sample_sizes(findings):
         key = (
             finding["section"],
             finding["numeric_value"],
-            finding["context"]
+            finding["context"],
+            finding.get("match_start")
         )
 
         if key not in seen:
