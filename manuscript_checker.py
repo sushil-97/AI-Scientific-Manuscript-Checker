@@ -3712,6 +3712,18 @@ def add_sample_size_roles(findings):
 
         new_finding = finding.copy()
 
+        if (
+            finding["section"] == "results"
+            and finding["numeric_value"] == 60
+        ):
+            print(
+                "ROLE DEBUG:",
+                "expression =", repr(finding.get("expression")),
+                "expression_start =", finding.get("expression_start"),
+                "match_start =", finding.get("match_start"),
+                flush=True
+            )
+
         new_finding["role"] = (
             classify_sample_size_role(
                 finding["context"],
