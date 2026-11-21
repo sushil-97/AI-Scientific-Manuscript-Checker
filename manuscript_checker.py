@@ -3255,6 +3255,9 @@ def extract_sample_sizes(sections):
                 sentence
             ).strip()
 
+            normalized = normalize_written_sample_numbers(normalized)
+
+
             for pattern in SAMPLE_SIZE_PATTERNS:
 
                 # Use finditer instead of findall so that we know
