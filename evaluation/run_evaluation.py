@@ -57,9 +57,9 @@ for case in cases:
         screening_flow = result[
             "sample_size_screening"
         ].get("screening_to_randomization")
-        if case_id == "EVAL_006":
+        if case_id in ["EVAL_006", "EVAL_007"]:
             print(
-                "DEBUG EVAL_006 screening_flow:",
+                f"DEBUG {case_id} screening_flow:",
                 screening_flow,
                 flush=True
             )
