@@ -65,12 +65,7 @@ for case in cases:
         for comparison in comparisons
         if comparison["role"] == "RANDOMIZED"
     ]
-    if case_id == "EVAL_002":
-        print(
-            "RANDOMIZED COMPARISON DEBUG:",
-            randomized_comparisons,
-            flush=True
-        )
+    
 
     if detector == "screening_flow":
 
@@ -109,6 +104,25 @@ for case in cases:
 
     else:
         actual = "NOT_EVALUATED"
+
+    
+    # Verify the evidence behind EVAL_002
+    if case_id == "EVAL_002":
+    
+        expected_sections = {
+            "abstract": [150],
+            "methods": [150],
+            "results": [142]
+        }
+    
+        evidence_matches = any(
+            comparison["sections"] == expected_sections
+            and comparison["result"] == "POTENTIAL_DISCREPANCY"
+            for comparison in randomized_comparisons
+        )
+    
+        if not evidence_matches:
+            actual = "EVIDENCE_MISMATCH"
 
     status = "PASS" if actual == expected else "FAIL"
     if status == "FAIL":
