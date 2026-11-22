@@ -4,7 +4,8 @@ def validate_randomized_evidence(
     expected_result
 ):
     return any(
-        all(
+        comparison.get("role") == "RANDOMIZED"
+        and all(
             comparison["sections"].get(section) == counts
             for section, counts in expected_sections.items()
         )
