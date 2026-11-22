@@ -245,4 +245,32 @@ def test_strict_mode_rejects_extra_section():
     assert result is False
 
 
+def test_strict_mode_accepts_exact_evidence():
+    comparisons = [
+        {
+            "role": "RANDOMIZED",
+            "sections": {
+                "abstract": [120],
+                "methods": [120],
+                "results": [120]
+            },
+            "result": "CONSISTENT"
+        }
+    ]
+
+    expected_sections = {
+        "abstract": [120],
+        "methods": [120],
+        "results": [120]
+    }
+
+    result = validate_randomized_evidence(
+        comparisons,
+        expected_sections,
+        "CONSISTENT",
+        strict=True
+    )
+
+    assert result is True
+
 
