@@ -99,3 +99,49 @@ def test_runner_accepts_valid_temporary_csv(tmp_path):
     assert "Pass Rate: 100.00%" in result.stdout
 
 
+def test_runner_reports_correct_eval_002_result(tmp_path):
+    project_root = Path(__file__).resolve().parents[1]
+
+    original_csv = (
+        project_root / "evaluation" / "evaluation_cases.csv"
+    )
+
+    temporary_csv = tmp_path / "evaluation_cases.csv"
+    temporary_csv.write_bytes(original_csv.read_bytes())
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "evaluation.run_evaluation",
+            "--csv",
+            str(temporary_csv)
+        ],
+        cwd=project_root,
+        capture_output=True,
+        text=True
+    )
+
+    assert result.returncode == 0, (
+        result.stdout + result.stderr
+    )
+
+    # Verify the individual evaluation result
+    eval_002_lines = [
+        line for line in result.stdout.splitlines()
+        if line.strip().startswith("EVAL_002 ")
+    ]
+
+    assert len(eval_002_lines) == 1
+
+    columns = eval_002_lines[0].split()
+
+    assert columns == [
+        "EVAL_002",
+        "POTENTIAL_DISCREPANCY",
+        "POTENTIAL_DISCREPANCY",
+        "PASS",
+    ]
+
+
+
