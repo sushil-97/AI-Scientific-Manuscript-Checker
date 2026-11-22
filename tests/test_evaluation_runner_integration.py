@@ -127,10 +127,13 @@ def test_runner_reports_correct_eval_002_result(tmp_path):
     )
 
     # Verify the individual evaluation result
+    
     eval_002_lines = [
         line for line in result.stdout.splitlines()
         if line.strip().startswith("EVAL_002 ")
+        and "|" not in line
     ]
+
 
     assert len(eval_002_lines) == 1
 
