@@ -134,11 +134,16 @@ for case in cases:
             }
     
             
+            
+            strict_mode = case["strict_validation"].strip().lower() == "true"
+            
             evidence_matches = validate_randomized_evidence(
                 randomized_comparisons,
                 expected_sections,
-                expected
+                expected,
+                strict=strict_mode
             )
+
 
     
             if not evidence_matches:
