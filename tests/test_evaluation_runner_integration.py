@@ -147,4 +147,61 @@ def test_runner_reports_correct_eval_002_result(tmp_path):
     ]
 
 
+def test_runner_detects_incorrect_expected_result(tmp_path):
+    project_root = Path(__file__).resolve().parents[1]
+
+    original_csv = (
+        project_root / "evaluation" / "evaluation_cases.csv"
+    )
+
+    with original_csv.open(
+        newline="", encoding="utf-8"
+    ) as file:
+        reader = csv.DictReader(file)
+        fieldnames = reader.fieldnames
+        cases = list(reader)
+
+    # Intentionally change EVAL_002's expected result
+    for case in cases:
+        if case["case_id"] == "EVAL_002":
+            case["expected_result"] = "CONSISTENT"
+            break
+    else:
+        raise AssertionError("EVAL_002 not found")
+
+    temporary_csv = tmp_path / "evaluation_cases.csv"
+
+    with temporary_csv.open(
+        "w", newline="", encoding="utf-8"
+    ) as file:
+        writer = csv.DictWriter(
+            file,
+            fieldnames=fieldnames
+        )
+        writer.writeheader()
+        writer.writerows(cases)
+
+    # Execute the real evaluation runner
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "evaluation.run_evaluation",
+            "--csv",
+            str(temporary_csv)
+        ],
+        cwd=project_root,
+        capture_output=True,
+        text=True
+    )
+
+    # The runner must reject the incorrect expectation
+    assert result.returncode != 0
+
+    # Verify the case was reported as failed
+    assert "EVAL_002" in result.stdout
+    assert "FAIL" in result.stdout
+    assert "Failed: 1" in result.stdout
+
+
 
