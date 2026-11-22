@@ -1,4 +1,3 @@
-
 def validate_randomized_evidence(
     comparisons,
     expected_sections,
@@ -21,3 +20,19 @@ def validate_randomized_evidence(
         and comparison["result"] == expected_result
         for comparison in comparisons
     )
+
+
+def parse_strict_validation(value):
+    normalized = value.strip().lower()
+
+    if normalized == "true":
+        return True
+
+    if normalized == "false":
+        return False
+
+    raise ValueError(
+        f"Invalid strict_validation value: {value!r}. "
+        "Expected 'True' or 'False'."
+    )
+
