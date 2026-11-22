@@ -274,3 +274,37 @@ def test_strict_mode_accepts_exact_evidence():
     assert result is True
 
 
+def test_csv_strict_mode_rejects_unexpected_section():
+    # Simulate the strict_validation value from CSV
+    csv_value = "True"
+    strict_mode = csv_value.strip().lower() == "true"
+
+    comparisons = [
+        {
+            "role": "RANDOMIZED",
+            "sections": {
+                "abstract": [120],
+                "methods": [120],
+                "results": [120]
+            },
+            "result": "CONSISTENT"
+        }
+    ]
+
+    # Expected evidence intentionally excludes Results
+    expected_sections = {
+        "abstract": [120],
+        "methods": [120]
+    }
+
+    result = validate_randomized_evidence(
+        comparisons,
+        expected_sections,
+        "CONSISTENT",
+        strict=strict_mode
+    )
+
+    assert result is False
+
+
+
