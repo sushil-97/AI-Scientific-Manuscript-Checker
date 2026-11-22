@@ -389,8 +389,12 @@ def test_parse_strict_validation_false():
 
 
 def test_parse_strict_validation_invalid():
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError,
+        match="Invalid strict_validation value"
+    ):
         parse_strict_validation("maybe")
+
 
 
 
