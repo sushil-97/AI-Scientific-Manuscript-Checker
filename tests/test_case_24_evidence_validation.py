@@ -161,4 +161,33 @@ def test_empty_expected_evidence():
     assert result is False
 
 
+def test_unexpected_extra_participant_count():
+    comparisons = [
+        {
+            "role": "RANDOMIZED",
+            "sections": {
+                "abstract": [120],
+                "methods": [120],
+                "results": [120, 135]
+            },
+            "result": "CONSISTENT"
+        }
+    ]
+
+    expected_sections = {
+        "abstract": [120],
+        "methods": [120],
+        "results": [120]
+    }
+
+    result = validate_randomized_evidence(
+        comparisons,
+        expected_sections,
+        "CONSISTENT"
+    )
+
+    assert result is False
+
+
+
 
