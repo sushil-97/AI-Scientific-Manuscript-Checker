@@ -199,9 +199,28 @@ def test_runner_detects_incorrect_expected_result(tmp_path):
     assert result.returncode != 0
 
     # Verify the case was reported as failed
-    assert "EVAL_002" in result.stdout
-    assert "FAIL" in result.stdout
+    
+# Find the EVAL_002 row in the summary table
+    eval_002_lines = [
+        line for line in result.stdout.splitlines()
+        if line.strip().startswith("EVAL_002 ")
+        and "|" not in line
+    ]
+    
+    assert len(eval_002_lines) == 1
+    
+    columns = eval_002_lines[0].split()
+    
+    assert columns == [
+        "EVAL_002",
+        "CONSISTENT",
+        "EVIDENCE_MISMATCH",
+        "FAIL",
+    ]
+    
+    # Verify the overall failure count
     assert "Failed: 1" in result.stdout
+
 
 
 
