@@ -1,4 +1,9 @@
-from evaluation.validators import validate_randomized_evidence
+import pytest
+
+from evaluation.validators import (
+    validate_randomized_evidence,
+    parse_strict_validation,
+)
 
 def test_correct_randomized_evidence():
     comparisons = [
@@ -372,6 +377,20 @@ def test_csv_partial_mode_allows_extra_section():
 
     assert result is True
 
+
+def test_parse_strict_validation_true():
+    result = parse_strict_validation("True")
+    assert result is True
+
+
+def test_parse_strict_validation_false():
+    result = parse_strict_validation("False")
+    assert result is False
+
+
+def test_parse_strict_validation_invalid():
+    with pytest.raises(ValueError):
+        parse_strict_validation("maybe")
 
 
 
