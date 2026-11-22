@@ -5,18 +5,8 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from manuscript_checker import analyze_manuscript
+from evaluation.validators import validate_randomized_evidence
 import csv
-
-
-def validate_randomized_evidence(comparisons, expected_sections, expected_result):
-    return any(
-        all(
-            comparison["sections"].get(section) == counts
-            for section, counts in expected_sections.items()
-        )
-        and comparison["result"] == expected_result
-        for comparison in comparisons
-    )
 
 
 
