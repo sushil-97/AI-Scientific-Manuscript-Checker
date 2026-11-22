@@ -172,8 +172,19 @@ for case in cases:
 
 
     
+            
             if not evidence_matches:
-                actual = "EVIDENCE_MISMATCH"
+                classification_matches = any(
+                    comparison.get("role") == "RANDOMIZED"
+                    and comparison.get("result") == expected
+                    for comparison in randomized_comparisons
+                )
+            
+                if classification_matches:
+                    actual = "EVIDENCE_MISMATCH"
+                else:
+                    actual = "CLASSIFICATION_MISMATCH"
+
 
 
     status = "PASS" if actual == expected else "FAIL"
