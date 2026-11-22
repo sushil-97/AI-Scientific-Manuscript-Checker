@@ -139,3 +139,26 @@ def test_wrong_participant_role():
     assert result is False
 
 
+def test_empty_expected_evidence():
+    comparisons = [
+        {
+            "role": "RANDOMIZED",
+            "sections": {
+                "abstract": [120],
+                "methods": [120],
+                "results": [120]
+            },
+            "result": "CONSISTENT"
+        }
+    ]
+
+    result = validate_randomized_evidence(
+        comparisons,
+        {},
+        "CONSISTENT"
+    )
+
+    assert result is False
+
+
+
