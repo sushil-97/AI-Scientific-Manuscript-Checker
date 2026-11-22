@@ -4,6 +4,9 @@ def validate_randomized_evidence(
     expected_sections,
     expected_result
 ):
+    if not expected_sections:
+        return False
+
     return any(
         comparison.get("role") == "RANDOMIZED"
         and all(
