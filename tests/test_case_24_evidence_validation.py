@@ -217,5 +217,32 @@ def test_additional_unexpected_section_is_allowed():
 
 
 
+def test_strict_mode_rejects_extra_section():
+    comparisons = [
+        {
+            "role": "RANDOMIZED",
+            "sections": {
+                "abstract": [120],
+                "methods": [120],
+                "results": [135]
+            },
+            "result": "POTENTIAL_DISCREPANCY"
+        }
+    ]
+
+    expected_sections = {
+        "abstract": [120],
+        "methods": [120]
+    }
+
+    result = validate_randomized_evidence(
+        comparisons,
+        expected_sections,
+        "POTENTIAL_DISCREPANCY",
+        strict=True
+    )
+
+    assert result is False
+
 
 
