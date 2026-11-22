@@ -5,7 +5,11 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from manuscript_checker import analyze_manuscript
-from evaluation.validators import validate_randomized_evidence
+
+from evaluation.validators import (
+    validate_randomized_evidence,
+    parse_strict_validation,
+)
 import csv
 
 
@@ -135,7 +139,11 @@ for case in cases:
     
             
             
-            strict_mode = case["strict_validation"].strip().lower() == "true"
+            
+            strict_mode = parse_strict_validation(
+                case["strict_validation"]
+            )
+
             
             evidence_matches = validate_randomized_evidence(
                 randomized_comparisons,
