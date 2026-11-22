@@ -189,5 +189,33 @@ def test_unexpected_extra_participant_count():
     assert result is False
 
 
+def test_additional_unexpected_section_is_allowed():
+    comparisons = [
+        {
+            "role": "RANDOMIZED",
+            "sections": {
+                "abstract": [120],
+                "methods": [120],
+                "results": [135]
+            },
+            "result": "POTENTIAL_DISCREPANCY"
+        }
+    ]
+
+    expected_sections = {
+        "abstract": [120],
+        "methods": [120]
+    }
+
+    result = validate_randomized_evidence(
+        comparisons,
+        expected_sections,
+        "POTENTIAL_DISCREPANCY"
+    )
+
+    assert result is True
+
+
+
 
 
