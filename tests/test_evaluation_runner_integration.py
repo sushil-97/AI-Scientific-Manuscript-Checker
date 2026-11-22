@@ -211,12 +211,14 @@ def test_runner_detects_incorrect_expected_result(tmp_path):
     
     columns = eval_002_lines[0].split()
     
+
     assert columns == [
         "EVAL_002",
         "CONSISTENT",
-        "EVIDENCE_MISMATCH",
+        "CLASSIFICATION_MISMATCH",
         "FAIL",
     ]
+
     
     # Verify the overall failure count
     assert "Failed: 1" in result.stdout
