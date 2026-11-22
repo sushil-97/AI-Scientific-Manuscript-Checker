@@ -1,3 +1,4 @@
+import argparse
 from pathlib import Path
 import sys
 
@@ -21,6 +22,23 @@ BASE_DIR = Path(__file__).resolve().parent
 
 CSV_PATH = BASE_DIR / "evaluation_cases.csv"
 MANUSCRIPT_DIR = BASE_DIR / "manuscripts"
+
+
+parser = argparse.ArgumentParser(
+    description="Run manuscript evaluation cases"
+)
+
+parser.add_argument(
+    "--csv",
+    default=None,
+    help="Optional path to a custom evaluation CSV file"
+)
+
+args = parser.parse_args()
+
+if args.csv is not None:
+    CSV_PATH = Path(args.csv)
+
 
 # Load evaluation labels
 with open(CSV_PATH, "r", encoding="utf-8") as file:
