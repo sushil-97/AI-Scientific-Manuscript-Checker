@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 
 
+
 def test_runner_rejects_invalid_strict_validation(tmp_path):
     project_root = Path(__file__).resolve().parents[1]
 
@@ -12,13 +13,16 @@ def test_runner_rejects_invalid_strict_validation(tmp_path):
         project_root / "evaluation" / "evaluation_cases.csv"
     )
 
-    with original_csv.open(newline="", encoding="utf-8") as file:
-        cases = list(csv.DictReader(file))
+    with original_csv.open(
+        newline="", encoding="utf-8"
+    ) as file:
+        reader = csv.DictReader(file)
+        fieldnames = reader.fieldnames
+        cases = list(reader)
 
-    # Create an invalid configuration in memory
+    # Modify the configuration without changing the original CSV
     cases[0]["strict_validation"] = "maybe"
 
-    # Write the modified CSV to a temporary location
     temporary_csv = tmp_path / "evaluation_cases.csv"
 
     with temporary_csv.open(
@@ -26,17 +30,29 @@ def test_runner_rejects_invalid_strict_validation(tmp_path):
     ) as file:
         writer = csv.DictWriter(
             file,
-            fieldnames=cases[0].keys()
+            fieldnames=fieldnames
         )
         writer.writeheader()
         writer.writerows(cases)
 
-    # Check that the parser rejects the invalid value
-    from evaluation.validators import parse_strict_validation
+    # Execute the actual evaluation runner
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "evaluation.run_evaluation",
+            "--csv",
+            str(temporary_csv)
+        ],
+        cwd=project_root,
+        capture_output=True,
+        text=True
+    )
 
-    try:
-        parse_strict_validation(cases[0]["strict_validation"])
-    except ValueError as error:
-        assert "Invalid strict_validation value" in str(error)
-    else:
-        raise AssertionError("Invalid configuration was accepted")
+    # Invalid configuration must cause the runner to fail
+    assert result.returncode != 0
+
+    # Verify that the failure happened for the correct reason
+    output = result.stdout + result.stderr
+
+    assert "Invalid strict_validation value" in output
