@@ -54,3 +54,59 @@ def test_incorrect_randomized_evidence():
     )
 
     assert result is False
+
+
+def test_missing_section_evidence():
+    comparisons = [
+        {
+            "role": "RANDOMIZED",
+            "sections": {
+                "abstract": [150],
+                "results": [142]
+            },
+            "result": "POTENTIAL_DISCREPANCY"
+        }
+    ]
+
+    expected_sections = {
+        "abstract": [150],
+        "methods": [150],
+        "results": [142]
+    }
+
+    result = validate_randomized_evidence(
+        comparisons,
+        expected_sections,
+        "POTENTIAL_DISCREPANCY"
+    )
+
+    assert result is False
+
+
+def test_incorrect_classification():
+    comparisons = [
+        {
+            "role": "RANDOMIZED",
+            "sections": {
+                "abstract": [150],
+                "methods": [150],
+                "results": [142]
+            },
+            "result": "CONSISTENT"
+        }
+    ]
+
+    expected_sections = {
+        "abstract": [150],
+        "methods": [150],
+        "results": [142]
+    }
+
+    result = validate_randomized_evidence(
+        comparisons,
+        expected_sections,
+        "POTENTIAL_DISCREPANCY"
+    )
+
+    assert result is False
+
