@@ -225,4 +225,74 @@ def test_runner_detects_incorrect_expected_result(tmp_path):
 
 
 
+def test_runner_detects_incorrect_expected_evidence(tmp_path):
+    project_root = Path(__file__).resolve().parents[1]
+
+    original_csv = (
+        project_root / "evaluation" / "evaluation_cases.csv"
+    )
+
+    with original_csv.open(
+        newline="", encoding="utf-8"
+    ) as file:
+        reader = csv.DictReader(file)
+        fieldnames = reader.fieldnames
+        cases = list(reader)
+
+    # Change only the expected Results count for EVAL_002
+    for case in cases:
+        if case["case_id"] == "EVAL_002":
+            case["expected_results_count"] = "145"
+            break
+    else:
+        raise AssertionError("EVAL_002 not found")
+
+    temporary_csv = tmp_path / "evaluation_cases.csv"
+
+    with temporary_csv.open(
+        "w", newline="", encoding="utf-8"
+    ) as file:
+        writer = csv.DictWriter(
+            file,
+            fieldnames=fieldnames
+        )
+        writer.writeheader()
+        writer.writerows(cases)
+
+    # Execute the actual evaluation runner
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "evaluation.run_evaluation",
+            "--csv",
+            str(temporary_csv)
+        ],
+        cwd=project_root,
+        capture_output=True,
+        text=True
+    )
+
+    assert result.returncode != 0
+
+    # Extract EVAL_002 from the summary table
+    eval_002_lines = [
+        line for line in result.stdout.splitlines()
+        if line.strip().startswith("EVAL_002 ")
+        and "|" not in line
+    ]
+
+    assert len(eval_002_lines) == 1
+
+    columns = eval_002_lines[0].split()
+
+    assert columns == [
+        "EVAL_002",
+        "POTENTIAL_DISCREPANCY",
+        "EVIDENCE_MISMATCH",
+        "FAIL",
+    ]
+
+    assert "Failed: 1" in result.stdout
+
 
