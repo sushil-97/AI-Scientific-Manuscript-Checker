@@ -56,3 +56,41 @@ def test_runner_rejects_invalid_strict_validation(tmp_path):
     output = result.stdout + result.stderr
 
     assert "Invalid strict_validation value" in output
+
+
+def test_runner_accepts_valid_temporary_csv(tmp_path):
+    project_root = Path(__file__).resolve().parents[1]
+
+    original_csv = (
+        project_root / "evaluation" / "evaluation_cases.csv"
+    )
+
+    # Copy the valid evaluation CSV to a temporary location
+    temporary_csv = tmp_path / "evaluation_cases.csv"
+
+    temporary_csv.write_bytes(
+        original_csv.read_bytes()
+    )
+
+    # Execute the real evaluation runner
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "evaluation.run_evaluation",
+            "--csv",
+            str(temporary_csv)
+        ],
+        cwd=project_root,
+        capture_output=True,
+        text=True
+    )
+
+    # Valid configuration should succeed
+    assert result.returncode == 0, (
+        result.stdout + result.stderr
+    )
+
+    # Verify the evaluation summary
+    assert "10/10" in result.stdout
+
