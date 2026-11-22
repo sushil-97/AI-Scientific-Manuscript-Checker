@@ -340,5 +340,39 @@ def test_csv_strict_mode_rejects_unexpected_section():
     assert result is False
 
 
+def test_csv_partial_mode_allows_extra_section():
+    # Simulate the strict_validation value from CSV
+    csv_value = "False"
+    strict_mode = csv_value.strip().lower() == "true"
+
+    comparisons = [
+        {
+            "role": "RANDOMIZED",
+            "sections": {
+                "abstract": [120],
+                "methods": [120],
+                "results": [120]
+            },
+            "result": "CONSISTENT"
+        }
+    ]
+
+    # Expected evidence contains only two sections
+    expected_sections = {
+        "abstract": [120],
+        "methods": [120]
+    }
+
+    result = validate_randomized_evidence(
+        comparisons,
+        expected_sections,
+        "CONSISTENT",
+        strict=strict_mode
+    )
+
+    assert result is True
+
+
+
 
 
