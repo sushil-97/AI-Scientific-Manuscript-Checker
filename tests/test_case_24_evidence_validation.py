@@ -1,6 +1,4 @@
-
-from evaluation.run_evaluation import validate_randomized_evidence
-
+from evaluation.validators import validate_randomized_evidence
 
 def test_correct_randomized_evidence():
     comparisons = [
