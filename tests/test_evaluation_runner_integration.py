@@ -92,5 +92,10 @@ def test_runner_accepts_valid_temporary_csv(tmp_path):
     )
 
     # Verify the evaluation summary
-    assert "10/10" in result.stdout
+    
+    assert "Total Evaluated: 10" in result.stdout
+    assert "Passed: 10" in result.stdout
+    assert "Failed: 0" in result.stdout
+    assert "Pass Rate: 100.00%" in result.stdout
+
 
